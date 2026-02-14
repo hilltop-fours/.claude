@@ -146,32 +146,111 @@ All file references use this pattern: `$CLINERULES_ROOT/path/to/file.md`
 → Read `$CLINERULES_ROOT/global/backend-api-format.md` (reference only)
 
 **WHEN user asks to validate code** (validate, review, check code quality):
-→ Read validation files:
-  - `$CLINERULES_ROOT/global/angular-instructions.md` - Angular coding rules and patterns
-  - `$CLINERULES_ROOT/global/code-simplicity.md` - Code simplicity and complexity rules
-  - `$CLINERULES_ROOT/validation/angular-style.md` - Code style preferences
-  - `$CLINERULES_ROOT/validation/angular-class-structure.md` - Class organization
-  - `$CLINERULES_ROOT/validation/sonarqube-rules.md` - SonarQube violations
-→ Execute validation checks:
-  - **CRITICAL**: Use git merge-base to find the true baseline (where the branch diverged from main)
-  - Run `npm run build` from frontend directory (check compilation errors)
-  - Run `npm run lint` (check ESLint violations)
-  - **Prettier check on changed files only**:
-    1. Get changed files: `git diff $(git merge-base HEAD origin/main)...HEAD --name-only --diff-filter=ACMR '*.ts' '*.html' '*.scss'`
-    2. Run `npx prettier --check [changed files]` to identify which need formatting
-    3. Do NOT use `npm run format` or `npm run format:check` (they affect all files in project)
-    4. **Why merge-base**: Compares to where we branched from main, not current main (ignores other developers' merges)
-  - **JSDoc check on changed TypeScript files**:
-    1. Get changed .ts files: `git diff $(git merge-base HEAD origin/main)...HEAD --name-only --diff-filter=ACMR '*.ts'`
-    2. Check for prohibited JSDoc patterns: `grep -n '^\s*/\*\*' [changed .ts files]` or `grep -n '@param\|@returns' [changed .ts files]`
-    3. Review each match to determine if it's decorative JSDoc (prohibited) or legitimate complex-logic documentation (allowed)
-    4. **Flag as violation**: JSDoc that describes "what" instead of "why", or duplicates TypeScript type information
-    5. **Allow**: JSDoc explaining complex algorithms, non-obvious business rules, or workarounds (rare)
-→ Review all changes against:
-  - All rules from the validation files read above
-  - Project patterns and requirements from `project-instructions.md`
-  - Frontend-specific rules from `project-instructions.md`
-  - **Use**: `git diff $(git merge-base HEAD origin/main)...HEAD` to get the diff for review
+
+Execute validation in MANDATORY PHASES. You MUST complete ALL steps in each phase before proceeding to next phase.
+
+**PHASE 1: Setup and File Reading (MANDATORY - NO SKIPPING)**
+
+1. Read ALL validation rule files (read each file, do not assume you remember):
+   - Read `$CLINERULES_ROOT/global/angular-instructions.md`
+   - Read `$CLINERULES_ROOT/global/code-simplicity.md`
+   - Read `$CLINERULES_ROOT/validation/angular-style.md`
+   - Read `$CLINERULES_ROOT/validation/angular-class-structure.md`
+   - Read `$CLINERULES_ROOT/validation/sonarqube-rules.md`
+   - Read `$CLINERULES_ROOT/projects/{PROJECT}/project-instructions.md`
+
+2. Get baseline and changed files:
+   - Run: `git merge-base HEAD origin/main` (get baseline commit hash)
+   - Run: `git diff {baseline}...HEAD --name-only --diff-filter=ACMR` (get all changed files)
+
+3. OUTPUT phase 1 results:
+   - Baseline commit: {hash}
+   - Files to validate: {list all changed files}
+
+**PHASE 2: Automated Checks (MANDATORY - RUN ALL, WAIT FOR EACH)**
+
+From frontend directory, run these commands sequentially:
+
+1. Run `npm run build` → WAIT for completion → Output: ✓ PASS / ✗ FAIL with full error details
+2. Run `npm run lint` → WAIT for completion → Output: ✓ PASS / ✗ FAIL with full error details
+3. Get changed formatting files: `git diff {baseline}...HEAD --name-only --diff-filter=ACMR '*.ts' '*.html' '*.scss'`
+4. Run `npx prettier --check {each file from step 3}` → Output: ✓ PASS / ✗ N files need formatting (list files)
+5. Get changed .ts files: `git diff {baseline}...HEAD --name-only --diff-filter=ACMR '*.ts'`
+6. Run `grep -n '^\s*/\*\*' {each .ts file from step 5}` → Output: ✓ PASS / ✗ N JSDoc violations (list line numbers)
+
+OUTPUT Section 1: Automated Checks Summary (use format below)
+
+**PHASE 3: Per-File Manual Review (MANDATORY - ONE FILE AT A TIME, ALL CHECKS ENUMERATED)**
+
+For EACH changed .ts file (do NOT batch, process ONE file completely before next):
+
+1. Read the complete file
+2. Get file diff: `git diff {baseline}...HEAD -- {filename}`
+
+3. Execute EVERY check below and output result (✓ PASS / ✗ FAIL with line numbers):
+
+**Angular Instructions checks:**
+- [ ] Line-by-line: Uses @if/@for/@let (not *ngIf/*ngFor) → ✓/✗ with lines
+- [ ] Line-by-line: Uses input()/output() (not @Input/@Output) → ✓/✗ with lines
+- [ ] Line-by-line: Uses viewChild() (not @ViewChild) → ✓/✗ with lines
+- [ ] Line-by-line: Signal references use () → ✓/✗ with lines
+- [ ] Line-by-line: No decorative JSDoc → ✓/✗ with lines
+- [ ] Line-by-line: No `any` type → ✓/✗ with lines
+- [ ] Line-by-line: No nested subscribes → ✓/✗ with lines
+- [ ] Line-by-line: No toSignal() in components → ✓/✗ with lines
+- [ ] Check: Naming conventions (kebab-case, PascalCase, camelCase) → ✓/✗
+
+**Code Simplicity checks:**
+- [ ] For each method: Tied to specific requirement → ✓/✗ with method names
+- [ ] For each pattern: Matches existing codebase → ✓/✗ with details
+- [ ] Check: No single-use abstractions → ✓/✗
+- [ ] Check: No // COMPLEXITY: markers → ✓/✗
+- [ ] Check: Mid-level developer readable → ✓/✗
+
+**Style Preferences checks:**
+- [ ] Line-by-line: Ternary for simple conditionals → ✓/✗ with lines
+- [ ] Line-by-line: Nullish coalescing (??) for defaults → ✓/✗ with lines
+- [ ] Line-by-line: readonly for immutable values → ✓/✗ with lines
+- [ ] Check: [class]/[style] bindings (not ngClass/ngStyle) → ✓/✗ with lines
+- [ ] Check: Event handlers describe action → ✓/✗
+- [ ] Line-by-line: Private fields use # syntax → ✓/✗ with lines
+
+**Class Structure checks:**
+- [ ] Check order: Dependencies first → ✓/✗
+- [ ] Check order: Public → protected → private → ✓/✗
+- [ ] Check order: Signals before variables → ✓/✗
+- [ ] Check order: Computed signals grouped → ✓/✗
+- [ ] Check order: Constructor position → ✓/✗
+- [ ] Check order: Lifecycle hooks position → ✓/✗
+- [ ] Check order: Methods last → ✓/✗
+
+**SonarQube Rules checks:**
+- [ ] Line-by-line: No any type (S4202) → ✓/✗ with lines
+- [ ] Line-by-line: No magic numbers (S109) → ✓/✗ with lines
+- [ ] Check: No deep nesting >3 (S134) → ✓/✗
+- [ ] Check: No duplicate strings (S1192) → ✓/✗
+- [ ] Line-by-line: No console.log (S106) → ✓/✗ with lines
+- [ ] Check: No unused imports (S1128) → ✓/✗
+
+**Project Patterns checks:**
+- [ ] Check: Follows project-specific patterns → ✓/✗
+- [ ] Check: Matches backend API docs if applicable → ✓/✗
+- [ ] Check: Uses design system correctly → ✓/✗
+
+OUTPUT Section 2: Detailed checklist for this file (show ALL checks above with results)
+
+REPEAT Phase 3 for next file (do NOT proceed until current file is 100% complete)
+
+**PHASE 4: Summary Report (MANDATORY)**
+
+Compile findings from all phases into final report.
+
+OUTPUT Section 3: Summary Report (use format below)
+
+---
+
+**VALIDATION OUTPUT FORMATS:**
+
 → Generate validation report with DETAILED CHECKLIST FORMAT:
 
 **CRITICAL**: ALWAYS use this format. User needs to see EVERY check performed on EVERY file.
