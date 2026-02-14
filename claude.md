@@ -172,15 +172,113 @@ All file references use this pattern: `$CLINERULES_ROOT/path/to/file.md`
   - Project patterns and requirements from `project-instructions.md`
   - Frontend-specific rules from `project-instructions.md`
   - **Use**: `git diff $(git merge-base HEAD origin/main)...HEAD` to get the diff for review
-→ Generate validation report with:
-  - Build & lint status (pass/fail)
-  - **Prettier status**: List files needing formatting (only from changed files)
-  - Files changed with summary (use `git diff $(git merge-base HEAD origin/main)...HEAD --stat`)
-  - Code quality findings organized by category
-  - Violations with severity levels
-  - Actionable recommendations for fixes
-  - **Note**: If issues found, present findings only (no automatic fixes unless explicitly requested)
-  - **Prettier auto-fix**: If formatting issues found, ask user if they want to fix them, then run `npx prettier --write [specific files]` on only those files that need formatting
+→ Generate validation report with DETAILED CHECKLIST FORMAT:
+
+**CRITICAL**: ALWAYS use this format. User needs to see EVERY check performed on EVERY file.
+
+**Section 1: Automated Checks Summary**
+```markdown
+## 1. Automated Checks (All Files)
+
+- [x] **Build**: `npm run build` - ✓ PASS / ✗ FAIL (with error details)
+- [x] **Lint**: `npm run lint` - ✓ PASS / ✗ FAIL (with error details)
+- [x] **Prettier**: Checked X files - ✓ PASS / ✗ N files need formatting
+- [x] **JSDoc**: Grepped changed .ts files - ✓ PASS / ✗ N violations found
+```
+
+**Section 2: Per-File Detailed Checklist**
+
+For EACH changed file, create a checklist showing EVERY rule checked:
+
+```markdown
+### File: [filename.ts](path/to/file.ts)
+
+**Angular Instructions (angular-instructions.md)**
+- [x] Control flow: Uses @if/@for/@let (not *ngIf/*ngFor) - ✓ PASS / ✗ FAIL: [details]
+- [x] Signals: Uses input()/output() (not @Input()/@Output()) - ✓ PASS / ✗ FAIL: [details]
+- [x] ViewChild: Uses viewChild() (not @ViewChild()) - ✓ PASS / ✗ FAIL: [details]
+- [x] Signal access: All references use () for signal values - ✓ PASS / ✗ FAIL: [details]
+- [x] Comments: No decorative JSDoc (only "why" comments if complex) - ✓ PASS / ✗ FAIL: [details]
+- [x] TypeScript: No any type used - ✓ PASS / ✗ FAIL: [details]
+- [x] RxJS: No nested subscribes - ✓ PASS / ✗ FAIL: [details]
+- [x] Naming: kebab-case files, PascalCase classes, camelCase variables - ✓ PASS / ✗ FAIL: [details]
+
+**Code Simplicity (code-simplicity.md)**
+- [x] Every method tied to a requirement (no speculative code) - ✓ PASS / ✗ FAIL: [details]
+- [x] Patterns match existing codebase patterns - ✓ PASS / ✗ FAIL: [details]
+- [x] No abstractions used only once - ✓ PASS / ✗ FAIL: [details]
+- [x] No // COMPLEXITY: markers remaining - ✓ PASS / ✗ FAIL: [details]
+- [x] Mid-level developer could understand without questions - ✓ PASS / ✗ FAIL: [details]
+
+**Style Preferences (angular-style.md)**
+- [x] Ternary operator for simple conditionals - ✓ PASS / ✗ FAIL: [details]
+- [x] Nullish coalescing (??) for defaults - ✓ PASS / ✗ FAIL: [details]
+- [x] readonly for immutable values - ✓ PASS / ✗ FAIL: [details]
+- [x] [class]/[style] bindings (not ngClass/ngStyle) - ✓ PASS / ✗ FAIL: [details]
+- [x] Event handlers describe action (not handleClick) - ✓ PASS / ✗ FAIL: [details]
+- [x] Private fields use # syntax (not private keyword) - ✓ PASS / ✗ FAIL: [details]
+
+**Class Structure (angular-class-structure.md)**
+- [x] Dependencies first, then public→protected→private - ✓ PASS / ✗ FAIL: [details]
+- [x] Signals properly ordered (ViewChild, Input, Output, computed, variables) - ✓ PASS / ✗ FAIL: [details]
+- [x] Constructor (if present) - ✓ PASS / ✗ FAIL: [details]
+- [x] Lifecycle hooks - ✓ PASS / ✗ FAIL: [details]
+- [x] Getters/setters - ✓ PASS / ✗ FAIL: [details]
+- [x] Methods (public→protected→private) - ✓ PASS / ✗ FAIL: [details]
+
+**SonarQube Rules (sonarqube-rules.md)**
+- [x] No any type (typescript:S4202) - ✓ PASS / ✗ FAIL: [details]
+- [x] No magic numbers (typescript:S109) - ✓ PASS / ✗ FAIL: [details]
+- [x] No deep nesting (typescript:S134) - ✓ PASS / ✗ FAIL: [details]
+- [x] No duplicate strings (typescript:S1192) - ✓ PASS / ✗ FAIL: [details]
+- [x] No console statements (typescript:S106) - ✓ PASS / ✗ FAIL: [details]
+- [x] No unused imports (typescript:S1128) - ✓ PASS / ✗ FAIL: [details]
+
+**Project Patterns (project-instructions.md)**
+- [x] Follows project-specific patterns - ✓ PASS / ✗ FAIL: [details]
+- [x] Matches backend API documentation if applicable - ✓ PASS / ✗ FAIL: [details]
+- [x] Uses design system components correctly - ✓ PASS / ✗ FAIL: [details]
+```
+
+**Section 3: Summary Report**
+```markdown
+# Code Validation Report
+
+**Date**: {YYYY-MM-DD}
+**Branch**: {branch-name}
+**Files Changed**: X files
+**Baseline**: Commit {hash} (where branch diverged from main)
+
+## Summary
+- Build: ✓ PASS / ✗ FAIL
+- Lint: ✓ PASS / ✗ FAIL
+- Prettier: ✓ PASS / ✗ N files need formatting
+- JSDoc: ✓ PASS / ✗ N violations
+- Code Review: ✓ PASS / ✗ N violations found
+
+## Files Changed
+{output from git diff --stat}
+
+## Critical Issues
+{List critical violations that MUST be fixed}
+
+## Warnings
+{List warnings that should be addressed}
+
+## Recommendations
+{Actionable recommendations}
+
+---
+
+Would you like me to fix the issues? (yes/no)
+```
+
+**IMPORTANT NOTES**:
+- Show EVERY check for EVERY file - user needs transparency
+- Mark [x] for all checks performed, then ✓ PASS or ✗ FAIL with details
+- If no violations for a rule, mark ✓ PASS (don't skip showing it)
+- If issues found, present findings only (no automatic fixes unless explicitly requested)
+- **Prettier auto-fix**: If formatting issues found, ask user if they want to fix them, then run `npx prettier --write [specific files]` on only those files that need formatting
 
 **WHEN user asks to review complexity** (review complexity, check complexity, simplicity check, review the code):
 → Read `$CLINERULES_ROOT/global/code-simplicity.md`
