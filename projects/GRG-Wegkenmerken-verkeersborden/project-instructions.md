@@ -363,3 +363,5 @@ GRG-Wegkenmerken-verkeersborden/
 **For backend API details**: Read the appropriate backend markdown file based on the mapping above
 
 **For updating backend API docs**: Read `.clinerules/global/update-backend-api-instructions.md`
+
+**For code validation**: See `$CLINERULES_ROOT/validation/checklists/` for file-type-specific validation checklists. Each checklist consolidates ALL rules from the 6 validation rule files (angular-instructions, code-simplicity, angular-style, angular-class-structure, dead-code-detection, sonarqube-rules).
