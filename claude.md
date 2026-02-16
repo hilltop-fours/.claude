@@ -50,8 +50,12 @@ Quick overview of `.clinerules/` organization:
 - `global/` - Shared rules for all projects
   - `git-instructions.md` - Git workflow, commit messages, branch naming, pushing
   - `angular-instructions.md` - Angular coding standards and patterns
+  - `code-simplicity.md` - Code simplicity, anti-patterns, and human-appropriate output
   - `update-backend-api-instructions.md` - How to update backend documentation
   - `backend-api-format.md` - Format reference for backend API documentation
+  - `pr-review-workflow.md` - PR review comment handling workflow and response style
+  - `pr-response-style.md` - Detailed style guide for PR review responses
+  - `story-workflow.md` - Standard workflow when starting a new story/task/bug
 
 - `validation/` - Detailed validation and style enforcement rules
   - `angular-*.md` - Specific Angular style and validation rules
@@ -533,6 +537,7 @@ All **frontend projects** use ONLY these file types:
 4. **Based on task**, read additional files:
    - Git operation → Read `$CLINERULES_ROOT/global/git-instructions.md`
    - Code editing → Read `$CLINERULES_ROOT/global/angular-instructions.md` + `$CLINERULES_ROOT/validation/angular-*.md`
+   - PR review comment → Read `$CLINERULES_ROOT/global/pr-review-workflow.md` + `$CLINERULES_ROOT/global/pr-response-style.md`
    - Backend API work → Read appropriate backend `.md` file (path in project-instructions.md)
    - Update backend docs → Read `$CLINERULES_ROOT/global/update-backend-api-instructions.md`
 5. **Apply all rules** from the files you read to every action
