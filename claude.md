@@ -133,10 +133,13 @@ All file references use this pattern: `$CLINERULES_ROOT/path/to/file.md`
 → Read `$CLINERULES_ROOT/global/backend-api-format.md` (reference only)
 
 **WHEN user asks to validate code** (validate, review, check code quality):
-→ Read validation files:
-  - `$CLINERULES_ROOT/validation/angular-style.md` - Code style preferences
-  - `$CLINERULES_ROOT/validation/angular-class-structure.md` - Class organization
-  - `$CLINERULES_ROOT/validation/sonarqube-rules.md` - SonarQube violations
+→ Read consolidated validation checklists (file-type-specific):
+  - For .component.ts/.service.ts files: `$CLINERULES_ROOT/validation/checklists/typescript-component.md` (50 checks)
+  - For .html files: `$CLINERULES_ROOT/validation/checklists/html-template.md` (16 checks)
+  - For .scss files: `$CLINERULES_ROOT/validation/checklists/scss-style.md` (5 checks)
+  - For .interface.ts/.model.ts/.type.ts files: `$CLINERULES_ROOT/validation/checklists/typescript-interface.md` (12 checks)
+  - `$CLINERULES_ROOT/projects/{PROJECT}/project-instructions.md` - Project-specific patterns
+  - `$CLINERULES_ROOT/validation/dead-code-detection.md` - For reference on detection methods
 → Execute validation checks:
   - Run `npm run build` from frontend directory (check compilation errors)
   - Run `npm run lint` (check ESLint violations)
@@ -144,11 +147,11 @@ All file references use this pattern: `$CLINERULES_ROOT/path/to/file.md`
     1. Get changed files: `git diff main...HEAD --name-only --diff-filter=ACMR '*.ts' '*.html' '*.scss'`
     2. Run `prettier --check [changed files]` to identify which need formatting
     3. Do NOT use `npm run format` or `npm run format:check` (they affect all files in project)
-→ Review all changes against:
-  - Angular best practices from `global/angular-instructions.md`
+→ Review all changes against appropriate file-type checklist:
+  - Determine file type (.component.ts, .html, .scss, .interface.ts)
+  - Load and execute ALL checks from the corresponding checklist
+  - Add verification: "Total checks completed: X/X" for each file
   - Project patterns and requirements from `project-instructions.md`
-  - Validation rules from all `validation/*.md` files
-  - Frontend-specific rules from `project-instructions.md`
 → Generate validation report with:
   - Build & lint status (pass/fail)
   - **Prettier status**: List files needing formatting (only from changed files)
