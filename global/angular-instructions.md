@@ -337,6 +337,10 @@ Purpose: Prevent duplication, centralize updates
 
 ## DEAD CODE CLEANUP - MANDATORY
 
+**For formal validation rules and detection methods, see:**
+→ `$CLINERULES_ROOT/validation/dead-code-detection.md` - Custom dead code validation rules
+→ Automated checks are part of the validation workflow in CLAUDE.md
+
 AFTER any change that removes or replaces functionality, actively check for and remove code that is no longer used. Claude Code does not have IDE greying-out indicators, so this check must be done manually.
 
 ALWAYS check and remove when applicable:
@@ -353,6 +357,9 @@ HOW to check:
 3. Use barrel exports (`index.ts`) as a signal: if something is exported but never imported anywhere, it may be dead
 
 PURPOSE: Prevents accumulation of unreferenced code that is invisible without IDE feedback
+
+**Real-world example:**
+The Observable method `canEditTrafficSign()` was defined in `road-section-auth.service.ts` but never called anywhere in the codebase. A Signal-based equivalent `canEditTrafficSignSignal()` was actually being used. This unused method (22 lines) was missed during validation because dead code checks were not part of the formal validation workflow. Fixed in commit ac2f2e34. This case motivated the creation of formal dead code detection rules in `validation/dead-code-detection.md`.
 
 ## SONARQUBE RULES - KNOWN ISSUES
 
