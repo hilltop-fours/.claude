@@ -1,16 +1,33 @@
-# GIT COMMIT MESSAGE RULES
+# GIT INSTRUCTIONS
 
-## FORMAT - MANDATORY
+## COMMIT CONTEXTS - FRONTEND REPOSITORIES
 
-Single line only. NO body. NO co-authored-by.
+Two distinct contexts for frontend commit message formatting. For .clinerules commits, see SPECIAL CASE section below.
 
-Standard format: `type(scope): description`
+### During Frontend Development (Branch Commits)
 
-Project-specific format (if project config specifies story/task IDs): `type(scope): #[story-id] #[task-id] description`
+Format: `WIP: descriptive message of what was done`
+
+Rules:
+- Always descriptive — useful as breadcrumbs during PR review
+- No type/scope/story-task IDs needed
+- Can be as many as needed, no squashing required
+- Squash merge on PR handles the final commit on main
+- This applies to frontend project repositories only
+
+### For PR Titles (When Asked)
+
+Format: `type(scope): #[story-id] #[task-id] description`
+
+Rules:
+- Single line only. NO body.
+- This is what ends up on main via squash merge
+- Claude generates this when user asks for a PR title
+- Uses the same type/scope/language rules defined below
 
 ## LANGUAGE
 
-ALL commit messages: English
+ALL commit messages and PR titles: English
 Description: lowercase only
 Description: concise action (what was done)
 
@@ -33,18 +50,16 @@ Check project-specific config for scope conventions.
 
 ## EXAMPLES
 
-Standard commits:
-- `feat(auth): add login functionality`
-- `bug(api): fix user data not loading`
-- `chore(deps): update angular to v17`
+Frontend WIP commits (during development):
+- `WIP: add zoom controls template`
+- `WIP: implement service logic for zoom`
+- `WIP: fix template binding errors`
+- `WIP: add unit tests for zoom service`
 
-Project-specific with IDs:
-- `feat(auth): #12345 #67890 add login functionality`
+Frontend PR titles (when asked):
+- `feat(map): #12345 #67890 add map zoom controls`
 - `bug(api): #12345 #67890 fix user data not loading`
-
-WIP commits:
-- `WIP: add user authentication logic`
-- `WIP: implement map zoom controls`
+- `chore(deps): #12345 #67890 update angular to v17`
 
 ## SPECIAL CASE - .CLINERULES REPO
 
@@ -76,7 +91,7 @@ Commit types (only these 3 for .clinerules repo):
 - `chore` - Restructuring, file moves, cleanup
 
 Examples:
-- `docs(global/git-instructions): add wip squashing rules for duplicate commit prevention`
+- `docs(global/git-instructions): rewrite for squash merge workflow`
 - `docs(projects/NTM-Publicatie-overzicht/backend/ntm-tracker-backend): update external-organizations endpoints`
 - `docs(global): update git workflow and main instructions`
 - `chore(projects): reorganize backend documentation structure`
@@ -136,278 +151,85 @@ User starts tasks by providing Azure DevOps screenshots containing:
 
 Screenshots provide context for:
 - Branch naming (story-id, task-id, description)
-- Commit type (bug, feat, chore)
+- PR title type (bug, feat, chore)
 - Implementation details
 
 Development process:
 - Work done incrementally
-- WIP commits used between stages when requested
+- WIP commits used throughout development (see WIP COMMIT SUGGESTIONS)
 
-## WIP SQUASHING - CRITICAL RULES
+## WIP COMMIT SUGGESTIONS - FRONTEND ONLY
 
-When user requests to "squash WIP commits" or similar:
+**Applies to frontend repositories only.** .clinerules uses proper `type(scope): description` commit format (see SPECIAL CASE section).
 
-**Step 1: Check for existing commit**
-- Run `git log --oneline -10` to view recent commits (last 10 commits)
-- Look for existing commit with the SAME story-id and task-id as WIP commits
-- CRITICAL: Only consider commits that appear DIRECTLY BELOW ALL WIP commits with NO gaps
-- Example: If WIP commits are for #12345 #67890, search for commit containing "#12345 #67890" immediately below the last WIP commit
+Claude proactively suggests WIP commits at logical moments during frontend development. Always ASK the user before committing — never auto-commit.
 
-**Step 2: Verify consecutive commits (no gaps)**
-- Check that ALL WIP commits are consecutive (no other commits between them)
-- Check that matching commit is IMMEDIATELY after the last WIP commit
-- If ANY gaps exist (between WIPs or between WIPs and matching commit), create NEW commit instead
+**When to suggest a WIP commit:**
+- After completing a logical chunk of work (e.g., template done, moving to service logic)
+- Before making a risky or experimental change (safety checkpoint to roll back to)
+- When a significant number of files have changed without a commit
+- After a refactoring step, before the next one
+- When switching focus within the same task
 
-**Step 3: Choose squashing strategy**
+**How to suggest:**
+- Always phrase as a question: *"Should I make a WIP commit for the template changes before we move on to the service?"*
+- Can suggest splitting changes: commit template changes separately from service changes for cleaner branch history
+- User can say yes, no, or later — respect their preference
 
-**If existing commit FOUND directly below consecutive WIP commits:**
-- Squash WIP commits INTO that existing commit using `git reset --soft` + `git commit --amend`
-- Commands:
-  ```bash
-  git reset --soft HEAD~N  # N = number of WIP commits only (NOT including existing commit)
-  git commit --amend --no-edit  # Amend into existing commit below, keep its message
-  ```
-- Result: Single commit with original message preserved
-- This PREVENTS duplicate commits with identical messages
+**WIP commit message quality:**
+- Must be descriptive of what was done
+- Keep it brief but meaningful
+- Good: `WIP: implement map zoom controls in template`
+- Good: `WIP: add search service with filter logic`
+- Bad: `WIP` or `WIP: changes` or `WIP: stuff`
 
-**If NO existing commit found OR gaps exist:**
-- Create new properly formatted commit by squashing all WIP commits
-- Use proper commit format: `type(scope): #[story-id] #[task-id] description`
-- Commands:
-  ```bash
-  git reset --soft HEAD~N  # N = number of WIP commits only
-  git commit -m "proper message here"
-  ```
+## PR TITLE FORMAT
 
-**Critical constraints:**
-- ONLY squash into existing commit if ALL WIP commits are consecutive AND matching commit is immediately below
-- If there are ANY commits between WIP commits themselves, create NEW commit
-- If there are ANY commits between last WIP and matching story/task commit, create NEW commit
-- NEVER use interactive rebase unless absolutely necessary (prefer reset + amend/commit)
-- ALWAYS check git log before squashing
-- User will notice immediately if duplicate commits are created
+When user asks for a PR title (to use as squash merge commit message on main):
 
-**Scenario 1: Squash INTO existing (CORRECT)**
-```
-Current log (newest first):
-abc123 WIP: add zoom buttons
-def456 WIP: implement zoom logic
-ghi789 feat(map): #12345 #67890 add map zoom controls  ← First commit below WIPs, matches IDs
-jkl012 bug(api): #11111 #22222 fix loading issue
+Format: `type(scope): #[story-id] #[task-id] description`
 
-Action: Squash WIP commits
-Verification: ✅ WIP commits are consecutive (abc123, def456), ✅ matching commit directly below
-Result: Squash abc123 and def456 INTO ghi789 (same story/task IDs, directly below, no gaps)
-Commands: git reset --soft HEAD~2, then git commit --amend --no-edit
-Final: Single commit "feat(map): #12345 #67890 add map zoom controls" with all changes
-```
+Rules:
+- Same type/scope/language rules as defined in COMMIT TYPES and SCOPE sections
+- Description should summarize all work in the PR
+- Single line, concise but complete
 
-**Scenario 2: Create NEW commit (CORRECT - other commits in between WIP and matching)**
-```
-Current log (newest first):
-abc123 WIP: add zoom buttons
-def456 chore(deps): update angular version  ← Different commit in between!
-ghi789 feat(map): #12345 #67890 add map zoom controls  ← Matching IDs but NOT directly below
-jkl012 bug(api): #11111 #22222 fix loading issue
-
-Action: Squash WIP commits
-Result: Create NEW commit (because def456 is between WIP and matching commit - gap exists)
-Commands: git reset --soft HEAD~1, then git commit -m "new message"
-Final: "feat(map): #12345 #67890 add zoom buttons to map controls" (new commit with WIP changes)
-```
-
-**Scenario 2b: Create NEW commit (CORRECT - gaps between WIP commits)**
-```
-Current log (newest first):
-abc123 WIP: add zoom buttons
-def456 chore(deps): update angular version  ← Gap between WIP commits!
-ghi789 WIP: implement zoom logic
-jkl012 feat(map): #12345 #67890 add map zoom controls  ← Matching IDs exist
-
-Action: Squash WIP commits
-Result: Create NEW commit (because gap exists BETWEEN WIP commits themselves)
-Reasoning: WIP commits must be consecutive. Any gaps = create new commit.
-Final: New commit squashing abc123 and ghi789 (skip def456)
-```
-
-**Scenario 3: Create NEW commit (CORRECT - no matching commit exists)**
-```
-Current log (newest first):
-abc123 WIP: add authentication
-def456 WIP: implement login form
-ghi789 bug(api): #11111 #22222 fix loading issue  ← No matching story/task IDs
-
-Action: Squash WIP commits
-Result: Create NEW commit (no existing commit with #12345 #67890 found)
-Final: "feat(auth): #12345 #67890 add user authentication with login form"
-```
-
-**Scenario 4: DO NOT squash into old commit (WRONG)**
-```
-Current log (newest first):
-abc123 WIP: add zoom buttons
-def456 bug(api): #11111 #22222 fix loading issue
-ghi789 chore(deps): update packages
-... (10 more commits)
-xyz789 feat(map): #12345 #67890 add map zoom controls  ← Too far back! From different day
-
-Action: Squash WIP commits
-Result: Create NEW commit (matching commit is too old, not directly below)
-Reasoning: Squashing into old commit could cause unexpected merge/conflict issues
-```
+Examples:
+- `feat(map): #12345 #67890 add map zoom controls with keyboard shortcuts`
+- `bug(import): #12345 #67890 fix csv import failing on special characters`
+- `chore(bootstrap-removal): #12345 #67890 replace bootstrap multi-select with design system component`
 
 ## PRE-PUSH VALIDATION - FRONTEND WORK ONLY
 
 **These rules apply ONLY to frontend project repositories (not .clinerules repo)**
 
-**ABSOLUTE RULE: ONE COMMIT PER PR**
-
-Each PR is identified by a unique story-id + task-id combination. There MUST be exactly ONE commit per PR when pushing. This rule overrides ALL other considerations including:
-- Different commit types (feat vs bug vs chore)
-- Different scopes
-- Different purposes (feature vs refactor vs fix)
-- Different files changed
-
-If multiple commits exist for the same story/task, they MUST be squashed into one commit before pushing.
-
 **BEFORE executing ANY `git push` command in a frontend repository:**
 
-1. **Check for WIP commits:**
-   - Run `git log origin/main..HEAD --oneline` to see all commits that will be pushed
-   - If ANY commit message starts with "WIP:", BLOCK the push
-   - Alert user: "Cannot push: WIP commits detected. Please squash WIP commits first."
-   - Do NOT execute the push command
-   - NO EXCEPTIONS: WIP commits should only be pushed manually by the user, never by automation
-
-2. **Check for duplicate commits (one-commit-per-PR rule):**
-   - Run `git log origin/main..HEAD --oneline` to see all commits that will be pushed
-   - Extract story/task IDs from commit messages (format: #[story-id] #[task-id])
-   - If MULTIPLE commits have the SAME story-id AND task-id, BLOCK the push
-   - Alert user: "Cannot push: Multiple commits detected for story #[story-id] task #[task-id]. Please squash commits to one commit per story/task."
-   - List ALL duplicate commits so user can see them
-   - Do NOT execute the push command
-   - This check applies REGARDLESS of commit type, scope, or description
-
-3. **Check branch name matches commit story/task IDs:**
+1. **Check branch name matches work being pushed:**
    - Extract story-id and task-id from the current branch name (format: `type/[story-id]/[task-id]/description`)
-   - Extract story-id and task-id from the commit messages being pushed
-   - If ANY commit contains story/task IDs that do NOT match the branch name, BLOCK the push
-   - Alert user: "Cannot push: commit #[story-id] #[task-id] does not match branch [branch-name]. The commit belongs on a different branch."
+   - Verify the branch corresponds to the work being done
+   - If the branch does not match the current task, WARN the user before pushing
    - This prevents accidentally pushing work for story A onto story B's branch
-   - Do NOT execute the push command
-
-4. **Only push if validation passes:**
-   - No WIP commits found
-   - No duplicate story/task IDs found (each unique story/task combination appears exactly once)
-   - All commit story/task IDs match the branch name
-   - Then execute `git push`
-
-**Examples (frontend repositories only):**
 
 ```
-# BLOCKED - WIP commit detected
-$ git log origin/main..HEAD --oneline
-abc123 WIP: add zoom buttons
-def456 feat(map): #12345 #67890 add map controls
-
-Alert: "Cannot push: WIP commits detected. Please squash WIP commits first."
-```
-
-```
-# BLOCKED - Duplicate story/task IDs (same type)
-$ git log origin/main..HEAD --oneline
-def456 feat(bootstrap-removal): #91306 #105854 replace multi select
-ghi789 feat(bootstrap-removal): #91306 #105854 update form controls
-
-Alert: "Cannot push: Multiple commits detected for story #91306 task #105854:
-- def456 feat(bootstrap-removal): #91306 #105854 replace multi select
-- ghi789 feat(bootstrap-removal): #91306 #105854 update form controls
-Please squash commits to one commit per story/task."
-```
-
-```
-# BLOCKED - Duplicate story/task IDs (different types: feat + bug)
-$ git log origin/main..HEAD --oneline
-abc123 bug(publications): #106687 #108464 fix string literal duplication
-def456 feat(import): #106687 #108464 implement moderator datasets review
-
-Alert: "Cannot push: Multiple commits detected for story #106687 task #108464:
-- abc123 bug(publications): #106687 #108464 fix string literal duplication
-- def456 feat(import): #106687 #108464 implement moderator datasets review
-Please squash commits to one commit per story/task."
-```
-
-```
-# BLOCKED - Duplicate story/task IDs (different types: feat + chore)
-$ git log origin/main..HEAD --oneline
-abc123 feat(maps): #12345 #67890 add map controls
-def456 chore(maps): #12345 #67890 refactor map utilities
-
-Alert: "Cannot push: Multiple commits detected for story #12345 task #67890:
-- abc123 feat(maps): #12345 #67890 add map controls
-- def456 chore(maps): #12345 #67890 refactor map utilities
-Please squash commits to one commit per story/task."
-```
-
-```
-# BLOCKED - Duplicate story/task IDs (different scopes)
-$ git log origin/main..HEAD --oneline
-abc123 feat(api): #12345 #67890 add backend integration
-def456 feat(ui): #12345 #67890 add user interface
-
-Alert: "Cannot push: Multiple commits detected for story #12345 task #67890:
-- abc123 feat(api): #12345 #67890 add backend integration
-- def456 feat(ui): #12345 #67890 add user interface
-Please squash commits to one commit per story/task."
-```
-
-```
-# ALLOWED - One commit per story/task, no WIP commits
-$ git log origin/main..HEAD --oneline
-abc123 feat(bootstrap-removal): #91306 #105855 inline template and styles into single-file component
-def456 feat(bootstrap-removal): #91306 #105854 replace multi select
-
-Push proceeds: ✅
-(Two different tasks: #105855 and #105854)
-```
-
-```
-# ALLOWED - Single commit for one story/task
-$ git log origin/main..HEAD --oneline
-abc123 feat(import): #106687 #108464 implement moderator datasets review
-
-Push proceeds: ✅
-```
-
-```
-# BLOCKED - Commit story/task IDs do not match branch name
+# EXAMPLE - Branch mismatch warning
 $ git branch --show-current
 feature/106687/108464/moderator-datasets
-$ git log origin/main..HEAD --oneline
-850c4cc6 feat(form-accessibility): #108710 #109367 implement wcag 3.3.1 compliant form error handling
-d68418d1 feat(import): #106687 #108464 implement moderator datasets review
 
-Alert: "Cannot push: commit #108710 #109367 does not match branch feature/106687/108464/moderator-datasets.
-The commit belongs on a different branch. Create feature/108710/109367/... from main first."
+If the user has been working on story #108710 / task #109367:
+→ Warn: "Current branch is feature/106687/108464/moderator-datasets but the work is for story #108710 task #109367. Should I create a new branch from main?"
 ```
 
-```
-# ALLOWED - Commit story/task IDs match branch name
-$ git branch --show-current
-feature/108710/109367/wcag-form-accessibility
-$ git log origin/main..HEAD --oneline
-aa0d9394 feat(form-accessibility): #108710 #109367 implement wcag 3.3.1 compliant form error handling
+2. **Only push if validation passes:**
+   - Branch matches the work
+   - Then execute `git push`
 
-Push proceeds: ✅
-(Branch and commit both belong to story #108710, task #109367)
-```
-
-**Note:** These validation rules do NOT apply to .clinerules repository pushes, where multiple commits per push is normal and expected.
+**Note:** These validation rules do NOT apply to .clinerules repository pushes.
 
 ## GIT OPERATIONS - CRITICAL RULES
 
-NEVER stage files unless user explicitly requests it
-NEVER create commits unless user explicitly requests it
+NEVER stage files unless user explicitly requests it OR approves a WIP commit suggestion
+NEVER create commits unless user explicitly requests it OR approves a WIP commit suggestion
 NEVER push commits unless user explicitly requests it
 
 **CRITICAL: Each operation must be separate**
@@ -425,7 +247,6 @@ NEVER push commits unless user explicitly requests it
 - "Always allow" in settings does NOT mean "do this automatically forever"
 - You must be explicitly instructed for EACH separate git operation
 
-Exception: WIP commits when user requests them during development
-Exception: Squashing WIP commits when user explicitly requests it (see WIP SQUASHING section above)
+Exception: WIP commits in frontend repos when user approves a suggestion during development (add + commit in sequence is OK after approval)
 
-User manages git operations manually. Only execute git commands when specifically instructed.
+User manages git operations manually. Only execute git commands when specifically instructed or when user approves a WIP commit suggestion.

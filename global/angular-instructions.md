@@ -20,8 +20,21 @@ PREFER signals for reactive state:
 
 DO NOT force signals when not needed:
 - Traditional approaches are acceptable if signals complicate the code
-- Avoid `toSignal()` casting unless absolutely necessary
 - If signal refactoring is complex, note as potential future task instead of implementing
+
+**NEVER use `toSignal()` in components:**
+- Services MUST provide signals directly, not Observables that components convert
+- If a service returns an Observable, refactor the service to expose a signal
+- Pattern: Service creates the signal with `toSignal()`, components consume the signal
+- Components should NEVER call `toSignal()` themselves
+- Only use `toSignal()` in components if explicitly requested by the user
+
+**Why this rule exists (human readability)**:
+- Round-trip conversions (signal → observable → signal) are confusing to read
+- Not immediately clear why the conversions are happening
+- Requires mental tracing through multiple reactive layers
+- Prefer explicit patterns like `effect()` even if they require subscription management
+- Tradeoff: A few lines of cleanup code is better than confusing conversions
 
 **PREFER `computed()` over methods for derived values:**
 When a method or getter derives its value from signals and has no side effects, consider converting it to `computed()`.
@@ -140,10 +153,64 @@ PURPOSE: Enable imports like `import { MyComponent } from './components/my-compo
 ONLY add comments when:
 - Marking temporary/mocked data: Use `// TODO: remove mock data` or `// Temporary for testing`
 - Explaining complex logic: Explain "why" not "what"
+- Complex business rules that aren't obvious from code alone
 
 DO NOT add comments for:
 - Obvious code that is self-explanatory
 - Describing what code does (use clear naming instead)
+- **JSDoc on simple methods** — method names, parameter names, and TypeScript types already communicate intent
+- **JSDoc describing parameters/returns** — TypeScript types are self-documenting
+- **Class-level JSDoc** that just repeats the class name
+
+**SPECIFICALLY PROHIBITED - Decorative JSDoc:**
+
+❌ WRONG (describes "what", duplicates type info):
+```typescript
+/**
+ * Service for managing traffic sign ownership
+ */
+@Injectable({ providedIn: 'root' })
+export class TrafficSignOwnerService {
+  /**
+   * Changes the owner of a traffic sign
+   * @param trafficSignId - The ID of the traffic sign
+   * @param request - The ownership change request
+   * @returns Observable of the change response
+   */
+  changeOwner(trafficSignId: string, request: OwnerChangeRequest): Observable<OwnerChangeResponse> {
+    return this.#http.put<OwnerChangeResponse>(...);
+  }
+}
+```
+
+✅ CORRECT (no JSDoc, types are self-documenting):
+```typescript
+@Injectable({ providedIn: 'root' })
+export class TrafficSignOwnerService {
+  changeOwner(trafficSignId: string, request: OwnerChangeRequest): Observable<OwnerChangeResponse> {
+    return this.#http.put<OwnerChangeResponse>(...);
+  }
+}
+```
+
+✅ ACCEPTABLE (explains "why" for non-obvious logic):
+```typescript
+canChangeOwner(trafficSign: TrafficSign, permissions: UserOwnershipPermissions): boolean {
+  // Signs without owners can always be claimed by anyone
+  if (!trafficSign.ownerRoadAuthorityCode) {
+    return true;
+  }
+
+  // Only admins and global users can override existing ownership
+  return permissions.isAdmin || permissions.hasGlobalMutationPermissions;
+}
+```
+
+**When JSDoc IS appropriate:**
+- Complex algorithms where the "why" isn't obvious
+- Non-obvious business rules or edge cases
+- Workarounds for framework limitations or bugs
+- Public APIs in shared libraries (not typical app code)
 
 NEVER remove existing comments:
 - Preserve ALL comments that were already in the code
@@ -270,6 +337,10 @@ Purpose: Prevent duplication, centralize updates
 
 ## DEAD CODE CLEANUP - MANDATORY
 
+**For formal validation rules and detection methods, see:**
+→ `$CLINERULES_ROOT/validation/dead-code-detection.md` - Custom dead code validation rules
+→ Automated checks are part of the validation workflow in CLAUDE.md
+
 AFTER any change that removes or replaces functionality, actively check for and remove code that is no longer used. Claude Code does not have IDE greying-out indicators, so this check must be done manually.
 
 ALWAYS check and remove when applicable:
@@ -286,6 +357,9 @@ HOW to check:
 3. Use barrel exports (`index.ts`) as a signal: if something is exported but never imported anywhere, it may be dead
 
 PURPOSE: Prevents accumulation of unreferenced code that is invisible without IDE feedback
+
+**Real-world example:**
+The Observable method `canEditTrafficSign()` was defined in `road-section-auth.service.ts` but never called anywhere in the codebase. A Signal-based equivalent `canEditTrafficSignSignal()` was actually being used. This unused method (22 lines) was missed during validation because dead code checks were not part of the formal validation workflow. Fixed in commit ac2f2e34. This case motivated the creation of formal dead code detection rules in `validation/dead-code-detection.md`.
 
 ## SONARQUBE RULES - KNOWN ISSUES
 

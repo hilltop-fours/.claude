@@ -84,6 +84,22 @@ NEVER search for or work with: `.js`, `.jsx`, `.tsx`, `.css`, `.less`, `.vue` fi
 
 ---
 
+## FRONTEND PATTERNS
+
+Project-specific patterns and conventions are documented in the `patterns/` folder.
+
+**Styling Guidelines**:
+→ Read `$CLINERULES_ROOT/projects/GRG-Wegkenmerken-verkeersborden/patterns/styling-guidelines.md`
+
+When to read:
+- Before writing any CSS classes or styles
+- When adding inline styles to components
+- When unsure about which CSS classes to use
+
+Critical rule: NEVER use Bootstrap classes. Only use classes from `/traffic-sign-frontend/src/assets/styles/`.
+
+---
+
 ## BACKEND API MAPPING
 
 *Last crawled: 2026-02-03*
@@ -325,6 +341,8 @@ GRG-Wegkenmerken-verkeersborden/
 └── .clinerules/                       ← Editable (documentation only)
     └── projects/GRG-Wegkenmerken-verkeersborden/
         ├── project-instructions.md    ← You are here
+        ├── patterns/
+        │   └── styling-guidelines.md  ← CSS class usage rules
         └── backend/
             ├── traffic-sign-backend.md
             ├── traffic-sign-area-backend.md
@@ -340,6 +358,10 @@ GRG-Wegkenmerken-verkeersborden/
 
 ## WHEN TO READ OTHER FILES
 
+**For styling and CSS classes**: Read `$CLINERULES_ROOT/projects/GRG-Wegkenmerken-verkeersborden/patterns/styling-guidelines.md`
+
 **For backend API details**: Read the appropriate backend markdown file based on the mapping above
 
 **For updating backend API docs**: Read `.clinerules/global/update-backend-api-instructions.md`
+
+**For code validation**: See `$CLINERULES_ROOT/validation/checklists/` for file-type-specific validation checklists. Each checklist consolidates ALL rules from the 6 validation rule files (angular-instructions, code-simplicity, angular-style, angular-class-structure, dead-code-detection, sonarqube-rules).
