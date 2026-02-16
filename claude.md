@@ -177,6 +177,10 @@ From frontend directory, run these commands sequentially:
 4. Run `npx prettier --check {each file from step 3}` → Output: ✓ PASS / ✗ N files need formatting (list files)
 5. Get changed .ts files: `git diff {baseline}...HEAD --name-only --diff-filter=ACMR '*.ts'`
 6. Run `grep -n '^\s*/\*\*' {each .ts file from step 5}` → Output: ✓ PASS / ✗ N JSDoc violations (list line numbers)
+7. Run dead code checks:
+   - TypeScript: `npx tsc --noEmit --noUnusedLocals --noUnusedParameters`
+   - ESLint: `npx eslint {each .ts file from step 5} --rule "no-unused-private-class-members: error"`
+   → Output: ✓ PASS / ✗ N unused code violations (list details)
 
 OUTPUT Section 1: Automated Checks Summary (use format below)
 
@@ -231,6 +235,13 @@ For EACH changed .ts file (do NOT batch, process ONE file completely before next
 - [ ] Check: No duplicate strings (S1192) → ✓/✗
 - [ ] Line-by-line: No console.log (S106) → ✓/✗ with lines
 - [ ] Check: No unused imports (S1128) → ✓/✗
+
+**Dead Code Detection checks:**
+- [ ] No unused local variables → ✓/✗ with lines
+- [ ] No unused function parameters → ✓/✗ with lines
+- [ ] No dead stores/assignments → ✓/✗ with lines
+- [ ] No unused private methods/properties → ✓/✗ with method names
+- [ ] No unreachable code → ✓/✗ with lines
 
 **Project Patterns checks:**
 - [ ] Check: Follows project-specific patterns → ✓/✗
@@ -323,6 +334,7 @@ OUTPUT Section 3: Summary Report (use format below)
 - [x] **Lint**: `npm run lint` - ✓ PASS / ✗ FAIL (with error details)
 - [x] **Prettier**: Checked X files - ✓ PASS / ✗ N files need formatting
 - [x] **JSDoc**: Grepped changed .ts files - ✓ PASS / ✗ N violations found
+- [x] **Dead Code**: TypeScript + ESLint - ✓ PASS / ✗ N violations found
 ```
 
 **Section 2: Per-File Detailed Checklist**
@@ -372,6 +384,13 @@ For EACH changed file, create a checklist showing EVERY rule checked:
 - [x] No duplicate strings (typescript:S1192) - ✓ PASS / ✗ FAIL: [details]
 - [x] No console statements (typescript:S106) - ✓ PASS / ✗ FAIL: [details]
 - [x] No unused imports (typescript:S1128) - ✓ PASS / ✗ FAIL: [details]
+
+**Dead Code Detection (dead-code-detection.md)**
+- [x] No unused local variables - ✓ PASS / ✗ FAIL: [details]
+- [x] No unused function parameters - ✓ PASS / ✗ FAIL: [details]
+- [x] No dead stores/assignments - ✓ PASS / ✗ FAIL: [details]
+- [x] No unused private members - ✓ PASS / ✗ FAIL: [details]
+- [x] No unreachable code - ✓ PASS / ✗ FAIL: [details]
 
 **Project Patterns (project-instructions.md)**
 - [x] Follows project-specific patterns - ✓ PASS / ✗ FAIL: [details]
