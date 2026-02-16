@@ -98,6 +98,23 @@ When to read:
 
 Critical rule: NEVER use Bootstrap classes. Only use classes from `/traffic-sign-frontend/src/assets/styles/`.
 
+**Service Patterns**:
+→ Read `$CLINERULES_ROOT/projects/GRG-Wegkenmerken-verkeersborden/patterns/service-patterns.md`
+
+When to read:
+- Before creating a new `*.service.ts` file
+- Before adding methods to an existing service
+- When unsure whether code belongs in a service or a repository
+
+**Repository Patterns**:
+→ Read `$CLINERULES_ROOT/projects/GRG-Wegkenmerken-verkeersborden/patterns/repository-patterns.md`
+
+When to read:
+- Before creating a new `*.repository.ts` file
+- Before adding methods to an existing repository
+- When unsure whether code belongs in a repository or a service
+- When working with Elf stores or state management
+
 ---
 
 ## BACKEND API MAPPING
@@ -342,7 +359,9 @@ GRG-Wegkenmerken-verkeersborden/
     └── projects/GRG-Wegkenmerken-verkeersborden/
         ├── project-instructions.md    ← You are here
         ├── patterns/
-        │   └── styling-guidelines.md  ← CSS class usage rules
+        │   ├── styling-guidelines.md  ← CSS class usage rules
+        │   ├── service-patterns.md    ← What belongs in *.service.ts
+        │   └── repository-patterns.md ← What belongs in *.repository.ts
         └── backend/
             ├── traffic-sign-backend.md
             ├── traffic-sign-area-backend.md
@@ -359,6 +378,10 @@ GRG-Wegkenmerken-verkeersborden/
 ## WHEN TO READ OTHER FILES
 
 **For styling and CSS classes**: Read `$CLINERULES_ROOT/projects/GRG-Wegkenmerken-verkeersborden/patterns/styling-guidelines.md`
+
+**For services (creating/editing *.service.ts)**: Read `$CLINERULES_ROOT/projects/GRG-Wegkenmerken-verkeersborden/patterns/service-patterns.md`
+
+**For repositories (creating/editing *.repository.ts)**: Read `$CLINERULES_ROOT/projects/GRG-Wegkenmerken-verkeersborden/patterns/repository-patterns.md`
 
 **For backend API details**: Read the appropriate backend markdown file based on the mapping above
 
