@@ -29,6 +29,13 @@ DO NOT force signals when not needed:
 - Components should NEVER call `toSignal()` themselves
 - Only use `toSignal()` in components if explicitly requested by the user
 
+**Why this rule exists (human readability)**:
+- Round-trip conversions (signal → observable → signal) are confusing to read
+- Not immediately clear why the conversions are happening
+- Requires mental tracing through multiple reactive layers
+- Prefer explicit patterns like `effect()` even if they require subscription management
+- Tradeoff: A few lines of cleanup code is better than confusing conversions
+
 **PREFER `computed()` over methods for derived values:**
 When a method or getter derives its value from signals and has no side effects, consider converting it to `computed()`.
 

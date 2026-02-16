@@ -12,6 +12,31 @@ Every rule below serves one goal: the output should look like a competent human 
 
 ---
 
+## CODE AUDIENCE - WHO READS THIS CODE
+
+**CRITICAL DISTINCTION**:
+
+- **.clinerules files** → Written FOR Claude, optimized for Claude's comprehension
+- **Angular code (src/)** → Written FOR humans, optimized for human readability
+
+The Angular code you write will be:
+- Read by humans during code review
+- Maintained by humans who weren't present during development
+- Extended by humans who need to understand the existing patterns
+
+**Readability over brevity**:
+- More lines of clear code is better than fewer lines of confusing code
+- Explicit patterns beat clever shortcuts
+- If a pattern requires mental effort to understand, it's too complex
+
+**Example tradeoff**:
+- ❌ **Bad** (short but confusing): Signal → Observable → Signal round-trip with toSignal/toObservable
+- ✅ **Good** (longer but clear): effect() that watches a signal and updates state explicitly
+
+The test: "Would a mid-level developer understand this in 10 seconds or need to trace through conversions?"
+
+---
+
 ## CORE PRINCIPLES
 
 ### 1. Simple first
