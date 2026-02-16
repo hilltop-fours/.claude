@@ -151,13 +151,13 @@ Execute validation in MANDATORY PHASES. You MUST complete ALL steps in each phas
 
 **PHASE 1: Setup and File Reading (MANDATORY - NO SKIPPING)**
 
-1. Read ALL validation rule files (read each file, do not assume you remember):
-   - Read `$CLINERULES_ROOT/global/angular-instructions.md`
-   - Read `$CLINERULES_ROOT/global/code-simplicity.md`
-   - Read `$CLINERULES_ROOT/validation/angular-style.md`
-   - Read `$CLINERULES_ROOT/validation/angular-class-structure.md`
-   - Read `$CLINERULES_ROOT/validation/sonarqube-rules.md`
-   - Read `$CLINERULES_ROOT/projects/{PROJECT}/project-instructions.md`
+1. Read consolidated validation checklists (read the checklist for each file type being validated):
+   - For .component.ts/.service.ts files: Read `$CLINERULES_ROOT/validation/checklists/typescript-component.md`
+   - For .html files: Read `$CLINERULES_ROOT/validation/checklists/html-template.md`
+   - For .scss files: Read `$CLINERULES_ROOT/validation/checklists/scss-style.md`
+   - For .interface.ts/.model.ts/.type.ts files: Read `$CLINERULES_ROOT/validation/checklists/typescript-interface.md`
+   - Read `$CLINERULES_ROOT/projects/{PROJECT}/project-instructions.md` (project-specific patterns)
+   - Read `$CLINERULES_ROOT/validation/dead-code-detection.md` (for reference on detection methods)
 
 2. Get baseline and changed files:
    - Run: `git merge-base HEAD origin/main` (get baseline commit hash)
@@ -186,12 +186,21 @@ OUTPUT Section 1: Automated Checks Summary (use format below)
 
 **PHASE 3: Per-File Manual Review (MANDATORY - ONE FILE AT A TIME, ALL CHECKS ENUMERATED)**
 
-For EACH changed .ts file (do NOT batch, process ONE file completely before next):
+For EACH changed file (do NOT batch, process ONE file completely before next):
 
 1. Read the complete file
 2. Get file diff: `git diff {baseline}...HEAD -- {filename}`
+3. **Determine file type and load appropriate checklist:**
+   - If filename ends with `.component.ts`, `.service.ts`, `.repository.ts`, `.directive.ts`, `.pipe.ts`:
+     → Use `typescript-component.md` checklist (50 checks)
+   - If filename ends with `.html`:
+     → Use `html-template.md` checklist (16 checks)
+   - If filename ends with `.scss`:
+     → Use `scss-style.md` checklist (5 checks)
+   - If filename ends with `.interface.ts`, `.model.ts`, `.type.ts`, `.enum.ts`:
+     → Use `typescript-interface.md` checklist (12 checks)
 
-3. Execute EVERY check below and output result (✓ PASS / ✗ FAIL with line numbers):
+4. Execute EVERY check from the loaded checklist and output result (✓ PASS / ✗ FAIL with line numbers):
 
 **Angular Instructions checks:**
 - [ ] Line-by-line: Uses @if/@for/@let (not *ngIf/*ngFor) → ✓/✗ with lines
@@ -248,9 +257,16 @@ For EACH changed .ts file (do NOT batch, process ONE file completely before next
 - [ ] Check: Matches backend API docs if applicable → ✓/✗
 - [ ] Check: Uses design system correctly → ✓/✗
 
-OUTPUT Section 2: Detailed checklist for this file (show ALL checks above with results)
+5. **Verification step (MANDATORY):**
+   After completing all checks for this file, add:
+   ```
+   **Total checks completed:** X/X
+   ✅ All checks performed for this file type
+   ```
 
-REPEAT Phase 3 for next file (do NOT proceed until current file is 100% complete)
+OUTPUT Section 2: Detailed checklist for this file (show ALL checks from file-type checklist with results)
+
+REPEAT Phase 3 for next file (do NOT proceed until current file is 100% complete with verification)
 
 **ANTI-CORNER-CUTTING ENFORCEMENT**
 
@@ -339,63 +355,44 @@ OUTPUT Section 3: Summary Report (use format below)
 
 **Section 2: Per-File Detailed Checklist**
 
-For EACH changed file, create a checklist showing EVERY rule checked:
+For EACH changed file, create a checklist showing EVERY rule checked from the file-type-specific checklist:
 
 ```markdown
-### File: [filename.ts](path/to/file.ts)
+### File: [filename.component.ts](path/to/file.ts)
 
-**Angular Instructions (angular-instructions.md)**
-- [x] Control flow: Uses @if/@for/@let (not *ngIf/*ngFor) - ✓ PASS / ✗ FAIL: [details]
-- [x] Signals: Uses input()/output() (not @Input()/@Output()) - ✓ PASS / ✗ FAIL: [details]
-- [x] ViewChild: Uses viewChild() (not @ViewChild()) - ✓ PASS / ✗ FAIL: [details]
-- [x] Signal access: All references use () for signal values - ✓ PASS / ✗ FAIL: [details]
-- [x] Comments: No decorative JSDoc (only "why" comments if complex) - ✓ PASS / ✗ FAIL: [details]
-- [x] TypeScript: No any type used - ✓ PASS / ✗ FAIL: [details]
-- [x] RxJS: No nested subscribes - ✓ PASS / ✗ FAIL: [details]
-- [x] Naming: kebab-case files, PascalCase classes, camelCase variables - ✓ PASS / ✗ FAIL: [details]
+**File type:** TypeScript Component
+**Checklist:** `validation/checklists/typescript-component.md` (50 checks)
 
-**Code Simplicity (code-simplicity.md)**
-- [x] Every method tied to a requirement (no speculative code) - ✓ PASS / ✗ FAIL: [details]
-- [x] Patterns match existing codebase patterns - ✓ PASS / ✗ FAIL: [details]
-- [x] No abstractions used only once - ✓ PASS / ✗ FAIL: [details]
-- [x] No // COMPLEXITY: markers remaining - ✓ PASS / ✗ FAIL: [details]
-- [x] Mid-level developer could understand without questions - ✓ PASS / ✗ FAIL: [details]
+[All 50 checks from typescript-component.md listed with results]
 
-**Style Preferences (angular-style.md)**
-- [x] Ternary operator for simple conditionals - ✓ PASS / ✗ FAIL: [details]
-- [x] Nullish coalescing (??) for defaults - ✓ PASS / ✗ FAIL: [details]
-- [x] readonly for immutable values - ✓ PASS / ✗ FAIL: [details]
-- [x] [class]/[style] bindings (not ngClass/ngStyle) - ✓ PASS / ✗ FAIL: [details]
-- [x] Event handlers describe action (not handleClick) - ✓ PASS / ✗ FAIL: [details]
-- [x] Private fields use # syntax (not private keyword) - ✓ PASS / ✗ FAIL: [details]
+**Total checks completed:** 50/50
+✅ All checks performed for this file type
+```
 
-**Class Structure (angular-class-structure.md)**
-- [x] Dependencies first, then public→protected→private - ✓ PASS / ✗ FAIL: [details]
-- [x] Signals properly ordered (ViewChild, Input, Output, computed, variables) - ✓ PASS / ✗ FAIL: [details]
-- [x] Constructor (if present) - ✓ PASS / ✗ FAIL: [details]
-- [x] Lifecycle hooks - ✓ PASS / ✗ FAIL: [details]
-- [x] Getters/setters - ✓ PASS / ✗ FAIL: [details]
-- [x] Methods (public→protected→private) - ✓ PASS / ✗ FAIL: [details]
+**Example for HTML template:**
+```markdown
+### File: [template.html](path/to/template.html)
 
-**SonarQube Rules (sonarqube-rules.md)**
-- [x] No any type (typescript:S4202) - ✓ PASS / ✗ FAIL: [details]
-- [x] No magic numbers (typescript:S109) - ✓ PASS / ✗ FAIL: [details]
-- [x] No deep nesting (typescript:S134) - ✓ PASS / ✗ FAIL: [details]
-- [x] No duplicate strings (typescript:S1192) - ✓ PASS / ✗ FAIL: [details]
-- [x] No console statements (typescript:S106) - ✓ PASS / ✗ FAIL: [details]
-- [x] No unused imports (typescript:S1128) - ✓ PASS / ✗ FAIL: [details]
+**File type:** HTML Template
+**Checklist:** `validation/checklists/html-template.md` (16 checks)
 
-**Dead Code Detection (dead-code-detection.md)**
-- [x] No unused local variables - ✓ PASS / ✗ FAIL: [details]
-- [x] No unused function parameters - ✓ PASS / ✗ FAIL: [details]
-- [x] No dead stores/assignments - ✓ PASS / ✗ FAIL: [details]
-- [x] No unused private members - ✓ PASS / ✗ FAIL: [details]
-- [x] No unreachable code - ✓ PASS / ✗ FAIL: [details]
+[All 16 checks from html-template.md listed with results]
 
-**Project Patterns (project-instructions.md)**
-- [x] Follows project-specific patterns - ✓ PASS / ✗ FAIL: [details]
-- [x] Matches backend API documentation if applicable - ✓ PASS / ✗ FAIL: [details]
-- [x] Uses design system components correctly - ✓ PASS / ✗ FAIL: [details]
+**Total checks completed:** 16/16
+✅ All checks performed for this file type
+```
+
+**Example for Interface:**
+```markdown
+### File: [model.interface.ts](path/to/model.interface.ts)
+
+**File type:** TypeScript Interface
+**Checklist:** `validation/checklists/typescript-interface.md` (12 checks)
+
+[All 12 checks from typescript-interface.md listed with results]
+
+**Total checks completed:** 12/12
+✅ All checks performed for this file type
 ```
 
 **Section 3: Summary Report**
