@@ -2,7 +2,7 @@
 
 **Applies to:** `.component.ts`, `.service.ts`, `.repository.ts`, `.directive.ts`, `.pipe.ts`
 
-**Total checks:** 50
+**Total checks:** 48
 
 This checklist consolidates ALL applicable validation rules from:
 - angular-instructions.md
@@ -68,7 +68,7 @@ This checklist consolidates ALL applicable validation rules from:
 - [ ] No unused private methods/properties → ✓/✗ with names
 - [ ] No unreachable code → ✓/✗ with lines
 
-## SonarQube Rules (11 checks)
+## SonarQube Rules (9 checks)
 
 - [ ] No any type (S4202) → ✓/✗ with lines
 - [ ] No magic numbers (S109) → ✓/✗ with lines
@@ -86,8 +86,8 @@ This checklist consolidates ALL applicable validation rules from:
 
 After completing all checks:
 
-**Total checks completed:** ____/50
+**Total checks completed:** ____/48
 
-✅ All 50 checks performed
+✅ All 48 checks performed
 ✅ No checks skipped
 ✅ All violations documented with line numbers

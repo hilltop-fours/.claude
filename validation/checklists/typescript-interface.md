@@ -2,7 +2,7 @@
 
 **Applies to:** `.interface.ts`, `.model.ts`, `.type.ts`, `.enum.ts`
 
-**Total checks:** 12
+**Total checks:** 11
 
 This checklist consolidates ALL applicable validation rules from:
 - angular-instructions.md
@@ -26,7 +26,7 @@ This checklist consolidates ALL applicable validation rules from:
 - [ ] No single-use types (unless at boundaries) → ✓/✗
 - [ ] Type structure is clear and readable → ✓/✗
 
-## SonarQube Rules (3 checks)
+## SonarQube Rules (2 checks)
 
 - [ ] No any type (S4202) → ✓/✗ with lines
 - [ ] No unused imports (S1128) → ✓/✗
@@ -37,8 +37,8 @@ This checklist consolidates ALL applicable validation rules from:
 
 After completing all checks:
 
-**Total checks completed:** ____/12
+**Total checks completed:** ____/11
 
-✅ All 12 checks performed
+✅ All 11 checks performed
 ✅ No checks skipped
 ✅ All violations documented with line numbers

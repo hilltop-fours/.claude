@@ -2,7 +2,7 @@
 
 **Applies to:** `.scss` files
 
-**Total checks:** 5
+**Total checks:** 4
 
 This checklist consolidates ALL applicable validation rules from:
 - code-simplicity.md
@@ -16,7 +16,7 @@ This checklist consolidates ALL applicable validation rules from:
 - [ ] Patterns match existing SCSS in codebase → ✓/✗
 - [ ] No unnecessary nesting → ✓/✗
 
-## SonarQube Rules (2 checks)
+## SonarQube Rules (1 check)
 
 - [ ] No duplicate CSS selectors (css:S4666) → ✓/✗ with selectors
 
@@ -26,8 +26,8 @@ This checklist consolidates ALL applicable validation rules from:
 
 After completing all checks:
 
-**Total checks completed:** ____/5
+**Total checks completed:** ____/4
 
-✅ All 5 checks performed
+✅ All 4 checks performed
 ✅ No checks skipped
 ✅ All violations documented with selectors

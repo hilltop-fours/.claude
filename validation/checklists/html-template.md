@@ -2,7 +2,7 @@
 
 **Applies to:** `.html` files
 
-**Total checks:** 16
+**Total checks:** 10
 
 This checklist consolidates ALL applicable validation rules from:
 - angular-instructions.md
@@ -40,8 +40,8 @@ This checklist consolidates ALL applicable validation rules from:
 
 After completing all checks:
 
-**Total checks completed:** ____/16
+**Total checks completed:** ____/10
 
-✅ All 16 checks performed
+✅ All 10 checks performed
 ✅ No checks skipped
 ✅ All violations documented with line numbers
