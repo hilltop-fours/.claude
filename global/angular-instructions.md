@@ -20,8 +20,14 @@ PREFER signals for reactive state:
 
 DO NOT force signals when not needed:
 - Traditional approaches are acceptable if signals complicate the code
-- Avoid `toSignal()` casting unless absolutely necessary
 - If signal refactoring is complex, note as potential future task instead of implementing
+
+**NEVER use `toSignal()` in components:**
+- Services MUST provide signals directly, not Observables that components convert
+- If a service returns an Observable, refactor the service to expose a signal
+- Pattern: Service creates the signal with `toSignal()`, components consume the signal
+- Components should NEVER call `toSignal()` themselves
+- Only use `toSignal()` in components if explicitly requested by the user
 
 **PREFER `computed()` over methods for derived values:**
 When a method or getter derives its value from signals and has no side effects, consider converting it to `computed()`.
