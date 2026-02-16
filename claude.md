@@ -241,6 +241,66 @@ OUTPUT Section 2: Detailed checklist for this file (show ALL checks above with r
 
 REPEAT Phase 3 for next file (do NOT proceed until current file is 100% complete)
 
+**ANTI-CORNER-CUTTING ENFORCEMENT**
+
+Claude has a tendency to cut corners during validation. The following rules MUST be enforced:
+
+1. **NO BATCHING FILES**
+   - NEVER group multiple files together like "Files: Type definitions (4 files)"
+   - Each file gets its own dedicated section with full checklist
+   - Even similar files must be validated independently
+
+2. **MANDATORY LINE NUMBER CITATIONS**
+   - EVERY "✓ PASS" must cite specific line ranges: "✓ PASS - Lines 1-44: No @Input decorators found"
+   - EVERY "✗ FAIL" must cite exact line number: "✗ FAIL - Line 99: console.error() usage"
+   - NEVER write "✓ PASS" without evidence
+   - If check doesn't apply, write "N/A - [reason]" not "✓ PASS"
+
+3. **ALL CHECKBOXES MUST BE SHOWN**
+   - Output ALL 35+ checks for .ts files
+   - Output ALL applicable checks for .html/.scss/interface files
+   - NEVER summarize with "the rest pass" or "all others ✓ PASS"
+   - If a check doesn't apply, still show it marked as "N/A"
+
+4. **NO ASSUMPTIONS - USE TOOLS**
+   - For "No @Input" check → MUST use Grep tool to search for `@Input`
+   - For "No console" check → MUST use Grep tool to search for `console.`
+   - For "No any type" check → MUST use Grep tool to search for `: any`
+   - Never trust memory - always verify with tools
+
+5. **EVIDENCE-BASED VALIDATION**
+   - EVERY check must have supporting evidence (grep result, line range, or reasoning)
+   - No checkbox can be marked without proof
+   - If you can't verify a check, mark it "⚠️ UNVERIFIED" and explain why
+
+6. **FILE-BY-FILE WORKFLOW**
+   - Before checking a file: use Read tool (even if already read)
+   - Before checking a file: use `git diff` to see what changed
+   - Process one file completely before mentioning the next
+   - Output "=== FILE {N} OF {TOTAL} COMPLETE ===" after each file
+
+7. **VERBOSITY OVER BREVITY**
+   - User wants transparency, not efficiency
+   - Better to be tediously thorough than concisely incomplete
+   - Default to MORE detail, not less
+   - Show all work, don't skip steps
+
+8. **NO FALSE EFFICIENCY**
+   - Don't rely on "build passes, so typing is fine" - still check for `any` types
+   - Don't rely on "lint passes, so no console.log" - still grep for console statements
+   - Automated checks catch some issues, manual review catches others
+
+9. **INTERFACE/TYPE FILE HANDLING**
+   - Interface files still get the full checklist
+   - Most checks will be "N/A - No logic in interface file"
+   - But still check: naming conventions, no `any` type, no magic numbers in defaults
+   - Show all checks, mark non-applicable ones as N/A
+
+10. **HTML/SCSS FILE HANDLING**
+    - HTML files: Check control flow syntax, signal usage, event handlers, design system usage
+    - SCSS files: Check for duplicate selectors, proper nesting, follows styling guidelines
+    - Both get abbreviated checklists, but ALL applicable checks must be shown
+
 **PHASE 4: Summary Report (MANDATORY)**
 
 Compile findings from all phases into final report.
