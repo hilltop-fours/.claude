@@ -67,6 +67,11 @@ Quick overview of `.clinerules/` organization:
     - `backend/` - Backend API documentation for this project
       - `{backend-name}.md` - API endpoints, models, request/response formats
 
+- `scripts/` - Validation automation scripts
+  - `validate.sh` - Main orchestrator (run this for code validation)
+  - `checks/` - Individual check scripts (build, lint, prettier, ts-checks, html-checks, class-structure)
+  - `report.md` - Generated validation report (gitignored)
+
 - `claude.md` - This file (Claude Code instructions and task rules)
 
 ---
@@ -122,6 +127,7 @@ All file references use this pattern: `$CLINERULES_ROOT/path/to/file.md`
 
 **BEFORE editing ANY code** (components, services, templates, styles):
 → Read `$CLINERULES_ROOT/global/angular-instructions.md`
+→ Read `$CLINERULES_ROOT/global/code-simplicity.md`
 → Reference `$CLINERULES_ROOT/validation/angular-*.md` files for detailed style and validation rules
 
 **WHEN user asks to update backend API docs**:
@@ -137,34 +143,13 @@ All file references use this pattern: `$CLINERULES_ROOT/path/to/file.md`
 → Read `$CLINERULES_ROOT/global/backend-api-format.md` (reference only)
 
 **WHEN user asks to validate code** (validate, review, check code quality):
-→ Read consolidated validation checklists (file-type-specific):
-  - For .component.ts/.service.ts files: `$CLINERULES_ROOT/validation/checklists/typescript-component.md` (50 checks)
-  - For .html files: `$CLINERULES_ROOT/validation/checklists/html-template.md` (16 checks)
-  - For .scss files: `$CLINERULES_ROOT/validation/checklists/scss-style.md` (5 checks)
-  - For .interface.ts/.model.ts/.type.ts files: `$CLINERULES_ROOT/validation/checklists/typescript-interface.md` (12 checks)
-  - `$CLINERULES_ROOT/projects/{PROJECT}/project-instructions.md` - Project-specific patterns
-  - `$CLINERULES_ROOT/validation/dead-code-detection.md` - For reference on detection methods
-→ Execute validation checks:
-  - Run `npm run build` from frontend directory (check compilation errors)
-  - Run `npm run lint` (check ESLint violations)
-  - **Prettier check on changed files only**:
-    1. Get changed files: `git diff main...HEAD --name-only --diff-filter=ACMR '*.ts' '*.html' '*.scss'`
-    2. Run `prettier --check [changed files]` to identify which need formatting
-    3. Do NOT use `npm run format` or `npm run format:check` (they affect all files in project)
-→ Review all changes against appropriate file-type checklist:
-  - Determine file type (.component.ts, .html, .scss, .interface.ts)
-  - Load and execute ALL checks from the corresponding checklist
-  - Add verification: "Total checks completed: X/X" for each file
-  - Project patterns and requirements from `project-instructions.md`
-→ Generate validation report with:
-  - Build & lint status (pass/fail)
-  - **Prettier status**: List files needing formatting (only from changed files)
-  - Files changed with summary
-  - Code quality findings organized by category
-  - Violations with severity levels
-  - Actionable recommendations for fixes
-  - **Note**: If issues found, present findings only (no automatic fixes unless explicitly requested)
-  - **Prettier auto-fix**: If formatting issues found, ask user if they want to fix them, then run `prettier --write [specific files]` on only those files that need formatting
+→ Run the validation script: `bash $CLINERULES_ROOT/scripts/validate.sh`
+→ Read the generated report: `$CLINERULES_ROOT/scripts/report.md`
+→ For each changed file, perform the judgment-based checks listed in Section 4 of the report
+→ Read project-specific `project-instructions.md` for project patterns
+→ Present combined findings to user (automated report summary + judgment-based findings)
+→ If Prettier issues found: ask user if they want to fix, then run `npx prettier --write [files]`
+→ **Note**: Do not auto-fix. Present findings only unless explicitly asked.
 
 ---
 
@@ -536,7 +521,8 @@ All **frontend projects** use ONLY these file types:
 3. **Read `project-instructions.md`** at `$CLINERULES_ROOT/projects/{PROJECT}/project-instructions.md`
 4. **Based on task**, read additional files:
    - Git operation → Read `$CLINERULES_ROOT/global/git-instructions.md`
-   - Code editing → Read `$CLINERULES_ROOT/global/angular-instructions.md` + `$CLINERULES_ROOT/validation/angular-*.md`
+   - Code editing → Read `$CLINERULES_ROOT/global/angular-instructions.md` + `$CLINERULES_ROOT/global/code-simplicity.md` + `$CLINERULES_ROOT/validation/angular-*.md`
+   - Code validation → Run `bash $CLINERULES_ROOT/scripts/validate.sh`, read report, do judgment checks
    - PR review comment → Read `$CLINERULES_ROOT/global/pr-review-workflow.md` + `$CLINERULES_ROOT/global/pr-response-style.md`
    - Backend API work → Read appropriate backend `.md` file (path in project-instructions.md)
    - Update backend docs → Read `$CLINERULES_ROOT/global/update-backend-api-instructions.md`
