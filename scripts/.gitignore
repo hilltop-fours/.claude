@@ -1,0 +1,6 @@
+node_modules/
+report.md
+dist/
+checks/*.js
+checks/*.js.map
+checks/*.d.ts

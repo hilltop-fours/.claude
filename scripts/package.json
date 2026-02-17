@@ -1,0 +1,13 @@
+{
+  "name": "clinerules-validation-scripts",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Validation scripts for .clinerules code review automation",
+  "dependencies": {
+    "ts-morph": "^24.0.0",
+    "typescript": "^5.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.2.3"
+  }
+}
