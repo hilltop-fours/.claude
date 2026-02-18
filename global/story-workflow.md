@@ -33,7 +33,7 @@ This is the most critical step — the original text gets lost when conversation
 
 ### Where to save
 
-Create a markdown file in the **`.stories/`** folder in the project root.
+Create a markdown file in the **`$CLINERULES_ROOT/stories/`** folder (inside the `.clinerules` repo, not the project root).
 
 **Filename convention:**
 - Format: `storyId-taskId-description.md`
@@ -42,7 +42,7 @@ Create a markdown file in the **`.stories/`** folder in the project root.
 
 Examples:
 - PR title: `feat(map): #12345 #67890 add map zoom controls`
-- Filename: `.stories/12345-67890-add-map-zoom-controls.md`
+- Filename: `$CLINERULES_ROOT/stories/12345-67890-add-map-zoom-controls.md`
 
 **One file per task/bug** — if a story has multiple children, each gets its own file with the shared story context repeated at the top.
 
@@ -93,7 +93,7 @@ Examples:
 
 **IMPORTANT:** Save this file immediately after extracting text. Do not wait until later steps.
 
-**CRITICAL — NO CODE CHANGES IN THIS STEP:** Creating the story file is the ONLY action in Step 1. Do NOT edit, create, or modify any source code files. Do NOT create pipes, enums, components, or any other code. The `.stories/` markdown file is the only output.
+**CRITICAL — NO CODE CHANGES IN THIS STEP:** Creating the story file is the ONLY action in Step 1. Do NOT edit, create, or modify any source code files. Do NOT create pipes, enums, components, or any other code. The `$CLINERULES_ROOT/stories/` markdown file is the only output.
 
 ---
 
@@ -164,15 +164,28 @@ Break the work into phases that can be independently verified and committed.
 
 ---
 
-## STEP 4: DEV TOOLS (IF NEEDED)
+## BACKEND ASSUMPTION — DEFAULT RULE
 
-Sometimes development requires mock data or special tooling because:
-- Backend is not merged yet
+**For all BE/FE combined stories: assume the backend does NOT exist unless explicitly told otherwise.**
+
+- Default: backend is not merged → always mock on the frontend
+- Exception: user explicitly says "the backend is merged" or "the backend is ready" → then use real API calls
+- Never check the backend repo or ask whether it exists — wait for the user to say so
+
+This means dev tools / mock services are almost always needed. See Step 4.
+
+---
+
+## STEP 4: DEV TOOLS (ALMOST ALWAYS NEEDED)
+
+For BE/FE combined stories, the backend is not merged yet (see Backend Assumption above). Dev tools are therefore needed in nearly every story to mock service responses so development is immediately testable.
+
+Also needed when:
 - Need to test with different account types/roles
 - Need to simulate specific data states
 
 **When needed:**
-- Create a small dev tools component for the development period
+- Mock the relevant service methods to return hardcoded responses that include the new fields
 - Keep it simple — just enough to unblock development
 
 **CRITICAL — Phase ordering:** Dev tools must come EARLY in the implementation plan — right after the bare-bones setup (models, shell component, basic wiring). Every subsequent phase should be testable with real-looking data from day one. Do NOT leave dev tools as the last phase.
