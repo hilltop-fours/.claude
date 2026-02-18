@@ -1,7 +1,7 @@
 # feat(use-cases): #105837 use-case met databehoefte vastleggen
 
-**Story:** #105837
-**Branch:** `feat/105837/use-case-vastleggen`
+**Story:** #105837 / **Task:** #110347
+**Branch:** `feature/105837/110347/use-case-vastleggen`
 **Date:** 2026-02-18
 
 ---
