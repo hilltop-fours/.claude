@@ -56,45 +56,57 @@ None
 
 ## Analysis
 
-This story adds a required `organisatietype` field to every organization. The type is chosen from a fixed list of 7 values (4 public, 3 private) and exactly one must be selected per organization.
+**What this story builds:**
+A single required dropdown field `organisatietype` added to every organization. The Moderator or hoofdpublicist can set it via the existing organization edit drawer. The type comes from a fixed list of 7 values.
 
-**Backend status:** Not implemented yet — mock all backend responses on the frontend side.
+**Backend status:** Not merged — mock all service responses on the frontend.
 
-**What needs to happen on the frontend:**
-- Add an `OrganizationType` enum with the 7 values
-- Extend `IOrganization` interface with `organizationType`
-- Add a required dropdown to the organization details page (where Moderator/hoofdpublicist can edit)
-- Display the type in the organization info card
-- Mock the field so development works without a real backend
+**How editing organizations works in NTM:**
+The edit flow lives entirely inside `list-card-organization-info` component — it is NOT a separate edit page. It has its own `FormGroup`, an "Edit" button that opens an `<ntm-drawer>`, and calls `OrganizationRepository.update()` on submit. The `organization-details` page just renders this card as a child.
 
-**Key existing code to build on (NTM paths):**
-- Organization model: `src/app/core/data-access/organizations/types/organization.interface.ts`
-- Organization repository: `src/app/core/data-access/organizations/organization.repository.ts` — has `find()`, `list()`, `delete()` etc.
-- Organization service: `src/app/core/data-access/organizations/organization.service.ts`
-- Organization details page: `src/app/modules/organization/pages/organization-details/organization-details.component.ts` — loads org via `OrganizationRepository.find()`
-- Organization info card: `src/app/shared/components/list-card/list-cards/list-card-organization-info/list-card-organization-info.component.ts` — displays org fields
-- Organization overview: `src/app/modules/organization/pages/organization-overview/organization-overview.component.ts`
-- Design system components: NTM uses its own design system (`@shared/components`), no `ndwInput`/`ndw-form-field` — check existing form patterns in publications or standards edit for the correct select/dropdown pattern
-- No Zod schemas in NTM — plain TypeScript interfaces only
+**Key files:**
+- Model: `src/app/core/data-access/organizations/types/organization.interface.ts` — add `organisatietype` field here
+- Form interface: `src/app/modules/account/types/account-update-form.interface.ts` — `IUserUpdateOrganizationForm` needs a new `organisatietype` FormControl
+- Edit drawer: `src/app/shared/components/list-card/list-cards/list-card-organization-info/list-card-organization-info.component.ts` + `.html` — this is where the FormControl is initialized and the dropdown is rendered
+- Org repository: `src/app/core/data-access/organizations/organization.repository.ts` — mock `find()` and `list()` responses to include `organisatietype`
 
-**Agreed:** Field is required. Existing orgs without a type will show an empty dropdown — user must pick before saving.
+**Dropdown pattern to use:**
+NTM has `ntm-single-select-dropdown` (`src/app/shared/components/single-select-dropdown/`) — takes `[options]` as `DropdownOption[]` (`{ label, value }`), works with `formControlName`. This is the right fit for a fixed enum list.
+
+**Enum values (7 total, matching story description exactly):**
+```
+PUBLIEK_RIJKSWATERSTAAT
+PUBLIEK_PROVINCIE
+PUBLIEK_GEMEENTE
+PUBLIEK_OVERIG
+PRIVAAT_DATA_EIGENAAR
+PRIVAAT_SERVICEPROVIDER
+PRIVAAT_OVERIG
+```
 
 ---
 
 ## Implementation Plan
 
-### Phase 1: Model + enum
-- Add `OrganizationTypeEnum` (7 values) to `src/app/core/data-access/organizations/types/`
-- Extend `IOrganization` interface with `organizationType: OrganizationTypeEnum`
-- Add translation keys for all 7 type labels (nl.json + en.json)
+### Phase 1: Enum + model + translations
+- Create `src/app/core/data-access/organizations/types/organisation-type.enum.ts` with 7 values
+- Add `organisatietype?: OrganisatietypeEnum` to `IOrganization` interface
+- Add `organisatietype: FormControl<OrganisatietypeEnum | null>` to `IUserUpdateOrganizationForm`
+- Add all 7 Dutch label translation keys to `nl.json` + `en.json`
+- Result: types in place, no visible UI yet
 
 ### Phase 2: Mock service
-- Mock `OrganizationRepository` responses to include `organizationType` on `find()` and `list()`
-- Enables all subsequent phases to be testable immediately
+- Patch `OrganizationRepository` mock so `find()` and `list()` responses include `organisatietype`
+- Result: all subsequent phases have real-looking data to work with
 
-### Phase 3: Form UI
-- Add required `organizationType` form control to the organization details page
-- Add a dropdown using NTM design system select pattern (reference publications or standards edit form for correct component usage)
+### Phase 3: Dropdown in edit drawer
+- Add `organisatietype` FormControl (required) to the form in `list-card-organization-info.component.ts`
+- Build `organisatietypeOptions` array from enum values + translation labels
+- Add `ntm-single-select-dropdown` to the drawer template in `list-card-organization-info.component.html`
+- Patch value on `openDrawer()`, include in `submit()` payload
+- Add `ntm-form-control-validation` for required error
+- Result: dropdown visible and functional in the edit drawer
 
 ### Phase 4: Display
-- Show the type label in `list-card-organization-info` component
+- Show the selected `organisatietype` label (read-only) on the organization info card when not in edit mode
+- Result: type is visible on the organization details page
