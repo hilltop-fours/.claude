@@ -93,6 +93,8 @@ Examples:
 
 **IMPORTANT:** Save this file immediately after extracting text. Do not wait until later steps.
 
+**CRITICAL — NO CODE CHANGES IN THIS STEP:** Creating the story file is the ONLY action in Step 1. Do NOT edit, create, or modify any source code files. Do NOT create pipes, enums, components, or any other code. The `.stories/` markdown file is the only output.
+
 ---
 
 ## STEP 2: ANALYZE & DISCUSS
@@ -103,6 +105,7 @@ After saving the text, explore the relevant codebase and explain back to the use
 
 **Rules:**
 - Conversational only — NO code examples, NO implementation details yet
+- **NO CODE CHANGES** — do not touch any source files during Step 2
 - Explain in plain language what the story/task is asking for
 - Identify what already exists in the codebase that can be reused
 - Confirm understanding with the user before moving to planning
@@ -183,6 +186,8 @@ Typical ordering:
 ---
 
 ## STEP 5: EXECUTE PHASES
+
+**This is the FIRST step where code changes are allowed.** Steps 1–4 produce only markdown (the story file). No source code is touched until the user explicitly says to start implementing.
 
 Work through phases one at a time.
 
