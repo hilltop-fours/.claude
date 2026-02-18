@@ -8,12 +8,12 @@ Complete reference for the NTM Backend API. This service manages data publicatio
 
 | Item | Value | Date |
 |------|-------|------|
-| Last Verified Commit | 1b56e18 | 2026-02-11 |
-| Commit Message | Feature #106687 Support filter on reviewstatus | |
-| Swagger Version | latest | 2026-02-11 |
+| Last Verified Commit | 3a80cf7 | 2026-02-18 |
+| Commit Message | Feature #108832 Add identifiers to DCat | |
+| Swagger Version | latest | 2026-02-18 |
 
-**Status**: ✓ Up to date as of 2026-02-11
-**Next Review**: Check commits after 1b56e18
+**Status**: ✓ Up to date as of 2026-02-18
+**Next Review**: Check commits after 3a80cf7
 
 ---
 
@@ -29,6 +29,7 @@ Complete reference for the NTM Backend API. This service manages data publicatio
 | **Users & Roles** | `/users`, `/users/{id}`, `/users/current` | GET, POST, PUT, DELETE | Keycloak NTM | User management and role requests |
 | **Role Requests** | `/organizations/{id}/role_requests` | GET, POST, PUT | Keycloak NTM | Request and approve role changes |
 | **Organization Permissions** | `/organizations/{id}/permissions`, `/organizations/{id}/logo` | PUT, GET | Keycloak NTM | Set permissions and manage org branding |
+| **Obligations** | `/obligations`, `/obligations/{id}` | GET | Keycloak NTM | Retrieve obligations (OVD import from Excel) |
 | **Favorites** | `/favorites` | GET, POST, DELETE | Keycloak NTM | Manage favorite publications |
 | **Info Messages** | `/info-messages`, `/info-messages/{id}`, `/info-messages/current` | GET, POST, PUT, DELETE | Keycloak NTM | System-wide notifications |
 
@@ -52,7 +53,7 @@ Complete reference for the NTM Backend API. This service manages data publicatio
 - `organizationId` (UUID, optional) - Filter by organization UUID
 - `ownerUserId` (UUID, optional) - Filter by publication owner
 - `themes` (array, optional) - Filter by themes (SHARE_MOBILITY, MAAS, PUBLIC_TRANSPORT, LOGISTIC, TRAFFIC_SAFETY, TRAFFIC_MANAGEMENT, ALTERNATIVE_FUEL, PARKING_HUBS, BIKES)
-- `regulationTypes` (array, optional) - Filter by regulation types (TRUCK_PARKING, ROAD_SAFETY, REALTIME, MULTIMODAL, MISC, AFIR, DATA_TOP_15, ENDS, SPVV)
+- `regulationTypes` (array, optional) - Filter by regulation types (TRUCK_PARKING, ROAD_SAFETY, REALTIME, MULTIMODAL, MISC, AFIR, DATA_TOP_15, ENDS, SPVV, ITS)
 - `categories` (array, optional) - Filter by data categories (extensive list of traffic/transport categories)
 - `networkCoverages` (array, optional) - Filter by network coverage areas
 - `transportModes` (array, optional) - Filter by transport modes
@@ -911,6 +912,31 @@ Complete reference for the NTM Backend API. This service manages data publicatio
 
 ---
 
+### Obligations
+
+#### GET /obligations
+
+**Authentication**: Keycloak NTM (ROLE_DATA_ITEM_READER)
+
+**Description**: Get all obligations (data obligations imported from OVD Excel files).
+
+**Response** (HTTP 200): Array of ObligationDto
+
+---
+
+#### GET /obligations/{id}
+
+**Authentication**: Keycloak NTM (ROLE_DATA_ITEM_READER)
+
+**Description**: Get a specific obligation by ID.
+
+**Path Parameters**:
+- `{id}` (UUID) - Obligation identifier
+
+**Response** (HTTP 200): ObligationDto
+
+---
+
 ### Other Endpoints
 
 #### GET /notifications
@@ -973,6 +999,8 @@ Complete reference for the NTM Backend API. This service manages data publicatio
 
 **Description**: Get all datasets.
 
+> ⚠️ **DEPRECATED** - Moving to new model served by `/obligations`. Will be removed in a future version.
+
 **Response** (HTTP 200): Array of DatasetDto
 
 ---
@@ -983,6 +1011,8 @@ Complete reference for the NTM Backend API. This service manages data publicatio
 
 **Description**: Get all data regulations.
 
+> ⚠️ **DEPRECATED** - Moving to new model served by `/obligations`. Will be removed in a future version.
+
 **Response** (HTTP 200): Array of DataRegulationDto
 
 ---
@@ -992,6 +1022,8 @@ Complete reference for the NTM Backend API. This service manages data publicatio
 **Authentication**: Keycloak NTM
 
 **Description**: Get a specific data regulation.
+
+> ⚠️ **DEPRECATED** - Moving to new model served by `/obligations`. Will be removed in a future version.
 
 **Path Parameters**:
 - `{id}` (UUID) - Regulation identifier
@@ -1170,6 +1202,7 @@ Complete reference for the NTM Backend API. This service manages data publicatio
 | `contact` | ContactDto | No | - | Contact information |
 | `contactType` | String | Yes | ORGANIZATION, ORGANIZATION_CONTACT, OWNER | Type of contact |
 | `owner` | UserDetailsDto | No | - | Publication owner |
+| `obligationIds` | Set[UUID] | No | - | IDs of associated obligations (defaults to empty set) |
 | `publicationStatus` | String | Yes | VISIBLE, HIDDEN | Visibility status |
 | `reviewStatus` | String | Yes | IMPORTED, PENDING_REVIEW, DEFINITIVE, HELD | Review status |
 | `favorite` | Boolean | No | - | Is favorite (user-specific) |
@@ -1256,6 +1289,57 @@ Complete reference for the NTM Backend API. This service manages data publicatio
 
 ---
 
+### ObligationDto
+
+**Used in**: GET `/obligations` and `/obligations/{id}` endpoints
+
+| Field | Type | Required | Constraints | Description |
+|-------|------|----------|-------------|-------------|
+| `id` | UUID | Yes (response) | - | Obligation identifier |
+| `startDateNewData` | LocalDate | No | ISO 8601 date | Start date for obligation on new data |
+| `startDateExistingData` | LocalDate | No | ISO 8601 date | Start date for obligation on existing data |
+| `obligationType` | ObligationType | No | EU, NL | Origin of the obligation |
+| `networkType` | DataNetwork | No | See DataNetwork enum | Network coverage type |
+| `modality` | Modality | No | DEMAND_DEPENDENT, EXCLUDING_DEMAND_DEPENDENT | Transport modality scope |
+| `dataItem` | ObligationDataItemDto | No | - | Linked obligation data item |
+
+**Example**:
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "startDateNewData": "2024-01-01",
+  "startDateExistingData": "2025-01-01",
+  "obligationType": "EU",
+  "networkType": "TEN_T",
+  "modality": "EXCLUDING_DEMAND_DEPENDENT",
+  "dataItem": {
+    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "description": "Real-time traffic data obligation",
+    "sourceLocation": "EUR-Lex",
+    "sourceDescription": "ITS Delegated Regulation",
+    "sourceCategory": "ITS",
+    "regulationType": "ITS"
+  }
+}
+```
+
+---
+
+### ObligationDataItemDto
+
+**Used in**: ObligationDto.dataItem
+
+| Field | Type | Required | Constraints | Description |
+|-------|------|----------|-------------|-------------|
+| `id` | UUID | Yes (response) | - | Data item identifier |
+| `description` | String | No | - | Description of the data item/obligation |
+| `sourceLocation` | String | No | - | Source document location (e.g. EUR-Lex URL) |
+| `sourceDescription` | String | No | - | Description of the source document |
+| `sourceCategory` | String | No | - | Category of the source |
+| `regulationType` | RegulationType | No | See RegulationType enum | Regulation type |
+
+---
+
 ### AddressDto
 
 **Used in**: OrganizationDto, StandardOrganizationDto
@@ -1327,6 +1411,64 @@ Complete reference for the NTM Backend API. This service manages data publicatio
 | ALTERNATIVE_FUEL | Alternative fuel infrastructure |
 | PARKING_HUBS | Parking facilities |
 | BIKES | Bicycle infrastructure |
+
+---
+
+### ObligationType
+
+**Used in**: ObligationDto
+
+| Value | Description |
+|-------|-------------|
+| EU | Obligation originates from EU regulation |
+| NL | Obligation originates from Dutch national regulation |
+
+---
+
+### Modality
+
+**Used in**: ObligationDto
+
+| Value | Description |
+|-------|-------------|
+| DEMAND_DEPENDENT | Demand-dependent transport (e.g., taxis, on-demand buses) |
+| EXCLUDING_DEMAND_DEPENDENT | All transport excluding demand-dependent |
+
+---
+
+### RegulationType
+
+**Used in**: DataPublicationDto, ObligationDataItemDto, filter params
+
+| Value | Description |
+|-------|-------------|
+| TRUCK_PARKING | Truck parking regulation |
+| ROAD_SAFETY | Road safety regulation |
+| REALTIME | Real-time data regulation |
+| MULTIMODAL | Multimodal transport regulation |
+| MISC | Miscellaneous regulation |
+| AFIR | Alternative Fuels Infrastructure Regulation |
+| DATA_TOP_15 | Data Top 15 regulation |
+| ENDS | European National Data Spaces regulation |
+| SPVV | SPVV regulation |
+| ITS | ITS 2023/2661 regulation |
+
+---
+
+### DataNetwork
+
+**Used in**: ObligationDto
+
+| Value | Description |
+|-------|-------------|
+| EU_ENTIRE_TRANSPORT_NETWORK | Gehele vervoersnetwerk EU |
+| MAIN_ROADS | Hoofdwegen |
+| TEN_T | TEN-T network |
+| TEN_T_PLUS | TEN-T+ network |
+| TEN_T_PLUS_AND_OTHER_HIGHWAYS | TEN-T+ en andere snelwegen |
+| TEN_T_AND_ROADS_WITH_INTENSITY_GREATER_THAN_8000 | TEN-T & wegen met intensiteit > 8000 |
+| ROADS_WITH_URBAN_NODES | Wegen met urban nodes |
+| OTHER | Other network |
 
 ---
 
