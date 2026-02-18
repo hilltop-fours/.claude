@@ -1,7 +1,7 @@
 # feat(organizations): #110023 organisatietype toevoegen aan organisatiebeheerscherm
 
-**Story:** #110023 / **Task:** #[task-id TBD]
-**Branch:** `feat/110023/[task-id]/organisatietype-toevoegen`
+**Story:** #110023 / **Task:** #110343
+**Branch:** `feature/110023/110343/organisatietype-toevoegen`
 **Date:** 2026-02-18
 
 ---
