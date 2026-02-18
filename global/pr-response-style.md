@@ -134,6 +134,18 @@ Reviewer asks for your reasoning. Response = explain your thinking humbly.
 
 ---
 
+## Output Format
+
+Always present the PR response in a **plain text fenced code block** (not a blockquote with `>`):
+
+````
+heb het verplaatst naar `AuthService` en `UserPermissionsService` verwijderd
+````
+
+This allows the user to copy-paste directly into GitHub without any markdown syntax getting in the way.
+
+---
+
 ## When to Apply This
 
 Use this style for all PR review responses in this project. When Claude provides a PR response, it should match the pattern shown in "After" examples.
