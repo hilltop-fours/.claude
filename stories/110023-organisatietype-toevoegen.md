@@ -58,22 +58,24 @@ None
 
 This story adds a required `organisatietype` field to every organization. The type is chosen from a fixed list of 7 values (4 public, 3 private) and exactly one must be selected per organization.
 
-**Backend status:** Not implemented yet. Standard assumption for BE/FE combined stories — always mock the backend on the frontend side unless explicitly told the backend is merged.
+**Backend status:** Not implemented yet — mock all backend responses on the frontend side.
 
 **What needs to happen on the frontend:**
 - Add an `OrganizationType` enum with the 7 values
-- Extend the `Organization` model with `organizationType`
-- Add a required dropdown to the organization edit form
-- Display the type on the organization card in the overview
+- Extend `IOrganization` interface with `organizationType`
+- Add a required dropdown to the organization details page (where Moderator/hoofdpublicist can edit)
+- Display the type in the organization info card
 - Mock the field so development works without a real backend
 
-**Key existing code to build on:**
-- Organization model: `src/app/modules/user/models/organization.interface.ts` (Zod schema)
-- Organization form: `src/app/modules/user/components/organization-form/organization-form.component` — has a "Organisatiedetails" card, dropdown goes here
-- Edit page: `src/app/modules/user/pages/organization-edit/organization-edit.component` — owns the FormGroup
-- Card: `src/app/modules/user/components/organization-card/organization-card.component` — shows org in overview list
-- Existing enum+dropdown pattern: `<select ndwInput>` inside `<ndw-form-field>`, with a `BasePipeTransform` pipe for Dutch labels (same pattern as e.g. `EnvironmentalZoneType`)
-- Organization service: already has `find()`, `create()`, `update()` — mock responses need to include `organizationType`
+**Key existing code to build on (NTM paths):**
+- Organization model: `src/app/core/data-access/organizations/types/organization.interface.ts`
+- Organization repository: `src/app/core/data-access/organizations/organization.repository.ts` — has `find()`, `list()`, `delete()` etc.
+- Organization service: `src/app/core/data-access/organizations/organization.service.ts`
+- Organization details page: `src/app/modules/organization/pages/organization-details/organization-details.component.ts` — loads org via `OrganizationRepository.find()`
+- Organization info card: `src/app/shared/components/list-card/list-cards/list-card-organization-info/list-card-organization-info.component.ts` — displays org fields
+- Organization overview: `src/app/modules/organization/pages/organization-overview/organization-overview.component.ts`
+- Design system components: NTM uses its own design system (`@shared/components`), no `ndwInput`/`ndw-form-field` — check existing form patterns in publications or standards edit for the correct select/dropdown pattern
+- No Zod schemas in NTM — plain TypeScript interfaces only
 
 **Agreed:** Field is required. Existing orgs without a type will show an empty dropdown — user must pick before saving.
 
@@ -82,17 +84,17 @@ This story adds a required `organisatietype` field to every organization. The ty
 ## Implementation Plan
 
 ### Phase 1: Model + enum
-- Add `OrganizationType` enum (7 values) to the organization model
-- Extend `Organization` Zod schema with `organizationType` (optional for now, required once backend is live)
-- Add a `BasePipeTransform` pipe for Dutch labels
+- Add `OrganizationTypeEnum` (7 values) to `src/app/core/data-access/organizations/types/`
+- Extend `IOrganization` interface with `organizationType: OrganizationTypeEnum`
+- Add translation keys for all 7 type labels (nl.json + en.json)
 
 ### Phase 2: Mock service
-- Mock `organization.service` responses to include `organizationType` on `find()` and `getAll()`
+- Mock `OrganizationRepository` responses to include `organizationType` on `find()` and `list()`
 - Enables all subsequent phases to be testable immediately
 
 ### Phase 3: Form UI
-- Add required `organizationType` form control to the edit page
-- Add `<select ndwInput>` dropdown to the organization form
+- Add required `organizationType` form control to the organization details page
+- Add a dropdown using NTM design system select pattern (reference publications or standards edit form for correct component usage)
 
 ### Phase 4: Display
-- Show the type label on the organization card in the overview
+- Show the type label in `list-card-organization-info` component
