@@ -20,7 +20,7 @@ Guidelines for how Claude should write PR review responses for this project.
 
 ---
 
-## Two Types of PR Comments
+## Three Types of PR Comments
 
 ### Type 1: Action Feedback ("do X instead" / "remove Y" / "don't use Z")
 
@@ -42,7 +42,17 @@ Reviewer asks for your reasoning. Response = explain your thinking humbly.
 - Never state things as absolute facts when explaining your own choices
 - You're sharing your perspective not lecturing the reviewer
 
-**Length (both types):**
+### Type 3: Pushback / Clarification ("is X still there?" / "shouldn't this be Y?")
+
+Reviewer flags something they think might be wrong, but the current code is actually correct. Response = explain gently why no change is needed.
+
+**Tone:**
+- Same humble/suggestive tone as Type 2
+- Don't be defensive — acknowledge what they're seeing and explain calmly
+- Use softening words: "volgens mij" / "ik denk dat" / "het idee is" / "klopt dat"
+- Leave room for the reviewer to push back further if they disagree
+
+**Length (all types):**
 - Keep it short and simple
 - Usually 1-2 sentences max
 - One clear idea per response
@@ -149,6 +159,56 @@ This allows the user to copy-paste directly into GitHub without any markdown syn
 ## When to Apply This
 
 Use this style for all PR review responses in this project. When Claude provides a PR response, it should match the pattern shown in "After" examples.
+
+---
+
+### Example 6: Explaining why something was removed (Type 2 - humble/suggestive)
+
+**Reviewer asked:** "h2?"
+
+**Claude attempt 1 (too formal, ends with "semantiek"):**
+> de `h2` was weggevallen doordat de content in `tsf-side-panel-header` terechtkwam die zelf al de heading styling regelt maar heb hem toch teruggebracht voor de semantiek
+
+**Claude attempt 2 (better but wrong tense, "weggehaald" instead of first person past):**
+> heb de `h2` weggehaald omdat de content in `tsf-side-panel-header` terechtkwam die zelf al de heading styling regelt maar heb hem toch teruggebracht
+
+**✅ Final accepted version:**
+> had de `h2` weggehaald omdat de content in `tsf-side-panel-header` kwam en die had zelf al de heading styling
+
+**Claude attempt 3 (adds question about approach but too wordy and "utility classes" is jargon):**
+> had de `h2` weggehaald omdat de content in `tsf-side-panel-header` kwam en die had zelf al de heading styling maar heb hem teruggebracht en de styling handmatig toegevoegd via onze utility classes — vraag me wel af of je liever `ndw-heading-sm` gebruikt of dat je het zo goed vindt
+
+**✅ Final accepted version:**
+> had de `h2` weggehaald omdat de content in `tsf-side-panel-header` kwam en die had zelf al de styling maar heb hem teruggebracht en de styling toegevoegd via classes de vraag is alleen of je toch liever `ndw-heading-sm` gebruikt of dat je het zo goed vindt
+
+**Key lessons:**
+- Use `had ... weggehaald` (past perfect) not `heb ... weggehaald` when explaining what you did before
+- Don't end with abstract nouns like "semantiek" — keep it concrete and practical
+- When the fix involves a judgment call, invite the reviewer to weigh in at the end
+- Avoid jargon like "utility classes" — just say "classes"
+- "heading styling" → just "styling" is more natural when context is clear
+- When asking a question, lead with "de vraag is alleen of" rather than "vraag me wel af of"
+
+### Example 7: Responding to a 2-part comment (fix + question about approach)
+
+**Reviewer comment:** "Moet dit geen h2 blijven? [...] geen fan van deze 5 classes op 1 element."
+
+Two parts: (1) request to revert to h2, (2) question about whether many classes on one element is okay.
+
+**Claude attempt 1 (too rude/assertive about the classes):**
+> de `h2` teruggebracht en de classes zijn onze eigen utility classes die we door de hele app gebruiken in plaats van de design system classes
+
+**Claude attempt 2 (better but "laat me weten" is too open-ended):**
+> de `h2` teruggebracht en wat de classes betreft dat zijn de classes die we zelf gedefinieerd hebben en afgesproken hebben om inline te gebruiken maar laat me weten als je dat anders ziet
+
+**✅ Final accepted version:**
+> heb de `h2` teruggebracht en over de classes op 1 element hadden we afgesproken dat de dingen die we zelf hadden gemaakt zoals in de `_spacing.scss` die mogen gewoon gebruikt worden inline
+
+**Key lessons:**
+- When a comment has 2 parts, address both in one response
+- Reference the actual agreement/file (`_spacing.scss`) to make it concrete instead of vague
+- "hadden we afgesproken" is better than "we zelf gedefinieerd hebben en afgesproken hebben" — less repetitive
+- Don't end with "laat me weten als je dat anders ziet" — it's too open; just state the agreement confidently
 
 ---
 
