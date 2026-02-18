@@ -32,32 +32,17 @@ User reports a PR review comment. Typical phrases:
 
 After fixing a PR comment, always present:
 
-```
 **What changed:** short summary of the fix
 
 **WIP commit message:** `WIP: english description of what was done`
 
 **PR comment response:**
-> the dutch response text here
-```
+
+(plain text fenced code block — no blockquote — so the user can copy-paste directly into GitHub)
+````
+the dutch response text here
+````
 
 ## PR COMMENT RESPONSE STYLE
 
-Language: Dutch (casual, conversational)
-
-**Capitalization:**
-- No capitalization at start of sentences or after periods
-- Only capitalize words that are inherently capitalized (proper nouns, codebase references that are capitalized in code)
-
-**Code formatting:**
-- Inline code in single backticks: `<button ndwLink>`
-- Multi-line code in triple backticks with language tag (```ts, ```html, etc.)
-
-**Content rules:**
-- Keep it short and simple
-- Describe what was changed, not where (no file names or component names unless essential)
-- Write so a third person reading later (without seeing the original code snippet) understands what got fixed
-- If the fix was applied in more places than just the commented spot, mention that casually
-
-**Example:**
-> `<a href="javascript:void(0)">` vervangen door `<button ndwLink>`, ook op andere plekken waar dit nog voorkwam.
+→ See `$CLINERULES_ROOT/global/pr-response-style.md` for full style rules (punctuation, capitalization, tone, output format, examples)
