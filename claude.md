@@ -55,7 +55,7 @@ Quick overview of `.clinerules/` organization:
   - `backend-api-format.md` - Format reference for backend API documentation
   - `pr-review-workflow.md` - PR review comment handling workflow and response style
   - `pr-response-style.md` - Detailed style guide for PR review responses
-  - `story-workflow.md` - Standard workflow when starting a new story/task/bug
+  - `new-story-instructions.md` - Standard workflow when starting a new story/task/bug
 
 - `validation/` - Detailed validation and style enforcement rules
   - `angular-*.md` - Specific Angular style and validation rules
@@ -111,6 +111,9 @@ All file references use this pattern: `$CLINERULES_ROOT/path/to/file.md`
 ---
 
 ## READ RULES ON-DEMAND
+
+**WHEN user starts a new story, task, or bug** (says "new story", "start story", "here's the story", "new task", "new bug", or posts Azure DevOps screenshots):
+→ **IMMEDIATELY** read `$CLINERULES_ROOT/global/new-story-instructions.md` and follow it step by step
 
 **BEFORE any git operation** (commit, branch, push, pull, status, checkout):
 → **ALWAYS** read `$CLINERULES_ROOT/global/git-instructions.md` first — no exceptions, even if read earlier in the session
@@ -520,6 +523,7 @@ All **frontend projects** use ONLY these file types:
 2. **Define $CLINERULES_ROOT** based on project (see PROJECT IDENTIFICATION section)
 3. **Read `project-instructions.md`** at `$CLINERULES_ROOT/projects/{PROJECT}/project-instructions.md`
 4. **Based on task**, read additional files:
+   - New story/task/bug → Read `$CLINERULES_ROOT/global/new-story-instructions.md`
    - Git operation → Read `$CLINERULES_ROOT/global/git-instructions.md`
    - Code editing → Read `$CLINERULES_ROOT/global/angular-instructions.md` + `$CLINERULES_ROOT/global/code-simplicity.md` + `$CLINERULES_ROOT/validation/angular-*.md`
    - Code validation → Run `bash $CLINERULES_ROOT/scripts/validate.sh`, read report, do judgment checks
