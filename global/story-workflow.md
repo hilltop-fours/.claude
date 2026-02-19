@@ -39,10 +39,17 @@ Create a markdown file in the **`$CLINERULES_ROOT/stories/`** folder (inside the
 - Format: `storyId-taskId-description.md`
 - Just the IDs and description, no type/scope prefix
 - Strip `#` and `:`, spaces become `-`, all lowercase
+- **Description MUST be in English** — translate Dutch task titles to English
+- Exception: Dutch proper nouns or product-specific terms integral to understanding may be kept (e.g. "register", "verkeersborden")
 
 Examples:
 - PR title: `feat(map): #12345 #67890 add map zoom controls`
 - Filename: `$CLINERULES_ROOT/stories/12345-67890-add-map-zoom-controls.md`
+
+**This English requirement applies to all three:**
+1. Story filename description
+2. Branch name description (`type/story-id/task-id/description`)
+3. PR title description
 
 **One file per task/bug** — if a story has multiple children, each gets its own file with the shared story context repeated at the top.
 
