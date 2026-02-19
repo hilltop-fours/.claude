@@ -8,12 +8,12 @@ Complete reference for the traffic-sign-backend API. This is the core backend se
 
 | Item | Value | Date |
 |------|-------|------|
-| Last Verified Commit | d2055bf3 | 2026-02-12 |
-| Commit Message | feat(findings): #109233 Add get by ID endpoint for findings | |
-| Swagger Version | latest | 2026-02-12 |
+| Last Verified Commit | 898195c4 | 2026-02-19 |
+| Commit Message | feat(traffic-sign): #108756 Use owner in validation of permissions | |
+| Swagger Version | latest | 2026-02-19 |
 
-**Status**: ✓ Up to date as of 2026-02-12
-**Next Review**: Check commits after d2055bf3
+**Status**: ✓ Up to date as of 2026-02-19
+**Next Review**: Check commits after 898195c4
 
 ---
 
@@ -22,6 +22,7 @@ Complete reference for the traffic-sign-backend API. This is the core backend se
 | Feature | Main Endpoints | HTTP Methods | Auth Required |
 |---------|----------------|--------------|---------------|
 | **Traffic Signs (CRUD)** | `/traffic-signs`, `/traffic-signs/{id}` | GET, POST, PUT, PATCH | Writer role |
+| **Traffic Sign Owner** | `/traffic-signs/{id}/owner` | POST | Writer role |
 | **Traffic Sign History** | `/traffic-signs/{id}/history` | GET | None |
 | **Traffic Sign Images** | `/images`, `/images/{id}` | GET, POST | Reader/Writer role |
 | **Organizations** | `/organizations`, `/organizations/{id}` | GET, POST, PUT, DELETE | Admin role |
@@ -169,6 +170,7 @@ Complete reference for the traffic-sign-backend API. This is the core backend se
 **Notes**:
 - Can upload JSON or multipart (CSV/GeoJSON)
 - Optional Content-Crs header for coordinate system
+- GeoJSON v5 format supports IMBOR RVV codes — automatically converted to standard RVV codes on import; IMBOR OB codes are also mapped to standard OB codes
 
 ---
 
@@ -219,6 +221,37 @@ Complete reference for the traffic-sign-backend API. This is the core backend se
 **Notes**:
 - Supports: add, remove, replace, move, copy, test operations
 - Max 1 operation per request
+
+---
+
+#### POST /traffic-signs/{id}/owner
+
+**Authentication**: ROLE_TRAFFIC_SIGN_WRITER
+
+**Path Parameters**:
+- `{id}` (UUID) - Traffic sign identifier
+
+**Description**: Change the owner (road authority) of a traffic sign. The caller must be the current owner, have global mutation permissions, or be an admin.
+
+**Request Body**: OwnerDto
+
+**Example Request**:
+```json
+{
+  "roadAuthorityType": "G",
+  "roadAuthorityCode": "344"
+}
+```
+
+**Response** (HTTP 202): Accepted
+
+**Error Responses**:
+- 400 Bad Request - Road authority not found or invalid combination
+
+**Notes**:
+- Asynchronous operation (returns 202)
+- Authorization: caller must be current owner, have global mutation permissions, or be admin
+- Road authority must exist in the system
 
 ---
 
@@ -297,6 +330,7 @@ Complete reference for the traffic-sign-backend API. This is the core backend se
 **Notes**:
 - Returns all changes made to this traffic sign
 - Includes who made changes and when
+- `changeType` values include: `CREATED`, `UPDATED`, `REMOVED`, `OWNER_PATCHED` (and others)
 
 ---
 
@@ -865,7 +899,7 @@ Complete reference for the traffic-sign-backend API. This is the core backend se
 | `externalIds` | Array<ExternalIdResponseDto> | No | - | External system IDs |
 | `textSigns` | Array<TrafficSignTextSignResponseDto> | No | - | Text content on sign |
 | `publishedOn` | DateTime | No | ISO 8601 | Publication timestamp |
-| `owner` | RoadAuthorityDto | No | nested | Sign owner (road authority) - populated from road section if not explicitly set |
+| `owner` | RoadAuthorityDto | No | nested | Sign owner (road authority) - explicitly set via POST /traffic-signs/{id}/owner, or falls back to road section authority |
 
 **Example**:
 ```json
@@ -930,9 +964,28 @@ Complete reference for the traffic-sign-backend API. This is the core backend se
 ```
 
 **Notes**:
-- For traffic signs, `owner` field is automatically populated from the road section authority if not explicitly set
+- For traffic signs, `owner` is explicitly set via `POST /traffic-signs/{id}/owner`, or falls back to road section authority if not set
 - Empty owner (null) indicates signs on private property or without road section assignment
-- Authorization checks use the `owner` field to determine edit permissions
+- Authorization checks use the `owner` field to determine edit permissions — owner, global mutation permission holders, and admins can update the owner
+
+---
+
+### OwnerDto
+
+**Used in**: POST `/traffic-signs/{id}/owner`
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `roadAuthorityType` | RoadAuthorityType (Enum) | Yes | Type of road authority (R, P, G, W, T) |
+| `roadAuthorityCode` | String | Yes | Authority code (e.g., "344", "UT", "R") |
+
+**Example**:
+```json
+{
+  "roadAuthorityType": "G",
+  "roadAuthorityCode": "344"
+}
+```
 
 ---
 
@@ -970,7 +1023,7 @@ Complete reference for the traffic-sign-backend API. This is the core backend se
 
 ### TrafficSignDto
 
-**Used in**: TrafficSignFindingDto
+**Used in**: TrafficSignFindingDto, internal events (TrafficSignCreatedEvent, TrafficSignUpdatedEvent, TrafficSignImportEvent)
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
@@ -978,6 +1031,8 @@ Complete reference for the traffic-sign-backend API. This is the core backend se
 | `rvvCode` | String | No | RVV code |
 | `blackCode` | String | No | Black code |
 | `location` | TrafficSignLocationDto | No | Location details |
+| `ownerRoadAuthorityType` | RoadAuthorityType (Enum) | No | Owner road authority type (R, P, G, W, T) |
+| `ownerRoadAuthorityCode` | String | No | Owner road authority code |
 
 ---
 
