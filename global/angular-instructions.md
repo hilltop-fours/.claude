@@ -85,9 +85,25 @@ SELF-CHECK — BEFORE finalising any added or edited code, verify that no legacy
 - `@ViewChildren()` → should be `viewChildren()` (Angular 19+)
 - `@ContentChild()` → should be `contentChild()` (Angular 19+)
 - `@ContentChildren()` → should be `contentChildren()` (Angular 19+)
-- `@HostListener()` → should be `hostListener()` (Angular 19+)
+- `@HostListener()` / `@HostBinding()` → should use `host: {}` object in `@Component`/`@Directive` decorator instead
 
 This check is needed because training data is dominated by the older decorator syntax. When in doubt, scan the file you just touched for any of these decorators and replace with the signal equivalent before finishing.
+
+Example - WRONG:
+```typescript
+@HostListener('keydown', ['$event'])
+handleKeydown(event: KeyboardEvent) { ... }
+```
+
+Example - CORRECT:
+```typescript
+@Component({
+  host: {
+    '(keydown)': 'handleKeydown($event)'
+  }
+})
+handleKeydown(event: KeyboardEvent) { ... }
+```
 
 CRITICAL — WHEN converting decorators to signals, UPDATE ALL REFERENCES:
 
