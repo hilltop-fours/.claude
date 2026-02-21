@@ -88,6 +88,7 @@ These are specific behaviors Claude tends toward that produce "looks AI-generate
 - Wrapping simple logic in extra methods just to give them a name
 - Adding exhaustive error handling for scenarios that cannot realistically occur
 - Generating interfaces or types for objects used in only one place
+- **Inventing user-visible text from domain knowledge** — translation values, card titles, labels, descriptions must come ONLY from the codebase, the story, or explicit user input. Never fill these in from assumed domain knowledge.
 
 ---
 
@@ -125,6 +126,11 @@ These examples calibrate Claude's sense of what "too complex" means in practice.
 **What happened**: Added 3 `validateSomethingCheck()` methods to a form component that were not needed by any requirement.
 **Why it was flagged**: Colleague saw methods that had no connection to any user story or acceptance criteria. Made the component look over-engineered.
 **What it should have been**: No validation methods at all — the form only needed to submit data. Validation was handled by the backend.
+
+### Entry 2: Invented user-visible text from domain knowledge
+**What happened**: Added `"ITS 2023/2661"` as a translation value for the ITS card title. The regulation number was not in the codebase, the story, or any user input — it came from Claude's training data about EU ITS regulations.
+**Why it was flagged**: The user was asked by colleagues why they wrote that specific regulation number. It immediately looked AI-generated because no human would know that detail without explicitly sourcing it.
+**What it should have been**: Ask the user what the title should be, or use a minimal placeholder like `"ITS"`. Never fill in domain-specific text (regulation names, official terminology, specific numbers) from assumed knowledge.
 
 ---
 
