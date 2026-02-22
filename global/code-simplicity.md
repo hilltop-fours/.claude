@@ -89,6 +89,48 @@ These are specific behaviors Claude tends toward that produce "looks AI-generate
 - Adding exhaustive error handling for scenarios that cannot realistically occur
 - Generating interfaces or types for objects used in only one place
 - **Inventing user-visible text from domain knowledge** — translation values, card titles, labels, descriptions must come ONLY from the codebase, the story, or explicit user input. Never fill these in from assumed domain knowledge.
+- Chaining multiple `map()` operators that could be combined into one — e.g. `map(x => x.value).map(v => v.toString())` → `map(x => x.value.toString())`
+- Leaving `tap(console.log)` or `tap(() => console.info(...))` debug calls in code before a PR — these must always be removed
+- Creating a private `computed()` and a public getter that just returns it, when a single public `computed()` does the same thing:
+  ```typescript
+  // ❌ Pointless indirection
+  readonly #total = computed(() => this.items().length);
+  get total() { return this.#total(); }
+
+  // ✅ One public computed
+  readonly total = computed(() => this.items().length);
+  ```
+  Exception: the getter pattern is fine if it adds logic or transforms the value.
+
+---
+
+## TEMPLATE ANTI-PATTERNS
+
+- `@if(condition === true)` → use `@if(condition)`
+- `[attr]="condition ? true : false"` → use `[attr]="condition"`
+- Wrapping content in `<ng-container>` when the only thing inside is an `@if` block — `@if` already renders nothing when false, the container adds nothing:
+  ```html
+  <!-- ❌ Pointless wrapper -->
+  <ng-container>
+    @if(items) {
+      <ul>...</ul>
+    }
+  </ng-container>
+
+  <!-- ✅ No wrapper needed -->
+  @if(items) {
+    <ul>...</ul>
+  }
+  ```
+- Complex inline expressions in templates — multi-step conditions or method chains that require mental effort to parse belong in a `computed()` in the component:
+  ```html
+  <!-- ❌ Hard to read in template -->
+  @if(items().length > 0 && items().some(i => i.active && i.type === 'primary')) {
+
+  <!-- ✅ Move to component -->
+  // readonly hasActivePrimaryItems = computed(() => this.items().some(i => i.active && i.type === 'primary'));
+  @if(hasActivePrimaryItems()) {
+  ```
 
 ---
 
