@@ -1,5 +1,12 @@
 # GIT INSTRUCTIONS
 
+> **Hook enforcement** (via `~/.claude/hooks/`):
+> - Commit message format is validated by `check-commit-message.sh` — wrong format is blocked
+> - Git commands outside `.clinerules/` or `*-frontend/` are blocked by `check-git-repo.sh`
+> - Branch mismatch before push is flagged by `check-push-branch.sh`
+>
+> This file covers the *what and why* — the hooks handle enforcement.
+
 ## COMMIT CONTEXTS - FRONTEND REPOSITORIES
 
 Two distinct contexts for frontend commit message formatting. For .clinerules commits, see SPECIAL CASE section below.
@@ -132,13 +139,8 @@ Rules:
 - Description: kebab-case
 - Story ID and Task ID: Obtained from project workflow (see WORKFLOW section)
 
-**CRITICAL: Never commit work onto an existing feature branch that belongs to a different story/task.**
-Each story/task gets its own branch. If you are currently on `feature/A/B/some-feature` and the user starts work on story C / task D, you MUST:
-1. Checkout `main`
-2. Create a new branch: `feature/C/D/description`
-3. Do all work there
-
-Committing onto the wrong branch requires force-pushing to undo, which disrupts remote history. Always verify the current branch's story/task IDs match the work being done before committing.
+**Never commit work onto a branch that belongs to a different story/task.**
+Each story/task gets its own branch. If the current branch doesn't match the work, checkout `main` and create a new branch first.
 
 Example: `bug/106187/108922/fix-verkeersbesluit-id-uppercase-validation`
 
@@ -199,54 +201,20 @@ Examples:
 - `bug(import): #12345 #67890 fix csv import failing on special characters`
 - `chore(bootstrap-removal): #12345 #67890 replace bootstrap multi-select with design system component`
 
-## PRE-PUSH VALIDATION - FRONTEND WORK ONLY
-
-**These rules apply ONLY to frontend project repositories (not .clinerules repo)**
-
-**BEFORE executing ANY `git push` command in a frontend repository:**
-
-1. **Check branch name matches work being pushed:**
-   - Extract story-id and task-id from the current branch name (format: `type/[story-id]/[task-id]/description`)
-   - Verify the branch corresponds to the work being done
-   - If the branch does not match the current task, WARN the user before pushing
-   - This prevents accidentally pushing work for story A onto story B's branch
-
-```
-# EXAMPLE - Branch mismatch warning
-$ git branch --show-current
-feature/106687/108464/moderator-datasets
-
-If the user has been working on story #108710 / task #109367:
-→ Warn: "Current branch is feature/106687/108464/moderator-datasets but the work is for story #108710 task #109367. Should I create a new branch from main?"
-```
-
-2. **Only push if validation passes:**
-   - Branch matches the work
-   - Then execute `git push`
-
-**Note:** These validation rules do NOT apply to .clinerules repository pushes.
-
 ## GIT OPERATIONS - CRITICAL RULES
 
 NEVER stage files unless user explicitly requests it OR approves a WIP commit suggestion
 NEVER create commits unless user explicitly requests it OR approves a WIP commit suggestion
 NEVER push commits unless user explicitly requests it
 
-**CRITICAL: Each operation must be separate**
-- NEVER combine `git add` and `git commit` in a single command (e.g., `git add . && git commit`)
-- NEVER combine `git commit` and `git push` in a single command (e.g., `git commit && git push`)
-- Each operation (add, commit, push) must be executed in SEPARATE tool calls
-- This ensures user permission prompts work correctly for each operation
+**Each request is ONE-TIME ONLY**
+- "stage these files" → run ONLY `git add` then STOP
+- "commit this" → run ONLY `git commit` then STOP
+- "push" → run ONLY `git push` then STOP
+- Do not chain or continue to the next operation without being explicitly asked again
 
-**CRITICAL: Each request is ONE-TIME ONLY**
-- If user says "stage these files", run ONLY `git add` then STOP
-- If user says "commit this", run ONLY `git commit` then STOP
-- If user says "push", run ONLY `git push` then STOP (but ONLY after pre-push validation passes for frontend repos)
-- DO NOT continue staging/committing/pushing in subsequent operations unless explicitly asked again
-- Each git operation requires fresh explicit permission
-- "Always allow" in settings does NOT mean "do this automatically forever"
-- You must be explicitly instructed for EACH separate git operation
+Exception: WIP commits — when user approves a suggestion, `git add` + `git commit` in sequence is OK.
 
-Exception: WIP commits in frontend repos when user approves a suggestion during development (add + commit in sequence is OK after approval)
+**Squash workflow: always use `git reset --soft` + new `git commit` — never `git rebase`**
 
-User manages git operations manually. Only execute git commands when specifically instructed or when user approves a WIP commit suggestion.
+User manages git operations manually. Only execute when specifically instructed or when user approves a WIP commit suggestion.
