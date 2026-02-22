@@ -490,30 +490,20 @@ All **frontend projects** use ONLY these file types:
 
 ---
 
-## EDITING RESTRICTIONS - CRITICAL
+## EDITING RESTRICTIONS
 
-**ONLY edit files in these locations**:
-- Frontend source code: `/{frontend-repo}/src/**`
-  - Example: `/ntm-frontend/src/**` (all subdirectories)
-- Rules/docs: `/.clinerules/**` (any file in .clinerules folder)
+File editing is enforced by a system hook (`~/.claude/hooks/check-edit-path.sh`).
 
-**NEVER edit**:
-- Backend code: `/*-backend/**` (any backend directory)
-- Design system: `/ndw-design/**`, `/design/**`
-- Node modules: `/**/node_modules/**`
-- Build artifacts: `/**/dist/**`, `/**/build/**`, `/**/.angular/**`
+**Allowed edit locations** (hook enforces this automatically):
+- `{frontend-repo}/src/` — frontend source code only
+- `.clinerules/` — rules and documentation
+- Root `claude.md` in each project
 
-**You CAN read (but not edit) outside `/src/`**:
+**You CAN read (but not edit) outside these locations**:
 - Configuration files: `package.json`, `angular.json`, `tsconfig.json`, etc.
-- When user explicitly asks to check/read specific files
-- When needed for understanding project setup
+- Backend code, design system, node_modules — for reference only
 
-**Exception for editing**: Only edit config files if user explicitly says "edit", "update", or "change"
-
-**Example**:
-- User: "Check if package abc is installed" → ✅ Read `package.json`
-- User: "Add package abc" → ✅ Edit `package.json`
-- Without explicit instruction → ❌ Don't edit config files
+**For config changes** (e.g., adding a package): use `npm install`, or tell the user what to paste manually.
 
 ---
 
