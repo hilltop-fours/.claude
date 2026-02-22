@@ -150,17 +150,9 @@ clearFilters() {
 
 ## INDEX FILES - MANDATORY
 
-WHEN creating new directories containing:
-- Components
-- Services
-- Repositories
-- Types
-- Models
+Every directory containing components, services, repositories, types, or models must have an `index.ts` that re-exports the main exports.
 
-THEN create `index.ts` file that re-exports main exports.
-
-WHEN modifying code in directories without `index.ts`:
-- Create the `index.ts` file
+A hook (`check-index-ts.sh`) detects missing `index.ts` after file writes and will auto-create it. Exports must still be filled in manually.
 
 PURPOSE: Enable imports like `import { MyComponent } from './components/my-component'` instead of `import { MyComponent } from './components/my-component/my-component.component'`
 
