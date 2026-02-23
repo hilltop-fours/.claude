@@ -51,3 +51,11 @@ Guidelines for organizing class members in Angular components and services.
 - This is a recommended convention for consistency
 - Apply when writing new code or refactoring existing code
 - Protected members are rare in Angular components
+
+## Scope of enforcement during validation
+
+**ONLY flag ordering violations for code added/modified in the current branch.**
+
+Do NOT flag pre-existing ordering violations in unchanged parts of a file. If a file has 200 lines of pre-existing code with a violation at line 50, and the branch only adds 10 lines at line 180, only check the ordering of those 10 new lines relative to their immediate neighbors.
+
+**Rule**: If the user did not write it in this branch, do not touch it unless they explicitly ask to clean up the whole file.
