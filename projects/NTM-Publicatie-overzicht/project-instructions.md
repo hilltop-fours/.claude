@@ -269,6 +269,13 @@ When working with specific endpoints:
 
 NTM uses specific patterns for recurring implementation scenarios. Each pattern is documented in its own focused file:
 
+**WHEN working with repositories** (`*.repository.ts` files):
+→ Read `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/patterns/repository-patterns.md`
+- Store structure and BaseRepository lifecycle methods
+- Observable field pattern (use `readonly field$`, not `get field$()` getter)
+- Standard action method shape (pending → HTTP → success/error → return observable)
+- Naming conventions, file location, refresh patterns, deduplication cache
+
 **WHEN working with accessible forms (WCAG 3.3.1 compliance)**:
 → Read `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/patterns/form-accessibility.md`
 - Error message formatting
