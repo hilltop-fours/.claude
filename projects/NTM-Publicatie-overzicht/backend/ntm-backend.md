@@ -8,12 +8,12 @@ Complete reference for the NTM Backend API. This service manages data publicatio
 
 | Item | Value | Date |
 |------|-------|------|
-| Last Verified Commit | 3a80cf7 | 2026-02-18 |
-| Commit Message | Feature #108832 Add identifiers to DCat | |
-| Swagger Version | latest | 2026-02-18 |
+| Last Verified Commit | 5eb1a95 | 2026-02-23 |
+| Commit Message | feat(organization): #110023 Add organization type | |
+| Swagger Version | latest | 2026-02-23 |
 
-**Status**: ✓ Up to date as of 2026-02-18
-**Next Review**: Check commits after 3a80cf7
+**Status**: ✓ Up to date as of 2026-02-23
+**Next Review**: Check commits after 5eb1a95
 
 ---
 
@@ -1248,6 +1248,7 @@ Complete reference for the NTM Backend API. This service manages data publicatio
 | `contact` | OrganizationContactDto | No | - | Contact person details |
 | `status` | String | No | ACTIVE, PENDING | Organization status |
 | `needsModeration` | Boolean | No | - | Requires publication approval |
+| `organizationType` | OrganizationType | No | See OrganizationType enum | Category of the organization (public/private sector) |
 
 ---
 
@@ -1411,6 +1412,24 @@ Complete reference for the NTM Backend API. This service manages data publicatio
 | ALTERNATIVE_FUEL | Alternative fuel infrastructure |
 | PARKING_HUBS | Parking facilities |
 | BIKES | Bicycle infrastructure |
+
+---
+
+### OrganizationType
+
+**Used in**: OrganizationDto
+
+| Value | Description |
+|-------|-------------|
+| RWS | Rijkswaterstaat (public sector) |
+| PROVINCE | Province (public sector) |
+| COUNTY | County/municipality (public sector) |
+| OTHER_PUBLIC | Other public sector organization |
+| DATA_OWNER | Private data owner |
+| SERVICE_PROVIDER | Private service provider |
+| OTHER_PRIVATE | Other private sector organization |
+
+Each value also carries an `isPublic` boolean: `RWS`, `PROVINCE`, `COUNTY`, `OTHER_PUBLIC` are public (`true`); `DATA_OWNER`, `SERVICE_PROVIDER`, `OTHER_PRIVATE` are private (`false`).
 
 ---
 
