@@ -375,6 +375,51 @@ const isInvalid = control.invalid && hasUserInteracted;
 
 Always ensure variable names are unique within their scope to avoid shadowing and confusion.
 
+## typescript:S2966 — Forbidden non-null assertion
+
+Do not use the non-null assertion operator (`!`) to bypass TypeScript's type safety. Fix the root cause instead.
+
+**Two correct approaches depending on the situation:**
+
+**1. Fix the type at the source** — if the data is always present (e.g. backend always returns it), make the field required in the interface. This eliminates the need for any assertion downstream.
+
+```typescript
+// ❌ WRONG — interface too permissive, assertion needed downstream
+interface IObligation {
+  id?: string;
+}
+items.map((item) => item.id!) // forced to assert
+
+// ✅ CORRECT — fix the interface, no assertion needed
+interface IObligation {
+  id: string;
+}
+items.map((item) => item.id) // clean
+```
+
+**2. Narrow with a local variable or `as` cast** — if the field is genuinely optional but you've already filtered/guarded it.
+
+```typescript
+// ❌ WRONG — calling signal twice, asserting on second call
+if (this.inputRef()?.nativeElement) {
+  this.inputRef()!.nativeElement.value = ''; // non-null assertion
+}
+
+// ✅ CORRECT — store result once, use optional chaining
+const inputRef = this.inputRef();
+if (inputRef?.nativeElement) {
+  inputRef.nativeElement.value = '';
+}
+
+// ❌ WRONG — type predicate verbose and hard to read
+.filter((x): x is typeof x & { networkType: DataNetworkEnum } => x.networkType != null)
+.map((x) => x.networkType)
+
+// ✅ CORRECT — filter null, cast in map (safe because filter already excluded null)
+.filter((x) => x.networkType != null)
+.map((x) => x.networkType as DataNetworkEnum)
+```
+
 ## Web:S6811 — Ensure aria-required is applied to the correct element
 
 The `aria-required` attribute is not supported on certain input types like radio buttons and checkboxes. Instead, place `aria-required="true"` on the parent `fieldset` or a wrapper element that groups the radio/checkbox controls together.
