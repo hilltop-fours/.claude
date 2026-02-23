@@ -269,6 +269,14 @@ When working with specific endpoints:
 
 NTM uses specific patterns for recurring implementation scenarios. Each pattern is documented in its own focused file:
 
+**WHEN working with services** (`*.service.ts` files):
+→ Read `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/patterns/service-patterns.md`
+- Service categories (API/HTTP, complex, auth, URL coordination, framework, utility)
+- No BaseService — plain injectable classes only
+- `baseUrl` field convention, `share()` usage, `Accept-Language` header pattern
+- Service vs repository boundary (services return observables, repositories subscribe)
+- File location rules and naming conventions
+
 **WHEN working with repositories** (`*.repository.ts` files):
 → Read `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/patterns/repository-patterns.md`
 - Store structure and BaseRepository lifecycle methods
