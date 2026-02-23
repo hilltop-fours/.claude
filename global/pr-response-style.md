@@ -12,6 +12,7 @@ Guidelines for how Claude should write PR review responses for this project.
 - No periods at end of sentences
 - No commas between clauses
 - No colons or semicolons
+- No em dashes (—) ever — AI overuses these, never use them
 - Write as a continuous flow without any terminal punctuation
 
 **Capitalization:**
