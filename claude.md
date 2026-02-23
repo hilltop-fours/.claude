@@ -148,9 +148,10 @@ All file references use this pattern: `$CLINERULES_ROOT/path/to/file.md`
 **WHEN user asks to validate code** (validate, review, check code quality):
 → Run the validation script: `bash $CLINERULES_ROOT/scripts/validate.sh`
 → Read the generated report: `$CLINERULES_ROOT/scripts/report.md`
-→ For each changed file, perform the judgment-based checks listed in Section 4 of the report
+→ Read ALL checklist files in `$CLINERULES_ROOT/validation/checklists/`: `typescript-component.md`, `typescript-interface.md`, `html-template.md`, `scss-style.md`
+→ Apply the full checklist (all numbered checks) to each changed file of the matching type
 → Read project-specific `project-instructions.md` for project patterns
-→ Present combined findings to user (automated report summary + judgment-based findings)
+→ Present combined findings to user (automated report summary + full checklist findings)
 → If Prettier issues found: ask user if they want to fix, then run `npx prettier --write [files]`
 → **Note**: Do not auto-fix. Present findings only unless explicitly asked.
 
