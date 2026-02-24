@@ -446,6 +446,18 @@ Example - CORRECT (aria-required on fieldset):
 
 Rationale: Radio buttons and checkboxes inherit their role implicitly, so ARIA attributes like `aria-required` should be placed on the grouping element (fieldset) rather than individual inputs.
 
+## Web:MouseEventWithoutKeyboardEquivalentCheck — Mouse events must have keyboard equivalents
+
+Sonar requires that elements with `(click)` also handle `(keydown)`, `(keyup)`, or `(keypress)` for keyboard accessibility.
+
+**This rule produces false positives on design system button components** (`<ntm-button>`, `<ndw-button>`, etc.) because Sonar cannot see through the component abstraction — it doesn't know the component renders a real `<button>` element internally, which already handles keyboard events natively.
+
+**Do NOT add keyboard event handlers to design system button components** — they already handle keyboard interaction correctly.
+
+If Sonar flags this on a native non-interactive element (e.g. `<div (click)="...">`) — that is a real issue. Fix it by using a proper `<button>` element instead.
+
+**Suppress on the Sonar server side** for false positives on design system components, rather than adding unnecessary event handlers.
+
 ## Web:S6853 — Form label must be associated with a control
 
 Labels must be associated with their input controls. Use either:
