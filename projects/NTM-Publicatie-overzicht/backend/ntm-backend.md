@@ -8,12 +8,12 @@ Complete reference for the NTM Backend API. This service manages data publicatio
 
 | Item | Value | Date |
 |------|-------|------|
-| Last Verified Commit | 5eb1a95 | 2026-02-23 |
-| Commit Message | feat(organization): #110023 Add organization type | |
-| Swagger Version | latest | 2026-02-23 |
+| Last Verified Commit | f7d8481 | 2026-02-24 |
+| Commit Message | feat(obligations): #108264 Adjust dto for FE | |
+| Swagger Version | latest | 2026-02-24 |
 
-**Status**: ✓ Up to date as of 2026-02-23
-**Next Review**: Check commits after 5eb1a95
+**Status**: ✓ Up to date as of 2026-02-24
+**Next Review**: Check commits after f7d8481
 
 ---
 
@@ -1202,7 +1202,7 @@ Complete reference for the NTM Backend API. This service manages data publicatio
 | `contact` | ContactDto | No | - | Contact information |
 | `contactType` | String | Yes | ORGANIZATION, ORGANIZATION_CONTACT, OWNER | Type of contact |
 | `owner` | UserDetailsDto | No | - | Publication owner |
-| `obligationIds` | Set[UUID] | No | - | IDs of associated obligations (defaults to empty set) |
+| `obligations` | List[ObligationDto] | No | - | Associated obligations with full details (defaults to empty list) |
 | `publicationStatus` | String | Yes | VISIBLE, HIDDEN | Visibility status |
 | `reviewStatus` | String | Yes | IMPORTED, PENDING_REVIEW, DEFINITIVE, HELD | Review status |
 | `favorite` | Boolean | No | - | Is favorite (user-specific) |
@@ -1292,7 +1292,7 @@ Complete reference for the NTM Backend API. This service manages data publicatio
 
 ### ObligationDto
 
-**Used in**: GET `/obligations` and `/obligations/{id}` endpoints
+**Used in**: GET `/obligations`, `/obligations/{id}`, and embedded in `DataPublicationDto.obligations`
 
 | Field | Type | Required | Constraints | Description |
 |-------|------|----------|-------------|-------------|
@@ -1638,5 +1638,6 @@ All endpoints require valid Keycloak NTM authentication with an OAuth2 bearer to
 - **Pagination**: Most list endpoints support pagination via Pageable parameter
 - **File Upload**: Logo and image uploads via multipart form data
 - **Statistics**: Admin endpoints provide usage analytics
+- **DCAT-AP ADMS Identifiers**: In the DCAT-AP XML output (`/v1`), `otherIdentifiers` are now serialized as proper `adms:Identifier` resources with `skos:notation` (spec-compliant). This affects only the RDF/XML catalog output, not the JSON REST API.
 
 ---
