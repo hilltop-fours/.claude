@@ -65,6 +65,11 @@ Rules that apply across all modes.
 - "styling" not "heading styling" when context makes it clear
 - Never end a sentence on an abstract noun like "semantiek" — keep it concrete
 
+**Use `maar` to chain contrast within one sentence**
+- Instead of splitting into two sentences or using formal connectors, use `maar` to flow into a contrast or nuance
+- Example: "heb X gedaan maar Y moest ik nog apart toevoegen"
+- Keeps the sentence continuous and natural — fits the no-punctuation style
+
 **Address all parts of a multi-part comment**
 - If a comment has two things, respond to both in one response
 - When referencing an agreement, be concrete: name the file or the rule, don't be vague
