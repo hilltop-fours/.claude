@@ -54,7 +54,7 @@ Quick overview of `.clinerules/` organization:
   - `update-backend-api-instructions.md` - How to update backend documentation
   - `backend-api-format.md` - Format reference for backend API documentation
   - `pr-review-workflow.md` - PR review comment handling workflow and response style
-  - `pr-response-style.md` - Detailed style guide for PR review responses
+  - `daniel-voice.md` - Daniel's personal voice guide for all written communication
   - `new-story-instructions.md` - Standard workflow when starting a new story/task/bug
 
 - `validation/` - Detailed validation and style enforcement rules
@@ -154,6 +154,15 @@ All file references use this pattern: `$CLINERULES_ROOT/path/to/file.md`
 → Present combined findings to user (automated report summary + full checklist findings)
 → If Prettier issues found: ask user if they want to fix, then run `npx prettier --write [files]`
 → **Note**: Do not auto-fix. Present findings only unless explicitly asked.
+
+**WHEN responding to a PR comment on your own PR** (reviewer gave feedback, asked a question, or flagged something):
+→ Read `$CLINERULES_ROOT/global/pr-review-workflow.md` + `$CLINERULES_ROOT/global/daniel-voice.md`
+
+**WHEN leaving a comment on someone else's PR** (reviewing their code, flagging an issue, asking a question):
+→ Read `$CLINERULES_ROOT/global/daniel-voice.md`
+
+**WHEN writing code comments** (inline or block comments inside source files):
+→ Read `$CLINERULES_ROOT/global/daniel-voice.md`
 
 **WHEN user asks to "load" / "set up" / "add" / "remove" the dev panel** (or "dev auth panel", "dev panel", "put in the dev panel"):
 → Read `$CLINERULES_ROOT/projects/{PROJECT}/patterns/dev-auth-panel-instructions.md` and follow it step by step
@@ -522,7 +531,9 @@ File editing is enforced by a system hook (`~/.claude/hooks/check-edit-path.sh`)
    - Git operation → Read `$CLINERULES_ROOT/global/git-instructions.md`
    - Code editing → Read `$CLINERULES_ROOT/global/angular-instructions.md` + `$CLINERULES_ROOT/global/code-simplicity.md` + `$CLINERULES_ROOT/validation/angular-*.md`
    - Code validation → Run `bash $CLINERULES_ROOT/scripts/validate.sh`, read report, do judgment checks
-   - PR review comment → Read `$CLINERULES_ROOT/global/pr-review-workflow.md` + `$CLINERULES_ROOT/global/pr-response-style.md`
+   - PR review comment → Read `$CLINERULES_ROOT/global/pr-review-workflow.md` + `$CLINERULES_ROOT/global/daniel-voice.md`
+   - Leaving a comment on someone else's PR → Read `$CLINERULES_ROOT/global/daniel-voice.md`
+   - Writing code comments → Read `$CLINERULES_ROOT/global/daniel-voice.md`
    - Backend API work → Read appropriate backend `.md` file (path in project-instructions.md)
    - Update backend docs → Read `$CLINERULES_ROOT/global/update-backend-api-instructions.md`
 5. **Apply all rules** from the files you read to every action
