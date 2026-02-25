@@ -70,12 +70,17 @@ The interceptor self-disables when `DEV_AUTH_MOCK_ENABLED = false` (localStorage
 
 ---
 
-## Step 3 — Override hasRoles() in auth.service.ts
+## Step 3 — Override auth.service.ts
 
-Add the role mock to `traffic-sign-frontend/src/app/core/auth/auth.service.ts`:
+Two overrides are needed in `traffic-sign-frontend/src/app/core/auth/auth.service.ts`.
+
+### 3a — Add import and override hasRoles()
 
 ```typescript
-// Add import at the top (line 17, after AuthRoleEnum import):
+// Add to existing Angular core import (add 'signal' to the destructure):
+import { DestroyRef, inject, Injectable, signal } from '@angular/core';
+
+// Add import after AuthRoleEnum import:
 import { DEV_ACTIVE_PERSONA, DEV_AUTH_MOCK_ENABLED } from '@core/dev/dev-auth-mock.config';
 
 // Replace hasRoles():
@@ -87,6 +92,31 @@ hasRoles(roles: AuthRoleEnum[], oneOfRole = true): boolean {
   return this.#ndwAuthService.hasRoles(roles, oneOfRole ? 'any' : 'all');
 }
 ```
+
+### 3b — Override userOwnershipPermissions signal
+
+**WHY this is needed**: `userOwnershipPermissions` uses `toSignal()` on a cold observable that calls `getUser()` at class field initialization time — before login completes. It receives `undefined`, returns `organizationRoadAuthorityIds: []`, and that value is frozen forever. The interceptor mock for the org API fires after login, too late to update this signal.
+
+**Fix**: Replace the `toSignal` declaration with a conditional that returns a plain `signal()` pre-populated from the persona config when the mock is enabled:
+
+```typescript
+// Replace the userOwnershipPermissions field:
+userOwnershipPermissions = DEV_AUTH_MOCK_ENABLED
+  ? signal<UserOwnershipPermissions>({
+      isAdmin: DEV_ACTIVE_PERSONA.roles.includes(AuthRoleEnum.Admin),
+      hasGlobalMutationPermissions: DEV_ACTIVE_PERSONA.organization.hasGlobalMutationPermissions,
+      organizationRoadAuthorityIds: DEV_ACTIVE_PERSONA.organization.roadAuthorities.map((ra) => ra.id),
+    })
+  : toSignal(this.#getUserOwnershipPermissions(), {
+      initialValue: {
+        isAdmin: false,
+        hasGlobalMutationPermissions: false,
+        organizationRoadAuthorityIds: [],
+      } as UserOwnershipPermissions,
+    });
+```
+
+This is evaluated at bootstrap from `localStorage` — same timing as the persona config — so the IDs are always correct.
 
 ---
 
@@ -129,8 +159,21 @@ Revert these files:
 - `traffic-sign-frontend/src/main.ts` — remove the `DevAuthMockInterceptor` import and provider line
 - `traffic-sign-frontend/src/app/app.component.ts` — remove `DevAuthPanelComponent` import and from `imports` array
 - `traffic-sign-frontend/src/app/app.component.html` — remove `<tsf-dev-auth-panel />`
-- `traffic-sign-frontend/src/app/core/auth/auth.service.ts` — remove the `DEV_ACTIVE_PERSONA`/`DEV_AUTH_MOCK_ENABLED` import and restore original `hasRoles()`:
+- `traffic-sign-frontend/src/app/core/auth/auth.service.ts` — remove the `DEV_ACTIVE_PERSONA`/`DEV_AUTH_MOCK_ENABLED` import, remove `signal` from the Angular core import, restore original `hasRoles()` and `userOwnershipPermissions`:
   ```typescript
+  // Restore Angular core import (remove signal):
+  import { DestroyRef, inject, Injectable } from '@angular/core';
+
+  // Restore userOwnershipPermissions:
+  userOwnershipPermissions = toSignal(this.#getUserOwnershipPermissions(), {
+    initialValue: {
+      isAdmin: false,
+      hasGlobalMutationPermissions: false,
+      organizationRoadAuthorityIds: [],
+    } as UserOwnershipPermissions,
+  });
+
+  // Restore hasRoles():
   hasRoles(roles: AuthRoleEnum[], oneOfRole = true): boolean {
     return this.#ndwAuthService.hasRoles(roles, oneOfRole ? 'any' : 'all');
   }
@@ -154,9 +197,14 @@ localStorage.removeItem('dev-mock-persona');
 
 Road authority is stored in the Elf `UserRepository` store (`user-ui` localStorage key). `updateActiveRoadAuthority()` updates the store synchronously and all signals/observables react immediately. No HTTP intercept needed — the org response already contains the full list of road authorities.
 
-### The `hasRoles()` override
+### The `hasRoles()` and `userOwnershipPermissions` overrides
 
-`auth.service.ts` has a temporary override that checks `DEV_AUTH_MOCK_ENABLED` before delegating to the real JWT check. When the mock is enabled, it uses the active persona's roles instead of the Keycloak token. This is the only file outside `core/dev/` that needs manual changes — it cannot live in the `dev/` folder because it's a core service.
+`auth.service.ts` has two temporary overrides. Both check `DEV_AUTH_MOCK_ENABLED` at bootstrap:
+
+1. **`hasRoles()`** — uses the active persona's roles instead of the Keycloak JWT token.
+2. **`userOwnershipPermissions`** — replaces the `toSignal()` call entirely with a plain `signal()` seeded from the persona config. This is necessary because `toSignal` subscribes at class field initialization time (before login), gets `organizationRoadAuthorityIds: []`, and freezes it. The org API interceptor fires too late to update that value. The plain `signal()` approach bypasses this timing issue completely.
+
+These are the only changes outside `core/dev/` — they cannot live there because they're core service fields.
 
 ### What the org data controls (interceptor mock):
 - Which road authorities the user belongs to → `roadAuthorities: [{type, code}]`
@@ -173,8 +221,30 @@ Road authority is stored in the Elf `UserRepository` store (`user-ui` localStora
 | `W`  | Waterschap | water authority |
 | `T`  | Other | tunnels, etc. |
 
-### Municipality codes:
-Find codes via road section details in the app — check the "wegbeheerder" field or the NWB data in the network tab for `roadOperatorCode` and `roadOperatorType`.
+### Municipality codes and UUIDs — ALWAYS use real values:
+
+**CRITICAL**: Road authority `id` must be the real UUID from the backend. The `organizationRoadAuthorityIds` filter in components compares `ra.id` — fake IDs silently break filtering even when display names look correct.
+
+**Fetch real UUIDs** from the running local dev server:
+```bash
+curl -s "http://localhost:4200/api/road-authorities" | python3 -c "
+import sys, json
+data = json.load(sys.stdin)
+for x in data:
+    if x.get('type') == 'G':  # change type filter as needed
+        print(x['code'], x['id'], x['name'], x.get('rwsId',''))
+"
+```
+Or filter by specific codes:
+```bash
+curl -s "http://localhost:4200/api/road-authorities" | python3 -c "
+import sys, json
+codes = ['796','344']  # add the codes you need
+for x in json.load(sys.stdin):
+    if x.get('code') in codes:
+        print(json.dumps(x, indent=2))
+"
+```
 
 ---
 
