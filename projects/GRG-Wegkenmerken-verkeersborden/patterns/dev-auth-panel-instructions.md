@@ -39,10 +39,11 @@ The interceptor replaces the org API response with the active persona's org data
 
 ## Step 1 — Copy the dev folder
 
-Copy the entire `patterns/dev/` folder from `.clinerules` into the frontend:
+Use **Bash `cp -r`** to copy the entire folder in one command (do NOT use Write tool — it wastes tokens):
 
-**Source**: `.clinerules/projects/GRG-Wegkenmerken-verkeersborden/patterns/dev/`
-**Destination**: `traffic-sign-frontend/src/app/core/dev/`
+```bash
+cp -r /Users/daniel/Developer/GRG-Wegkenmerken-verkeersborden/.clinerules/projects/GRG-Wegkenmerken-verkeersborden/patterns/dev /Users/daniel/Developer/GRG-Wegkenmerken-verkeersborden/traffic-sign-frontend/src/app/core/dev
+```
 
 That's it — all 5 files land in place in one operation:
 - `dev-auth-mock.config.ts`
