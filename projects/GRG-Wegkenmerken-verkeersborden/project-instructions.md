@@ -115,6 +115,13 @@ When to read:
 - When unsure whether code belongs in a repository or a service
 - When working with Elf stores or state management
 
+**Dev Auth Panel**:
+→ Read `$CLINERULES_ROOT/projects/GRG-Wegkenmerken-verkeersborden/patterns/dev-auth-panel-instructions.md`
+
+When to read:
+- When user asks to load, set up, add, or remove the dev panel
+- When testing org/persona context locally during development
+
 ---
 
 ## BACKEND API MAPPING
