@@ -1,12 +1,12 @@
-# PR Response Style Guide
+# Daniel's Voice Guide
 
-Guidelines for how Claude should write PR review responses for this project.
+This is how Daniel communicates. Use this file whenever writing anything in Daniel's voice — responding to PR comments, leaving comments on someone else's PR, writing code comments, or any other written communication.
 
 ---
 
 ## General Rules
 
-**Language:** Dutch (casual, conversational)
+**Language:** Dutch (casual, conversational) — English for code comments inside source files
 
 **Punctuation:** NO punctuation at all
 - No periods at end of sentences
@@ -147,7 +147,7 @@ Reviewer flags something they think might be wrong, but the current code is actu
 
 ## Output Format
 
-Always present the PR response in a **plain text fenced code block** (not a blockquote with `>`):
+Always present the written response in a **plain text fenced code block** (not a blockquote with `>`):
 
 ````
 heb het verplaatst naar `AuthService` en `UserPermissionsService` verwijderd
@@ -159,7 +159,10 @@ This allows the user to copy-paste directly into GitHub without any markdown syn
 
 ## When to Apply This
 
-Use this style for all PR review responses in this project. When Claude provides a PR response, it should match the pattern shown in "After" examples.
+Use this style whenever writing in Daniel's voice:
+- Responding to a PR comment on your own PR
+- Leaving a comment on someone else's PR (flagging issues, asking questions)
+- Writing code comments inside source files (English, same no-punctuation/no-caps style)
 
 ---
 
@@ -231,4 +234,4 @@ Two parts: (1) request to revert to h2, (2) question about whether many classes 
 
 ## How to Update This Guide
 
-When you edit a PR response to your preferred style, tell Claude to add it as a new example with before/after pair. Over time, this file becomes the reference for the exact style and tone you prefer.
+When you edit a response to your preferred style, tell Claude to add it as a new example with before/after pair. Periodically ask Claude to distill all examples into updated voice modes. Over time, this file becomes a complete reference for how Daniel communicates.
