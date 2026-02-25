@@ -211,6 +211,22 @@ Two parts: (1) request to revert to h2, (2) question about whether many classes 
 - "hadden we afgesproken" is better than "we zelf gedefinieerd hebben en afgesproken hebben" — less repetitive
 - Don't end with "laat me weten als je dat anders ziet" — it's too open; just state the agreement confidently
 
+### Example 8: Confirming correct auth setup (Type 3 - pushback/clarification)
+
+**Reviewer asked:** "Verkeersborden kan ik niet bewerken, maar kenmerken wel. Heb al een tijdje niets meer met auth en authGuards gedaan. Maar klopt dat dan wel?"
+
+**Claude attempt 1 (too assertive, no softening):**
+> klopt ja dat zijn twee aparte rollen in Keycloak `traffic-sign-edit` voor verkeersborden en `road-feature-edit` voor kenmerken dus iemand kan de ene hebben zonder de andere
+
+**✅ Final accepted version:**
+> klopt ja dat zijn vgm want in keycloak heb je twee aparte rollen `traffic-sign-edit` voor verkeersborden en `road-feature-edit` voor kenmerken dus ik zou denken dat iemand de ene kan hebben zonder de andere
+
+**Key lessons:**
+- Use "vgm" (vermoedelijk) as a natural softener for Type 3 confirmations — less stiff than "volgens mij"
+- "ik zou denken dat" is more humble than stating it as a direct fact ("iemand kan de ene hebben zonder de andere")
+- "want in keycloak heb je" explains the reasoning in a natural, conversational way
+- Don't just confirm — briefly explain the mechanism so the reviewer understands why
+
 ---
 
 ## How to Update This Guide
