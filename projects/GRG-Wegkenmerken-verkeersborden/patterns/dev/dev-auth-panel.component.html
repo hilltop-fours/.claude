@@ -1,0 +1,75 @@
+@if (isVisible) {
+  <div class="dev-panel" [class.dev-panel--expanded]="isExpanded()">
+    <button class="dev-panel__pill" (click)="toggle()" type="button">
+      <span class="dev-panel__pill-label">DEV</span>
+      <span class="dev-panel__pill-persona">{{ pillLabel() }}</span>
+    </button>
+
+    @if (isExpanded()) {
+      <div class="dev-panel__body">
+
+        <section class="dev-panel__section">
+          <h4 class="dev-panel__section-title">Status</h4>
+          <dl class="dev-panel__info">
+            <dt>Mock</dt>
+            <dd>{{ mockEnabled() ? 'Ingeschakeld' : 'Uitgeschakeld' }}</dd>
+            <dt>Organisatie</dt>
+            <dd>{{ organization()?.name ?? '—' }}</dd>
+            <dt>Wegbeheerder</dt>
+            <dd>{{ activeRoadAuthority()?.name ?? '—' }}</dd>
+          </dl>
+        </section>
+
+        <section class="dev-panel__section">
+          <h4 class="dev-panel__section-title">Persona</h4>
+          <div class="dev-panel__btn-list">
+            @for (key of personaKeys; track key) {
+              <button
+                class="dev-panel__item-btn"
+                [class.dev-panel__item-btn--active]="key === activePersonaKey()"
+                (click)="selectPersona(key)"
+                type="button"
+              >
+                {{ personas[key].label }}
+              </button>
+            }
+          </div>
+        </section>
+
+        @if (roadAuthorities().length > 1) {
+          <section class="dev-panel__section">
+            <h4 class="dev-panel__section-title">Wegbeheerder</h4>
+            <div class="dev-panel__btn-list">
+              @for (ra of roadAuthorities(); track ra.id) {
+                <button
+                  class="dev-panel__item-btn"
+                  [class.dev-panel__item-btn--active]="ra.id === activeRoadAuthority()?.id"
+                  (click)="selectRoadAuthority(ra)"
+                  type="button"
+                >
+                  {{ ra.name }}
+                </button>
+              }
+            </div>
+          </section>
+        }
+
+        <section class="dev-panel__section">
+          <h4 class="dev-panel__section-title">Rollen</h4>
+          <div class="dev-panel__roles">
+            @for (role of personas[activePersonaKey()].roles; track role) {
+              <span class="dev-panel__role-badge">{{ role }}</span>
+            }
+          </div>
+        </section>
+
+        <section class="dev-panel__section">
+          <button class="dev-panel__toggle-btn" (click)="toggleMock()" type="button">
+            Mock {{ mockEnabled() ? 'uitschakelen' : 'inschakelen' }}
+          </button>
+        </section>
+
+      </div>
+    }
+  </div>
+}
