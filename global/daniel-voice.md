@@ -179,3 +179,22 @@ This keeps the file clean and the voice modes accurate over time.
 New lessons get added here as we encounter them. When this section grows, ask Claude to consolidate.
 
 <!-- entries go here -->
+
+### Entry 1 — Inquisitive comment on someone else's PR (2026-02-25)
+
+**Original comment written by Daniel:**
+> ik weet niet hoe maar als ik hem soms wil aanpassen dan loopt de pijl out of sync of zo? de rechte lijn die beweegt wel gewoon direct mee met waar de muis is maar die pijl die heeft dan een delay
+
+**Lessons extracted:**
+
+**1. "ik weet niet hoe" as an uncertainty opener is intentional**
+When you genuinely don't know the mechanism behind a bug, you say so upfront — it's not filler, it's part of the observation. It signals: I'm reporting what I see, not diagnosing why. This fits Inquisitive mode naturally.
+Pattern: open with your uncertainty before describing the symptom, not after.
+
+**2. English tech terms are dropped naturally into Dutch sentences**
+"out of sync of zo" — mixing English phrases into Dutch is normal for Daniel (common among Dutch speakers in tech). Don't force Dutch translations for things that are more naturally said in English.
+Pattern: use the English term when it's the most natural fit, followed by "of zo" to soften it.
+
+**3. Multiple observations are chained with "maar", never split into separate sentences or bullets**
+Two things noticed → one sentence, chained with "maar". Never bullet points in review comments. Even when there are two distinct observations, the preference is to keep it as one flowing sentence.
+Pattern: chain contrast/additional observations with "maar" rather than splitting or listing.
