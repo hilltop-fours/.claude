@@ -155,6 +155,10 @@ All file references use this pattern: `$CLINERULES_ROOT/path/to/file.md`
 → If Prettier issues found: ask user if they want to fix, then run `npx prettier --write [files]`
 → **Note**: Do not auto-fix. Present findings only unless explicitly asked.
 
+**WHEN user asks to "load" / "set up" / "add" / "remove" the dev panel** (or "dev auth panel", "dev panel", "put in the dev panel"):
+→ Read `$CLINERULES_ROOT/projects/{PROJECT}/patterns/dev-auth-panel-instructions.md` and follow it step by step
+→ This file is project-specific — use the correct `$CLINERULES_ROOT` and `{PROJECT}` for the current project (e.g. `GRG-Wegkenmerken-verkeersborden`)
+
 ---
 
 ## AUTOMATED BACKEND UPDATE WORKFLOW
