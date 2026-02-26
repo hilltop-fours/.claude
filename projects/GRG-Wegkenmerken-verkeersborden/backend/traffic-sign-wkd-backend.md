@@ -8,12 +8,12 @@ Complete reference for the traffic-sign-wkd-backend API. This service manages ve
 
 | Item | Value | Date |
 |------|-------|------|
-| Last Verified Commit | c66bbf5 | 2026-02-11 |
-| Commit Message | chore(deps): update all non-major dependencies (no API changes) | |
-| Swagger Version | latest | 2026-02-11 |
+| Last Verified Commit | 710a0f7 | 2026-02-26 |
+| Commit Message | feat(traffic-type): #110017 Flat geojson feature properties | |
+| Swagger Version | latest | 2026-02-26 |
 
-**Status**: ✓ Up to date as of 2026-02-11
-**Next Review**: Check commits after c66bbf5
+**Status**: ✓ Up to date as of 2026-02-26
+**Next Review**: Check commits after 710a0f7
 
 ---
 
@@ -201,6 +201,43 @@ Complete reference for the traffic-sign-wkd-backend API. This service manages ve
 **Request Body**: TrafficTypeMutationDto
 
 **Response** (HTTP 200): Feature (GeoJSON)
+
+**GeoJSON Feature Properties** (flat format — one boolean property per traffic type × direction):
+```json
+{
+  "type": "Feature",
+  "geometry": { "type": "LineString", "coordinates": [...] },
+  "properties": {
+    "roadSectionId": 12345,
+    "roadAuthorityType": "G",
+    "roadAuthorityCode": "344",
+    "status": "NEW",
+    "organizationId": "org-uuid",
+    "pedestrianForward": true,
+    "pedestrianBackward": true,
+    "bicycleForward": true,
+    "bicycleBackward": true,
+    "mofaForward": false,
+    "mofaBackward": false,
+    "mopedForward": false,
+    "mopedBackward": false,
+    "motorcycleForward": true,
+    "motorcycleBackward": true,
+    "carForward": true,
+    "carBackward": true,
+    "trailerForward": true,
+    "trailerBackward": false,
+    "truckForward": true,
+    "truckBackward": false,
+    "busForward": true,
+    "busBackward": false,
+    "agriculturalvehicleForward": false,
+    "agriculturalvehicleBackward": false
+  }
+}
+```
+
+**Note**: Properties use the `TrafficType.wkdPrefix` + `Forward`/`Backward` pattern. WKD prefixes differ from enum names: `MOPED_25` → `mofa`, `MOPED_45` → `moped`, `AGRICULTURAL_VEHICLE` → `agriculturalvehicle`.
 
 ---
 
@@ -645,20 +682,20 @@ Similar endpoints exist for:
 
 ### TrafficType
 
-**Used in**: TrafficDirectionTypeDto
+**Used in**: TrafficDirectionTypeDto, GeoJSON feature properties (as `{wkdPrefix}Forward`/`{wkdPrefix}Backward`)
 
-| Value | Description |
-|-------|-------------|
-| PEDESTRIAN | Pedestrians/foot traffic |
-| BICYCLE | Bicycles/cycles |
-| MOPED_25 | Mopeds max 25 km/h |
-| MOPED_45 | Mopeds max 45 km/h |
-| MOTORCYCLE | Motorcycles |
-| CAR | Passenger cars |
-| TRAILER | Vehicles with trailers |
-| TRUCK | Heavy goods vehicles |
-| BUS | Buses/public transport |
-| AGRICULTURAL_VEHICLE | Agricultural machinery |
+| Value | WKD Prefix | Description |
+|-------|------------|-------------|
+| PEDESTRIAN | `pedestrian` | Pedestrians/foot traffic |
+| BICYCLE | `bicycle` | Bicycles/cycles |
+| MOPED_25 | `mofa` | Mopeds max 25 km/h |
+| MOPED_45 | `moped` | Mopeds max 45 km/h |
+| MOTORCYCLE | `motorcycle` | Motorcycles |
+| CAR | `car` | Passenger cars |
+| TRAILER | `trailer` | Vehicles with trailers |
+| TRUCK | `truck` | Heavy goods vehicles |
+| BUS | `bus` | Buses/public transport |
+| AGRICULTURAL_VEHICLE | `agriculturalvehicle` | Agricultural machinery |
 
 ---
 
