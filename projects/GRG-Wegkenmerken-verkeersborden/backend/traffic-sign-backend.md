@@ -8,12 +8,12 @@ Complete reference for the traffic-sign-backend API. This is the core backend se
 
 | Item | Value | Date |
 |------|-------|------|
-| Last Verified Commit | 898195c4 | 2026-02-19 |
-| Commit Message | feat(traffic-sign): #108756 Use owner in validation of permissions | |
-| Swagger Version | latest | 2026-02-19 |
+| Last Verified Commit | d2cbc9df | 2026-02-26 |
+| Commit Message | feat(traffic-sign): #63318 Support search on external system+id | |
+| Swagger Version | latest | 2026-02-26 |
 
-**Status**: ✓ Up to date as of 2026-02-19
-**Next Review**: Check commits after 898195c4
+**Status**: ✓ Up to date as of 2026-02-26
+**Next Review**: Check commits after d2cbc9df
 
 ---
 
@@ -50,6 +50,17 @@ Complete reference for the traffic-sign-backend API. This is the core backend se
 - `criteria` (TrafficSignCriteria, required) - Filter criteria
 - `pageable` (Pageable, required) - Pagination (page, size, sort)
 
+**TrafficSignCriteria fields**:
+- `rvvCode` (array of strings, optional) - Filter by RVV code(s)
+- `blackCode` (array of strings, optional) - Filter by black code(s)
+- `status` (array of TrafficSignStatus, optional) - Filter by status
+- `roadSectionId` (array of integers, optional) - Filter by road section ID(s)
+- `boundingBox` (array of doubles, optional) - Geographic bounding box filter
+- `validated` (boolean, optional) - Filter by validation state
+- `trafficOrderIds` (array of strings, optional) - Filter by traffic order URL(s)
+- `externalSystem` (string, optional) - Filter by external system name (e.g., "CAMERA_SYSTEM")
+- `externalId` (string, optional) - Filter by external ID within that system
+
 **Response** (HTTP 200): Page<TrafficSignResponseDto>
 
 **Example Response**:
@@ -81,6 +92,7 @@ Complete reference for the traffic-sign-backend API. This is the core backend se
 **Notes**:
 - Returns paginated results
 - Filtering by RVV code, status, validated flag, etc.
+- Use `externalSystem` + `externalId` together to look up a sign by its ID in an external system
 - Public read endpoint
 
 ---
