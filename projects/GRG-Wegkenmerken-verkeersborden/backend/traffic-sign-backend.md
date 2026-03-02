@@ -8,12 +8,12 @@ Complete reference for the traffic-sign-backend API. This is the core backend se
 
 | Item | Value | Date |
 |------|-------|------|
-| Last Verified Commit | d2cbc9df | 2026-02-26 |
-| Commit Message | feat(traffic-sign): #63318 Support search on external system+id | |
-| Swagger Version | latest | 2026-02-26 |
+| Last Verified Commit | 9a0c3022 | 2026-03-02 |
+| Commit Message | feat(api-v5): #105975 Add conditions and motives for C-series | |
+| Swagger Version | latest | 2026-03-02 |
 
-**Status**: ✓ Up to date as of 2026-02-26
-**Next Review**: Check commits after d2cbc9df
+**Status**: ✓ Up to date as of 2026-03-02
+**Next Review**: Check commits after 9a0c3022
 
 ---
 
@@ -956,6 +956,50 @@ Complete reference for the traffic-sign-backend API. This is the core backend se
 
 ---
 
+### TrafficSignPropertiesDtoV5
+
+**Used in**: GeoJSON v5 static road data response — feature `.properties` object
+(Returned by: `GET /rest/static-road-data/traffic-signs/v5/current-state`, `GET /rest/static-road-data/traffic-signs/v5/main-signs`, GeoJSON collections)
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `ndwId` | UUID | Yes | NDW traffic sign identifier |
+| `rvvCode` | String | Yes | RVV code (e.g., `"C7"`, `"C22"`) |
+| `blackCode` | String | No | Internal black code value |
+| `textSigns` | Array | No | Text sign sub-codes on sign |
+| `placement` | String | No | Physical placement type |
+| `side` | String | No | Road side |
+| `roadSectionId` | Long | No | Road section NWB identifier |
+| `nwbVersion` | LocalDate | No | NWB version used for assignment |
+| `privateProperty` | Boolean | Yes | Whether sign is on private property |
+| `conditions` | ConditionsDtoV5 | No | **New in 9a0c3022** — derived legal meaning (restrictions/exemptions) for C-series signs |
+| `registeredOn` | LocalDate | No | Date sign was registered |
+| `lastModifiedOn` | LocalDate | No | Date sign was last modified |
+| `operatorCode` | String | No | County code of the operator |
+| `operatorName` | String | No | County name of the operator |
+
+**Notes**:
+- `conditions` is only populated for C-series RVV codes (C1, C6–C22). Derived server-side from the RVV code + OB text sign sub-codes.
+- `conditions` is omitted from JSON when null.
+
+**Example** (with conditions):
+```json
+{
+  "ndwId": "550e8400-e29b-41d4-a716-446655440000",
+  "rvvCode": "C7",
+  "privateProperty": false,
+  "conditions": {
+    "restrictions": {
+      "vehicleType": ["truck"],
+      "category": []
+    },
+    "exemptions": []
+  }
+}
+```
+
+---
+
 ### RoadAuthorityDto
 
 **Used in**: TrafficSignResponseDto (as `owner` field), GET `/road-authorities`, GET `/road-authorities/search`
@@ -1125,6 +1169,69 @@ Complete reference for the traffic-sign-backend API. This is the core backend se
 
 ---
 
+### ConditionsDtoV5
+
+**Used in**: `TrafficSignPropertiesDtoV5.conditions` (GeoJSON v5 response — static road data endpoints)
+
+Represents the derived legal meaning of a C-series traffic sign, including who is restricted and any exemptions. The conditions are computed server-side from the sign's RVV code and its OB text sign sub-codes.
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `restrictions` | ConditionPropertiesDtoV5 | No | The main restriction that applies (what is prohibited / limited) |
+| `exemptions` | Array<ConditionPropertiesDtoV5> | No | One or more exemption groups (who is allowed despite the restriction) |
+
+**Notes**:
+- Only populated for C-series RVV codes (C1, C6–C22). Returns `null` for non-C-series signs.
+- Field is omitted from the JSON response when `null` (`@JsonInclude(NON_NULL)`)
+
+**Example**:
+```json
+{
+  "restrictions": {
+    "vehicleType": ["truck"],
+    "category": []
+  },
+  "exemptions": [
+    {
+      "vehicleType": ["agriculturalVehicle"],
+      "category": []
+    }
+  ]
+}
+```
+
+---
+
+### ConditionPropertiesDtoV5
+
+**Used in**: `ConditionsDtoV5.restrictions`, `ConditionsDtoV5.exemptions`
+
+Describes one condition group — either the main restriction or a single exemption. All fields are optional and omitted from JSON when null.
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `vehicleType` | Array<VehicleType> | No | Vehicle types this condition applies to |
+| `category` | Array<TrafficType> | No | Traffic categories this condition applies to |
+| `timeValidity` | String | No | Opening hours string (e.g., `"Mo-Fr 07:00-19:00"`) when condition applies only during specific times |
+| `emissionClass` | Integer | No | Minimum emission class required for exemption (Euro norm, e.g., 6) |
+| `fuelType` | String | No | Required fuel type for exemption |
+| `axleWeight` | Double | No | Axle weight limit in tonnes (for C20) |
+| `height` | Double | No | Height limit in metres (for C19) |
+| `length` | Double | No | Length limit in metres (for C17) |
+| `weight` | Double | No | Total weight limit in tonnes (for C21) |
+| `width` | Double | No | Width limit in metres (for C18) |
+
+**Example**:
+```json
+{
+  "vehicleType": ["car", "deliveryVan"],
+  "category": [],
+  "emissionClass": 5
+}
+```
+
+---
+
 ## ENUMS
 
 ### TrafficSignStatus
@@ -1231,6 +1338,53 @@ Text sign object codes exposed via the GraphQL API. Single-digit OB codes are ze
 | OB713l, OB713r | Object code 713, left / right |
 | OB719, OB720 | Object codes 719, 720 |
 | OTHER | Any other object code |
+
+---
+
+### VehicleType
+
+**Used in**: `ConditionPropertiesDtoV5.vehicleType`
+
+JSON serialization uses camelCase string values (via `@JsonValue`).
+
+| Value (Java) | JSON value | Description |
+|---|---|---|
+| BICYCLE | `"bicycle"` | Bicycle |
+| CAR | `"car"` | Passenger car |
+| MICROCAR | `"microcar"` | Microcar / brommobiel |
+| TRUCK | `"truck"` | Truck / vrachtwagen |
+| BUS | `"bus"` | Bus |
+| PEDESTRIAN | `"pedestrian"` | Pedestrian |
+| MOPED | `"moped"` | Moped / bromfiets |
+| MOTORCYCLE | `"motorcycle"` | Motorcycle |
+| CARAVAN | `"caravan"` | Caravan |
+| TRAILER | `"trailer"` | Trailer / aanhangwagen |
+| DELIVERY_VAN | `"deliveryVan"` | Delivery van / bestelwagen |
+| RIDER | `"rider"` | Rider (e.g., horse) |
+| TRAM | `"tram"` | Tram |
+| TAXI | `"taxi"` | Taxi |
+| AGRICULTURAL_VEHICLE | `"agriculturalVehicle"` | Agricultural vehicle / landbouwvoertuig |
+
+**Predefined sets** (used internally in conditions mapping):
+- `MOTORIZED_4_WHEELS`: car, truck, bus, caravan, trailer, deliveryVan, taxi, agriculturalVehicle
+- `ALL_MOTORIZED`: above + motorcycle, moped, microcar
+
+---
+
+### TrafficType
+
+**Used in**: `ConditionPropertiesDtoV5.category`
+
+JSON serialization uses camelCase string values (via `@JsonValue`).
+
+| Value (Java) | JSON value | Description |
+|---|---|---|
+| CHARGING | `"charging"` | Charging vehicles |
+| LOADING | `"loading"` | Loading/unloading traffic |
+| PERMIT | `"permit"` | Permit holders |
+| LOCAL | `"localTraffic"` | Local (destination) traffic |
+| DISABLED_TRANSPORT | `"disabledTransport"` | Disabled transport (OB16/OB66) |
+| DANGEROUS_SUPPLIES | `"dangerousSupplies"` | Dangerous goods transport (C22) |
 
 ---
 
