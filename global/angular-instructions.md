@@ -1,5 +1,28 @@
 # ANGULAR CODING RULES
 
+## CODEBASE CONSISTENCY - HIGHEST PRIORITY RULE
+
+**Before implementing any reactive pattern (signals, observables, async pipe, toSignal, toResponse, etc.), search the existing codebase to find how the same pattern is already handled.**
+
+This is the single most important rule in this file. All other rules are defaults — the codebase is the override.
+
+**Mandatory check before writing any data access pattern:**
+1. Find 2-3 existing components that consume data from a repository
+2. Identify the exact pattern they use (async pipe + toResponse? signal from repo? computed()?)
+3. Use that exact pattern — not a variation, not an improvement, not what the rules below suggest in the abstract
+
+**What "consistent" means in practice:**
+- If existing components use `observable$ | async` in the template → new components must too
+- If existing repos expose `HttpState<T>` observables without signals → new repos must too
+- If existing components pipe through `toResponse()` themselves → new components must too
+
+**The rule below about `toSignal()` is a general Angular guideline. The actual project pattern takes precedence.** Check the project before applying the rule.
+
+**Real example of what happens when this is skipped:**
+A `toSignal()` rule said "services must expose signals." Without checking the project first, signals were added to a repository and `computed()` wrappers in components — introducing a pattern inconsistent with every other repository in the codebase, which uses `Observable$ | async` + `toResponse()`. Three rewrites were required to get back to consistency.
+
+---
+
 ## CONTROL FLOW - MANDATORY SYNTAX
 
 ALWAYS use new control flow syntax:
@@ -22,12 +45,12 @@ DO NOT force signals when not needed:
 - Traditional approaches are acceptable if signals complicate the code
 - If signal refactoring is complex, note as potential future task instead of implementing
 
-**NEVER use `toSignal()` in components:**
-- Services MUST provide signals directly, not Observables that components convert
-- If a service returns an Observable, refactor the service to expose a signal
-- Pattern: Service creates the signal with `toSignal()`, components consume the signal
-- Components should NEVER call `toSignal()` themselves
-- Only use `toSignal()` in components if explicitly requested by the user
+**NEVER use `toSignal()` in components — unless the project already does so:**
+- Check the project first (see CODEBASE CONSISTENCY rule at top of this file)
+- If the project uses `Observable$ | async` throughout, keep using that — do not introduce `toSignal()`
+- If the project already exposes signals from repositories, match that pattern
+- Only add `toSignal()` to a repo/service if explicitly requested or if the project already uses it
+- Components should NEVER call `toSignal()` themselves regardless
 
 **Why this rule exists (human readability)**:
 - Round-trip conversions (signal → observable → signal) are confusing to read
