@@ -8,12 +8,12 @@ Complete reference for the traffic-sign-backend API. This is the core backend se
 
 | Item | Value | Date |
 |------|-------|------|
-| Last Verified Commit | 9a0c3022 | 2026-03-02 |
-| Commit Message | feat(api-v5): #105975 Add conditions and motives for C-series | |
-| Swagger Version | latest | 2026-03-02 |
+| Last Verified Commit | 1096b8b1 | 2026-03-03 |
+| Commit Message | Feature #110156 Create finding for transfer ownership | |
+| Swagger Version | latest | 2026-03-03 |
 
-**Status**: ✓ Up to date as of 2026-03-02
-**Next Review**: Check commits after 9a0c3022
+**Status**: ✓ Up to date as of 2026-03-03
+**Next Review**: Check commits after 1096b8b1
 
 ---
 
@@ -676,7 +676,9 @@ Complete reference for the traffic-sign-backend API. This is the core backend se
 - `{trafficSignId}` (UUID) - Traffic sign identifier
 - `{reason}` (FindingReason, required) - Finding reason enum value
 
-**Response** (HTTP 200): TrafficSignFindingDto
+**Response** (HTTP 200): List<TrafficSignFindingDto>
+
+> **Breaking change** (commit `1096b8b1`): Previously returned a single `TrafficSignFindingDto` or `null`. Now returns a list (may be empty).
 
 ---
 
@@ -1059,6 +1061,8 @@ Complete reference for the traffic-sign-backend API. This is the core backend se
 | `feedbackText` | String | No | max 1000 chars | User feedback |
 | `createdAt` | DateTime | Yes (response) | ISO 8601 | Creation time |
 | `updatedAt` | DateTime | Yes (response) | ISO 8601 | Last update |
+| `newOwnerRoadAuthorityType` | RoadAuthorityType (Enum) | No | R, P, G, W, T | New owner road authority type (for TRANSFER_OWNERSHIP findings) |
+| `newOwnerRoadAuthorityCode` | String | No | - | New owner road authority code (for TRANSFER_OWNERSHIP findings) |
 
 **Example**:
 ```json
@@ -1264,6 +1268,7 @@ Describes one condition group — either the main restriction or a single exempt
 | WKD_INCONSISTENCY_LOAD | Load restriction mismatch |
 | WKD_INCONSISTENCY_SPEED | Speed limit mismatch |
 | WKD_INCONSISTENCY_WIDTH | Width restriction mismatch |
+| TRANSFER_OWNERSHIP | Traffic sign ownership is being transferred to another road authority |
 
 ---
 
