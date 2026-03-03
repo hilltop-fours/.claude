@@ -228,6 +228,27 @@ NEVER remove existing comments:
 
 ## TYPESCRIPT TYPING - STRICT RULES
 
+NEVER use `Type | undefined` for optional interface/model properties:
+- Always use `?` (optional property) instead: `prop?: Type` not `prop: Type | undefined`
+- This applies to ALL interfaces and model types across all projects — no exceptions
+- `prop?: Type` is the correct TypeScript pattern for optional properties
+
+Example - WRONG:
+```typescript
+export interface IFoo {
+  name: string;
+  value: SomeType | undefined;
+}
+```
+
+Example - CORRECT:
+```typescript
+export interface IFoo {
+  name: string;
+  value?: SomeType;
+}
+```
+
 NEVER use `any` type:
 - Always define proper interfaces, types, or use generics
 - If data structure is unknown, use `unknown` and add type guards
