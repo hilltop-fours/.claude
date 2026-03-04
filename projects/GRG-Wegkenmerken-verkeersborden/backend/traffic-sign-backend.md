@@ -243,7 +243,7 @@ Complete reference for the traffic-sign-backend API. This is the core backend se
 **Path Parameters**:
 - `{id}` (UUID) - Traffic sign identifier
 
-**Description**: Change the owner (road authority) of a traffic sign. The caller must be the current owner, have global mutation permissions, or be an admin.
+**Description**: Change the owner (road authority) of a traffic sign. Returns 202 on direct success or 403 when a finding is created instead.
 
 **Request Body**: OwnerDto
 
@@ -255,14 +255,29 @@ Complete reference for the traffic-sign-backend API. This is the core backend se
 }
 ```
 
-**Response** (HTTP 202): Accepted
+**Two-response scenarios**:
+
+| Response | Condition | Side effect |
+|----------|-----------|-------------|
+| **202 Accepted** | Caller is admin, OR org has matching road authority, OR org has globalMutation and owner type ≠ R | Ownership changed immediately |
+| **403 Forbidden** | Caller has ROLE_TRAFFIC_SIGN_WRITER but fails authorization | `TrafficSignFinding` created with `reason=TRANSFER_OWNERSHIP`, ownership NOT changed (pending approval) |
+
+**Authorization rules** (from `AuthorizationService.canOrganizationEditAt`):
+- `ROLE_ADMIN` → always 202, bypasses all checks
+- Authority type `T` (traffic company) → always 202, no org check
+- `hasGlobalMutationPermissions` AND owner type ≠ `R` → 202
+- Org has road authority matching owner:
+  - Type `R`: org entry with type=R matches any Rijk sign (code not checked)
+  - Type `P/G/W`: org must have matching type AND matching code
+- Otherwise → 403 + finding created with `newOwnerRoadAuthorityType/Code` set to the requested values
 
 **Error Responses**:
 - 400 Bad Request - Road authority not found or invalid combination
+- 403 Forbidden - Authorization failed; a `TrafficSignFinding` with reason `TRANSFER_OWNERSHIP` is created as a side effect
 
 **Notes**:
-- Asynchronous operation (returns 202)
-- Authorization: caller must be current owner, have global mutation permissions, or be admin
+- Asynchronous operation (returns 202 on success)
+- On 403, a finding IS created — the frontend should treat this as "pending approval" (not an error)
 - Road authority must exist in the system
 
 ---
