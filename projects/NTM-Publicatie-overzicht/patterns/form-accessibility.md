@@ -163,8 +163,6 @@ export class FormValidationDirective implements OnInit, OnDestroy {
 
 ### 4. Required Field Indicators (Visual + Programmatic)
 
-#### Three-Layer Approach
-
 **1. Visual Indicator (Asterisk)**
 ```html
 <label for="firstName" class="form-label">
@@ -178,14 +176,6 @@ export class FormValidationDirective implements OnInit, OnDestroy {
 <input aria-required="true" />
 ```
 
-**3. Form-Wide Explanation**
-```html
-<p class="form-info text-xs mb-3">
-  <i class="bx bx-info-circle" aria-hidden="true"></i>
-  Velden gemarkeerd met <span aria-hidden="true">*</span> zijn verplicht.
-</p>
-```
-
 #### Styling
 ```scss
 .required-indicator {
@@ -195,18 +185,6 @@ export class FormValidationDirective implements OnInit, OnDestroy {
   font-size: 1.1em;
 }
 
-.form-info {
-  color: $secondary-grey;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-
-  i {
-    font-size: 1rem;
-    color: $secondary-grey;
-  }
-}
 ```
 
 ### 5. Visual Differentiation (Non-Color Based)
@@ -426,7 +404,6 @@ When creating a new form or updating an existing one, ensure:
 ### 1. Form Structure
 - [ ] Form has proper `<form>` or `<section>` wrapper
 - [ ] All form controls have `formControlName` attribute
-- [ ] Form-wide explanation of required fields at top
 
 ### 2. Each Required Field
 - [ ] Label with `for` attribute matching input `id`
@@ -461,12 +438,6 @@ When creating a new form or updating an existing one, ensure:
 ### Template
 ```html
 <form [formGroup]="form">
-  <!-- Form-wide explanation -->
-  <p class="form-info text-xs mb-3">
-    <i class="bx bx-info-circle" aria-hidden="true"></i>
-    Velden gemarkeerd met <span aria-hidden="true">*</span> zijn verplicht.
-  </p>
-
   <!-- Required field -->
   <div class="mb-3">
     <label for="firstName" class="form-label">
