@@ -19,7 +19,7 @@ This is the single most important rule in this file. All other rules are default
 **The rule below about `toSignal()` is a general Angular guideline. The actual project pattern takes precedence.** Check the project before applying the rule.
 
 **Real example of what happens when this is skipped:**
-A `toSignal()` rule said "services must expose signals." Without checking the project first, signals were added to a repository and `computed()` wrappers in components — introducing a pattern inconsistent with every other repository in the codebase, which uses `Observable$ | async` + `toResponse()`. Three rewrites were required to get back to consistency.
+The required-publications feature uses `toSignal()` + `computed()` in components. Without checking the file first, the pattern was replaced with `Observable$ | async` + `toResponse()` (matching a different feature area) — requiring multiple rewrites to restore consistency with the original file.
 
 ---
 
@@ -45,19 +45,11 @@ DO NOT force signals when not needed:
 - Traditional approaches are acceptable if signals complicate the code
 - If signal refactoring is complex, note as potential future task instead of implementing
 
-**NEVER use `toSignal()` in components — unless the project already does so:**
+**`toSignal()` in components — check the file first:**
 - Check the project first (see CODEBASE CONSISTENCY rule at top of this file)
-- If the project uses `Observable$ | async` throughout, keep using that — do not introduce `toSignal()`
-- If the project already exposes signals from repositories, match that pattern
-- Only add `toSignal()` to a repo/service if explicitly requested or if the project already uses it
-- Components should NEVER call `toSignal()` themselves regardless
-
-**Why this rule exists (human readability)**:
-- Round-trip conversions (signal → observable → signal) are confusing to read
-- Not immediately clear why the conversions are happening
-- Requires mental tracing through multiple reactive layers
-- Prefer explicit patterns like `effect()` even if they require subscription management
-- Tradeoff: A few lines of cleanup code is better than confusing conversions
+- The NTM required-publications components use `toSignal()` + `computed()` — match that if working in this feature
+- Other features in NTM use `observable$ | async` + `toResponse()` — match that if working there
+- Never mix patterns within the same feature area
 
 **PREFER `computed()` over methods for derived values:**
 When a method or getter derives its value from signals and has no side effects, consider converting it to `computed()`.
