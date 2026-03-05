@@ -380,10 +380,10 @@ All changes are stashed. Unstash group by group, verify build, commit.
 
 ### Commit 7 — modules/standards
 
-- [ ] `standard-edit-header`
-- [ ] `version-form`
-- [ ] `standards-filters-aside`
-- [ ] `standards-edit`
+- [x] `standard-edit-header`
+- [x] `version-form`
+- [x] `standards-filters-aside`
+- [x] `standards-edit`
 
 ### Commit 8 — modules/publications
 
