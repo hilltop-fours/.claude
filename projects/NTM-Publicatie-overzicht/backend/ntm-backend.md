@@ -8,12 +8,12 @@ Complete reference for the NTM Backend API. This service manages data publicatio
 
 | Item | Value | Date |
 |------|-------|------|
-| Last Verified Commit | f7d8481 | 2026-02-24 |
-| Commit Message | feat(obligations): #108264 Adjust dto for FE | |
-| Swagger Version | latest | 2026-02-24 |
+| Last Verified Commit | 031b0b9 | 2026-03-05 |
+| Commit Message | feat(organization): #110023 Rename 'RWS' to 'R' | |
+| Swagger Version | latest | 2026-03-05 |
 
-**Status**: ✓ Up to date as of 2026-02-24
-**Next Review**: Check commits after f7d8481
+**Status**: ✓ Up to date as of 2026-03-05
+**Next Review**: Check commits after 031b0b9
 
 ---
 
@@ -30,6 +30,7 @@ Complete reference for the NTM Backend API. This service manages data publicatio
 | **Role Requests** | `/organizations/{id}/role_requests` | GET, POST, PUT | Keycloak NTM | Request and approve role changes |
 | **Organization Permissions** | `/organizations/{id}/permissions`, `/organizations/{id}/logo` | PUT, GET | Keycloak NTM | Set permissions and manage org branding |
 | **Obligations** | `/obligations`, `/obligations/{id}` | GET | Keycloak NTM | Retrieve obligations (OVD import from Excel) |
+| **Data Regulations** | `/data-regulations`, `/data-regulations/{regulation}` | GET | Keycloak NTM | Retrieve data regulations by type |
 | **Favorites** | `/favorites` | GET, POST, DELETE | Keycloak NTM | Manage favorite publications |
 | **Info Messages** | `/info-messages`, `/info-messages/{id}`, `/info-messages/current` | GET, POST, PUT, DELETE | Keycloak NTM | System-wide notifications |
 
@@ -993,40 +994,24 @@ Complete reference for the NTM Backend API. This service manages data publicatio
 
 ---
 
-#### GET /datasets
-
-**Authentication**: Keycloak NTM
-
-**Description**: Get all datasets.
-
-> ⚠️ **DEPRECATED** - Moving to new model served by `/obligations`. Will be removed in a future version.
-
-**Response** (HTTP 200): Array of DatasetDto
-
----
-
 #### GET /data-regulations
 
-**Authentication**: Keycloak NTM
+**Authentication**: Keycloak NTM (ROLE_DATA_ITEM_READER)
 
 **Description**: Get all data regulations.
-
-> ⚠️ **DEPRECATED** - Moving to new model served by `/obligations`. Will be removed in a future version.
 
 **Response** (HTTP 200): Array of DataRegulationDto
 
 ---
 
-#### GET /data-regulations/{id}
+#### GET /data-regulations/{regulation}
 
-**Authentication**: Keycloak NTM
+**Authentication**: Keycloak NTM (ROLE_DATA_ITEM_READER)
 
-**Description**: Get a specific data regulation.
-
-> ⚠️ **DEPRECATED** - Moving to new model served by `/obligations`. Will be removed in a future version.
+**Description**: Get a specific data regulation by regulation type.
 
 **Path Parameters**:
-- `{id}` (UUID) - Regulation identifier
+- `{regulation}` (RegulationType) - Regulation type identifier (e.g., `REALTIME`, `ITS`)
 
 **Response** (HTTP 200): DataRegulationDto
 
@@ -1303,6 +1288,7 @@ Complete reference for the NTM Backend API. This service manages data publicatio
 | `networkType` | DataNetwork | No | See DataNetwork enum | Network coverage type |
 | `modality` | Modality | No | DEMAND_DEPENDENT, EXCLUDING_DEMAND_DEPENDENT | Transport modality scope |
 | `dataItem` | ObligationDataItemDto | No | - | Linked obligation data item |
+| `publications` | List[DataPublicationReferenceDto] | No | - | Data publications linked to this obligation |
 
 **Example**:
 ```json
@@ -1320,7 +1306,10 @@ Complete reference for the NTM Backend API. This service manages data publicatio
     "sourceDescription": "ITS Delegated Regulation",
     "sourceCategory": "ITS",
     "regulationType": "ITS"
-  }
+  },
+  "publications": [
+    { "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901", "name": "Real-time Traffic Data NL" }
+  ]
 }
 ```
 
@@ -1338,6 +1327,43 @@ Complete reference for the NTM Backend API. This service manages data publicatio
 | `sourceDescription` | String | No | - | Description of the source document |
 | `sourceCategory` | String | No | - | Category of the source |
 | `regulationType` | RegulationType | No | See RegulationType enum | Regulation type |
+
+---
+
+### DataPublicationReferenceDto
+
+**Used in**: ObligationDto.publications
+
+| Field | Type | Required | Constraints | Description |
+|-------|------|----------|-------------|-------------|
+| `id` | UUID | Yes (response) | - | Publication identifier |
+| `name` | String | No | - | Publication name |
+
+---
+
+### DataItemDto
+
+**Used in**: DataRegulationDto.dataItems
+
+| Field | Type | Required | Constraints | Description |
+|-------|------|----------|-------------|-------------|
+| `id` | UUID | Yes (response) | - | Data item identifier |
+| `description` | String | No | - | Description of the data item |
+| `sourceLocation` | String | No | - | Source document location |
+| `sourceDescription` | String | No | - | Description of the source document |
+| `sourceCategory` | String | No | - | Category of the source |
+| `obligations` | List[ObligationDto] | No | - | Obligations linked to this data item |
+
+---
+
+### DataRegulationDto
+
+**Used in**: GET `/data-regulations`, `/data-regulations/{regulation}`
+
+| Field | Type | Required | Constraints | Description |
+|-------|------|----------|-------------|-------------|
+| `regulationType` | RegulationType | No | See RegulationType enum | The regulation type |
+| `dataItems` | List[DataItemDto] | No | - | Data items under this regulation |
 
 ---
 
@@ -1421,7 +1447,7 @@ Complete reference for the NTM Backend API. This service manages data publicatio
 
 | Value | Description |
 |-------|-------------|
-| RWS | Rijkswaterstaat (public sector) |
+| R | Rijkswaterstaat (public sector) |
 | PROVINCE | Province (public sector) |
 | COUNTY | County/municipality (public sector) |
 | OTHER_PUBLIC | Other public sector organization |
@@ -1429,7 +1455,7 @@ Complete reference for the NTM Backend API. This service manages data publicatio
 | SERVICE_PROVIDER | Private service provider |
 | OTHER_PRIVATE | Other private sector organization |
 
-Each value also carries an `isPublic` boolean: `RWS`, `PROVINCE`, `COUNTY`, `OTHER_PUBLIC` are public (`true`); `DATA_OWNER`, `SERVICE_PROVIDER`, `OTHER_PRIVATE` are private (`false`).
+Each value also carries an `isPublic` boolean: `R`, `PROVINCE`, `COUNTY`, `OTHER_PUBLIC` are public (`true`); `DATA_OWNER`, `SERVICE_PROVIDER`, `OTHER_PRIVATE` are private (`false`).
 
 ---
 
