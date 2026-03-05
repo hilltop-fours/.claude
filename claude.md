@@ -112,7 +112,7 @@ All file references use this pattern: `$CLINERULES_ROOT/path/to/file.md`
 
 ## READ RULES ON-DEMAND
 
-**AT SESSION START** (every new conversation):
+**ON FIRST USER MESSAGE** (every new conversation, before responding):
 → The session-start hook outputs the current frontend branch in `<system-reminder>` (e.g., `Frontend branch: chore/110904/111093/desc`)
 → Extract any numeric IDs from the branch path segments (e.g., `chore/110904/111093/desc` → IDs: `110904`, `111093`)
 → IF branch is `main` or `master` → skip entirely
@@ -120,6 +120,7 @@ All file references use this pattern: `$CLINERULES_ROOT/path/to/file.md`
 → OTHERWISE: search `$CLINERULES_ROOT/stories/` (all subfolders) for a file whose name begins with those IDs (e.g., `110904-111093-*.md`)
 → IF file found → read it silently as background context for this session. No need to announce this to the user.
 → IF no file found → skip silently, no mention to user
+→ **Note**: Claude Code is reactive — this cannot run before the first message. Always do this as part of processing the first user message, before replying.
 
 ---
 
