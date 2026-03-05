@@ -369,14 +369,14 @@ All changes are stashed. Unstash group by group, verify build, commit.
 
 ### Commit 6 — modules/users
 
-- [ ] `users-edit-personal-info`
-- [ ] `users-edit-role`
-- [ ] `users-edit-role-drawer`
-- [ ] `users-edit-role-organization-contact-drawer`
-- [ ] `users-edit-role-organization-drawer`
-- [ ] `user-delete-popup`
-- [ ] `users-edit-publicist-role-popup`
-- [ ] `users-new-drawer`
+- [x] `users-edit-personal-info`
+- [x] `users-edit-role`
+- [x] `users-edit-role-drawer`
+- [x] `users-edit-role-organization-contact-drawer`
+- [x] `users-edit-role-organization-drawer`
+- [x] `user-delete-popup`
+- [x] `users-edit-publicist-role-popup`
+- [x] `users-new-drawer`
 
 ### Commit 7 — modules/standards
 
