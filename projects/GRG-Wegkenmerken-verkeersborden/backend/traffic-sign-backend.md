@@ -8,12 +8,12 @@ Complete reference for the traffic-sign-backend API. This is the core backend se
 
 | Item | Value | Date |
 |------|-------|------|
-| Last Verified Commit | 1096b8b1 | 2026-03-03 |
-| Commit Message | Feature #110156 Create finding for transfer ownership | |
-| Swagger Version | latest | 2026-03-03 |
+| Last Verified Commit | c27aac9a | 2026-03-05 |
+| Commit Message | feat(api-v5): #105975 Add conditions and motives for C-series | |
+| Swagger Version | latest | 2026-03-05 |
 
-**Status**: ✓ Up to date as of 2026-03-03
-**Next Review**: Check commits after 1096b8b1
+**Status**: ✓ Up to date as of 2026-03-05
+**Next Review**: Check commits after c27aac9a
 
 ---
 
@@ -1226,6 +1226,8 @@ Represents the derived legal meaning of a C-series traffic sign, including who i
 **Used in**: `ConditionsDtoV5.restrictions`, `ConditionsDtoV5.exemptions`
 
 Describes one condition group — either the main restriction or a single exemption. All fields are optional and omitted from JSON when null.
+
+**Note** (updated c27aac9a): Numeric fields (`weight`, `axleWeight`, `height`, `length`, `width`) are now null-safe — if the blackCode is null or non-numeric, the field is omitted from JSON instead of causing a server error.
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
