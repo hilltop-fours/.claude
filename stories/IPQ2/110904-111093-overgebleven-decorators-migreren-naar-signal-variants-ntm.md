@@ -341,8 +341,8 @@ All changes are stashed. Unstash group by group, verify build, commit.
 
 ### Commit 2 — shared overlays
 
-- [ ] `shared/popup`
-- [ ] `shared/drawer`
+- [x] `shared/popup`
+- [x] `shared/drawer`
 
 ### Commit 3 — shared stepper
 
