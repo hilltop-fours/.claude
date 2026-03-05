@@ -111,7 +111,7 @@ Apply this checklist to **every file** touched in this story. Go through each it
 
 ### Description
 
-NTM [FE] overgebleven inputs en outputs migreren naar signal variants
+alle `@Input()` `@Output()` `@ViewChild()` `@ViewChildren()` `@HostBinding()` en `@HostListener()` decorators vervangen door de signal varianten `input()` `output()` `viewChild()` `viewChildren()` en `host: {}` en `ngOnChanges` wat een input kreeg is vervangen door `effect()` en andere zijn `computed()` geworden
 
 ### Acceptance Criteria
 
@@ -361,8 +361,8 @@ All changes are stashed. Unstash group by group, verify build, commit.
 ### Commit 5 — small modules (about, account, do-more, tutorial, welcome)
 
 - [ ] `modules/about/about` — `@Input()` → `input()`
-- [ ] `modules/account/account-new-form-organization` — `@Input()`/`OnChanges` → `input()`/`effect()`
-- [ ] `modules/account/account-new-form-role` — `@Input()`/`OnChanges` → `input()`/`effect()`
+- [ ] `modules/account/account-new-form-organization` — `@Input()`/`OnChanges` → `input()`/`effect()`, getters `firstName`/`lastName`/`email`/`phoneNumber` → `computed()`, removed `@UntilDestroy()`/`untilDestroyed`/`AfterViewInit`/`cdr`
+- [ ] `modules/account/account-new-form-role` — `@Input()`/`OnChanges` → `input()`/`effect()`, getter `editorOrHeadEditor` → `computed()`
 - [ ] `modules/do-more/do-more-themes-item` — `@Input()` → `input()`
 - [ ] `modules/tutorial/tutorial-section` — `@Input()`/`@HostBinding` → `input()` + `host: { '[class.right]': 'textPosition()' }`
 - [ ] `modules/welcome/do-more-banner` — `@Input()`/`@Output()` → `input()`/`output()`

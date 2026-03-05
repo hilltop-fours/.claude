@@ -201,3 +201,173 @@ WIP commit after Phase 3.
 Replace `organizationIdBS = new BehaviorSubject<string | undefined>(undefined)` with `organizationId = signal<string | undefined>(undefined)`. Search for all usages: `.next()` → `.set()`, `.asObservable()` → `toObservable(this.organizationId)` or direct signal read. Build and test organization selection flow.
 
 WIP commit after Phase 4.
+
+---
+
+## Additional Old Patterns to Modernize (General — Any Project)
+
+Discovered during IP-sprint implementation. These patterns appear across projects and are candidates for future stories.
+
+---
+
+### `@UntilDestroy()` + `untilDestroyed(this)` → `takeUntilDestroyed(destroyRef)`
+
+**Old pattern** (`@ngneat/until-destroy` — third-party library):
+```typescript
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+
+@UntilDestroy()
+export class MyComponent {
+  constructor() {
+    someObservable$.pipe(untilDestroyed(this)).subscribe(...);
+  }
+}
+```
+
+**Modern equivalent** (Angular built-in since v16):
+```typescript
+import { DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
+export class MyComponent {
+  readonly #destroyRef = inject(DestroyRef);
+
+  constructor() {
+    someObservable$.pipe(takeUntilDestroyed(this.#destroyRef)).subscribe(...);
+  }
+}
+```
+
+**Why:** `takeUntilDestroyed` is Angular's own API — no third-party dependency. `DestroyRef` fires at the correct point in the component/service destruction cycle. The `@UntilDestroy()` class decorator and `untilDestroyed(this)` operator can both be removed entirely.
+
+**Note:** `takeUntilDestroyed()` can also be called without arguments *if called inside an injection context* (constructor or field initializer). Pass `destroyRef` explicitly when calling from inside methods or effects.
+
+---
+
+### `implements OnDestroy` + manual `ngOnDestroy` → `DestroyRef` / `takeUntilDestroyed`
+
+**Old pattern:**
+```typescript
+export class MyComponent implements OnDestroy {
+  readonly #destroy$ = new Subject<void>();
+
+  constructor() {
+    someObservable$.pipe(takeUntil(this.#destroy$)).subscribe(...);
+  }
+
+  ngOnDestroy() {
+    this.#destroy$.next();
+    this.#destroy$.complete();
+  }
+}
+```
+
+**Modern equivalent:**
+```typescript
+export class MyComponent {
+  readonly #destroyRef = inject(DestroyRef);
+
+  constructor() {
+    someObservable$.pipe(takeUntilDestroyed(this.#destroyRef)).subscribe(...);
+  }
+  // No ngOnDestroy needed
+}
+```
+
+**Why:** ~8 lines of boilerplate reduced to 1. The `Subject`, `ngOnDestroy`, `OnDestroy` interface, and `takeUntil` can all be removed.
+
+---
+
+### Missing `ChangeDetectionStrategy.OnPush`
+
+Components without `OnPush` use Angular's default change detection, which checks every component on every event (click, timer, HTTP response). This is slow and unnecessary once a component uses signal inputs — Angular's signal system is already reactive.
+
+**Rule:** Every component with `input()`, `output()`, `model()`, `signal()`, or `computed()` should have `OnPush`. A component that is purely template-driven (no async subscriptions, no imperative mutations) can also safely get `OnPush`.
+
+**How to add:**
+```typescript
+@Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  ...
+})
+```
+
+**Prerequisite:** Before adding `OnPush`, ensure no `ChangeDetectorRef.detectChanges()` calls remain — those are workarounds for Default CD and are unnecessary with signals + `OnPush`.
+
+---
+
+### `toSignal()` inside repository/service files
+
+**Old pattern (avoid):**
+```typescript
+// notifications.repository.ts
+notificationCountSignal = toSignal(this.notificationCount$); // ← wrong place
+```
+
+**Why it's wrong:** Repositories should expose pure Observables — that is their only job. `toSignal()` creates a subscription that lives as long as the injection context (the repo/service), not the component consuming it. Components should do their own `toSignal()` if they need a signal.
+
+**Fix:** Remove `toSignal()` from repo/service files. Let the consuming component do:
+```typescript
+readonly notificationCount = toSignal(this.#notificationsRepo.notificationCount$);
+```
+
+---
+
+### `setTimeout` patterns → `afterNextRender()` / `afterRender()`
+
+**Old pattern:**
+```typescript
+// Used to delay until after Angular has rendered
+ngAfterViewInit() {
+  setTimeout(() => {
+    this.doSomethingWithDom();
+    this.#cdr.detectChanges();
+  }, 0);
+}
+```
+
+**Modern equivalent** (Angular v17+):
+```typescript
+constructor() {
+  afterNextRender(() => {
+    this.doSomethingWithDom();
+    // No cdr needed — Angular re-renders automatically after afterNextRender
+  });
+}
+```
+
+**Why:** `setTimeout(..., 0)` is a hack to escape the current change detection cycle. `afterNextRender()` is Angular's explicit API for "run this after the next render cycle". It is SSR-safe (does not run on the server), self-documenting, and does not require `cdr.detectChanges()`.
+
+**Note:** Use `afterNextRender` for one-time post-render initialization. Use `afterRender` for logic that must run after every render.
+
+---
+
+### `ngOnInit` → constructor / field initializer / `effect()`
+
+**Old pattern:**
+```typescript
+export class MyComponent implements OnInit {
+  data: SomeType;
+
+  ngOnInit() {
+    this.data = this.#service.getData();
+  }
+}
+```
+
+**Modern equivalent:**
+```typescript
+export class MyComponent {
+  readonly data = this.#service.getData(); // field initializer
+  // OR
+  readonly data = toSignal(this.#service.getData$); // if Observable
+  // OR
+  constructor() {
+    effect(() => { /* runs when signals change */ });
+  }
+}
+```
+
+**Why:** `ngOnInit` was needed because injected services weren't available in the constructor in older Angular versions (before `inject()`). With `inject()`, services are available at field initialization time — no lifecycle hook needed. The remaining legitimate use case for `ngOnInit` is code that must run after `@Input()` values are set, but with `input()` signals that use case moves to `effect()` in the constructor.
+
+**Rule of thumb:** If `ngOnInit` only reads `inject()`-able services (not `@Input()` values), move it to a field initializer or the constructor. If it reacts to inputs, use `effect()`. If nothing remains in `ngOnInit`, remove `implements OnInit` and the method.
