@@ -8,12 +8,12 @@ Complete reference for the traffic-sign-wkd-backend API. This service manages ve
 
 | Item | Value | Date |
 |------|-------|------|
-| Last Verified Commit | 710a0f7 | 2026-02-26 |
-| Commit Message | feat(traffic-type): #110017 Flat geojson feature properties | |
-| Swagger Version | latest | 2026-02-26 |
+| Last Verified Commit | 685a5d3 | 2026-03-05 |
+| Commit Message | Feature #108981 Send emails for exports | |
+| Swagger Version | latest | 2026-03-05 |
 
-**Status**: ✓ Up to date as of 2026-02-26
-**Next Review**: Check commits after 710a0f7
+**Status**: ✓ Up to date as of 2026-03-05
+**Next Review**: Check commits after 685a5d3
 
 ---
 
@@ -96,6 +96,8 @@ Complete reference for the traffic-sign-wkd-backend API. This service manages ve
 **Request Body**: Array of SpeedMutationDto
 
 **Response** (HTTP 200): FeatureCollection
+
+**Note** (updated eac7cbc): Segment length validation now allows minor rounding errors — if the segment max `to` value is within 1 metre of the road section length (due to floating-point rounding), the backend automatically adjusts it to match the road section length exactly rather than rejecting the request.
 
 ---
 
@@ -373,6 +375,8 @@ Similar endpoints exist for:
 
 **Response** (HTTP 200): FileUploadDto
 
+**Note** (updated adc16c6): On validation failure, the response now includes a more specific error code (`upload.error.invalid-speed`) with carriageway type, speed value, and direction details, in addition to the generic `upload.error.invalid-mutation` and `upload.error.invalid-segment-range` codes.
+
 ---
 
 #### POST /driving-directions/upload
@@ -397,7 +401,7 @@ Similar endpoints exist for:
 
 **Authentication**: NDW IAM
 
-**Description**: Start data export for a specific WKD type and NWB version.
+**Description**: Start data export for a specific WKD type and NWB version. On completion, the system sends email notifications to configured recipients with the export result (updated 685a5d3).
 
 **Query Parameters**:
 - `nwbVersion` (date, optional) - Target NWB version
