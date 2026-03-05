@@ -352,11 +352,11 @@ All changes are stashed. Unstash group by group, verify build, commit.
 
 ### Commit 4 — shared list-card
 
-- [ ] `shared/list-card/list-card`
-- [ ] `shared/list-card/list-card-list-item`
-- [ ] `shared/list-card/list-card-organization-contact`
-- [ ] `shared/list-card/list-card-organization-info`
-- [ ] `shared/list-card/list-card-organization-permissions`
+- [x] `shared/list-card/list-card`
+- [x] `shared/list-card/list-card-list-item`
+- [x] `shared/list-card/list-card-organization-contact`
+- [x] `shared/list-card/list-card-organization-info`
+- [x] `shared/list-card/list-card-organization-permissions`
 
 ### Commit 5 — small modules (about, account, do-more, tutorial, welcome)
 
