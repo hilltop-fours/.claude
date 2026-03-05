@@ -253,16 +253,44 @@ this.#service.getAll()
 
 ---
 
-## Signals (Emerging Pattern)
+## Signals Convention
 
-Some repos expose signals via `toSignal()` for direct template binding without `async` pipe:
+**Repositories stay Observable.** The elf store is Observable-based — do not add `toSignal()` inside repositories to expose signals. Keep repos as pure Observable/getter layers.
+
+**Signal conversion happens in the component**, not the repository. Components use `toSignal()` at field initializer level to bridge the Observable into the signal world:
 
 ```typescript
-readonly notificationCountSignal: Signal<number> = toSignal(this.notificationCount$, { initialValue: 0 });
-readonly selection = toSignal(this.selection$, { initialValue: [] });
+// In the component — bridge at the boundary
+organization = toSignal(this.#organizationRepository.find(this.id()));
 ```
 
-This is acceptable and encouraged for computed/derived values frequently used in templates. Always provide `initialValue` to avoid injection context issues.
+**Exception — static derived values:** A small number of repos expose pre-converted signals for values that are truly global and static (e.g., `notificationCountSignal`, `selection`). This is acceptable only when:
+- The value does not depend on any component input
+- It is consumed by many components across the app
+
+```typescript
+// Acceptable — global UI state, not tied to a component input
+readonly notificationCountSignal: Signal<number> = toSignal(this.notificationCount$, { initialValue: 0 });
+```
+
+Always provide `initialValue` when using `toSignal()` in a repository to avoid undefined initial state.
+
+**When the signal depends on a dynamic component input (`input()` signal):**
+
+Use `toSignal()` + `toObservable()` + `switchMap` in the component, at field initializer level:
+
+```typescript
+// In the component — reactive to id() changes, called as field initializer
+organization = toSignal(
+  toObservable(this.id).pipe(
+    switchMap((id) => this.#organizationRepository.find(id))
+  )
+);
+```
+
+This must be declared as a class field (not inside a method or lifecycle hook) because `toSignal()` and `toObservable()` require injection context. Angular's injector is available during field initialization.
+
+**Do NOT use `toSignal()` for action method return values** (update, create, delete). Those return `Observable<HttpResponse<T>>` and are consumed with `.subscribe()` in the component for one-time response handling — converting them to signals doesn't make sense.
 
 ---
 
