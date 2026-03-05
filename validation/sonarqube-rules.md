@@ -458,6 +458,24 @@ If Sonar flags this on a native non-interactive element (e.g. `<div (click)="...
 
 **Suppress on the Sonar server side** for false positives on design system components, rather than adding unnecessary event handlers.
 
+## typescript:S2871 — Array sort should use a compare function
+
+Do not call `.sort()` on an array of strings without a compare function. The default sort is locale-inconsistent and can produce different results across environments.
+
+Fix: Always pass `(a, b) => a.localeCompare(b)` as the compare function when sorting strings.
+
+Example - WRONG:
+```typescript
+dates.sort()[0]  // ❌ No compare function
+```
+
+Example - CORRECT:
+```typescript
+dates.sort((a, b) => a.localeCompare(b))[0]  // ✅ Locale-aware compare
+```
+
+Note: This applies even when sorting ISO date strings (e.g. `"2025-12-31"`), where plain `.sort()` would technically work — Sonar still flags it.
+
 ## Web:S6853 — Form label must be associated with a control
 
 Labels must be associated with their input controls. Use either:
