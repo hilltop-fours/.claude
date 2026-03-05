@@ -207,7 +207,7 @@ When implementing features related to:
   - CRUD operations on standards
 
 - **Data Regulations** → Read `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
-  - List all regulations and get by ID
+  - List all regulations and get by regulation type (RegulationType path param)
 
 - **Statistics** → Read `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
   - User, organization, and data publication counts
