@@ -157,6 +157,9 @@ Rules that apply across all modes.
 - Only add a comment when the WHY is not obvious from reading the code — never explain the WHAT
 - A comment should answer: "why was this added" or "why does it work this way"
 - If the code is self-explanatory, no comment needed
+- Use "we" not "I" — frame it as explaining to a colleague, not documenting your own decision
+- Use "so we know" as the connector when the reason is about needing information — e.g. "we need X so we know Y"
+- Tone is collegial and direct — like saying it out loud to someone sitting next to you
 
 ---
 
