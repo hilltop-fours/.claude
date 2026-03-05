@@ -325,84 +325,84 @@ All changes are stashed. Unstash group by group, verify build, commit.
 
 ### Commit 1 — core/components + shared simple components
 
-- [ ] `core/navigation-small` — `@Input()`/`@Output()` → `input()`/`output()`, template `theme()`/`icon()`
-- [ ] `shared/accordion/accordion-item` — `@Input() expanded` kept as `@Input()` intentionally (mutable local state)
-- [ ] `shared/accordion/accordion` — `@Output()` → `output()`
-- [ ] `shared/banner` — `@Input()`/`@Output()` → `input()`/`output()`
-- [ ] `shared/button` — `@Input()`/`@Output()` → `input()`/`output()`
-- [ ] `shared/carousel` — `@Input()`/`@Output()` → `input()`/`output()`
-- [ ] `shared/charts/pie-chart` — `@Input()`/`OnChanges` → `input()`/`effect()`
-- [ ] `shared/file-upload` — `@Input()`/`@Output()` → `input()`/`output()`
-- [ ] `shared/floating-action-button` — `@Input()`/`@Output()` → `input()`/`output()`
-- [ ] `shared/info-button` — `@Output()` → `output()`
-- [ ] `shared/multi-select-dropdown` — `@Input()`/`@Output()` → `input()`/`output()`
-- [ ] `shared/notification` — `@Input()`/`@Output()` → `input()`/`output()`
-- [ ] `shared/search-input` — `@Input()`/`@Output()` → `input()`/`output()`
+- [ ] `core/navigation-small`
+- [ ] `shared/accordion/accordion-item`
+- [ ] `shared/accordion/accordion`
+- [ ] `shared/banner`
+- [ ] `shared/button`
+- [ ] `shared/carousel`
+- [ ] `shared/charts/pie-chart`
+- [ ] `shared/file-upload`
+- [ ] `shared/floating-action-button`
+- [ ] `shared/info-button`
+- [ ] `shared/multi-select-dropdown`
+- [ ] `shared/notification`
+- [ ] `shared/search-input`
 
 ### Commit 2 — shared overlays
 
-- [ ] `shared/popup` — `@Input()`/`@Output()`/`OnChanges` → `input()`/`output()`/`effect()`, `visibleClass` → `signal()`
-- [ ] `shared/drawer` — `@Input()`/`@Output()` → `input()`/`output()`
+- [ ] `shared/popup`
+- [ ] `shared/drawer`
 
 ### Commit 3 — shared stepper
 
-- [ ] `shared/stepper` — `@ViewChild` → `viewChild()`; replace `stepHeader.selected = true` with `stepHeader.selected.set(true)` etc.
-- [ ] `shared/step-header` — `selected`/`id` plain properties + getter/setter + `ChangeDetectorRef` → `signal()`; kept `EventEmitter` (stepper subscribes with `.pipe()`)
-- [ ] `shared/step-panel` — `selected`/`id`/`isFirstStep`/`isLastStep` plain properties + getter/setter + `ChangeDetectorRef` → `signal()`; kept `EventEmitter` (stepper subscribes with `.pipe()`)
+- [x] `shared/stepper`
+- [x] `shared/step-header`
+- [x] `shared/step-panel`
 
 ### Commit 4 — shared list-card
 
-- [ ] `shared/list-card/list-card` — `@Input()`/`@Output()` → `input()`/`output()`
-- [ ] `shared/list-card/list-card-list-item` — `@Input()` → `input()`, template `key()`/`value()`
-- [ ] `shared/list-card/list-card-organization-contact` — `@Input()` → `input.required()`, `drawerVisible` → `signal()`, `canEdit` → `computed()`
-- [ ] `shared/list-card/list-card-organization-info` — `@Input()` → `input.required()`, `drawerVisible` → `signal()`, `canEdit` → `computed()`, removed `ChangeDetectorRef`
-- [ ] `shared/list-card/list-card-organization-permissions` — `@Input()` → `input.required()`, `drawerVisible` → `signal()`, `canEdit` → `computed()`
+- [ ] `shared/list-card/list-card`
+- [ ] `shared/list-card/list-card-list-item`
+- [ ] `shared/list-card/list-card-organization-contact`
+- [ ] `shared/list-card/list-card-organization-info`
+- [ ] `shared/list-card/list-card-organization-permissions`
 
 ### Commit 5 — small modules (about, account, do-more, tutorial, welcome)
 
-- [ ] `modules/about/about` — `@Input()` → `input()`
-- [ ] `modules/account/account-new-form-organization` — `@Input()`/`OnChanges` → `input()`/`effect()`, getters `firstName`/`lastName`/`email`/`phoneNumber` → `computed()`, removed `@UntilDestroy()`/`untilDestroyed`/`AfterViewInit`/`cdr`
-- [ ] `modules/account/account-new-form-role` — `@Input()`/`OnChanges` → `input()`/`effect()`, getter `editorOrHeadEditor` → `computed()`
-- [ ] `modules/do-more/do-more-themes-item` — `@Input()` → `input()`
-- [ ] `modules/tutorial/tutorial-section` — `@Input()`/`@HostBinding` → `input()` + `host: { '[class.right]': 'textPosition()' }`
-- [ ] `modules/welcome/do-more-banner` — `@Input()`/`@Output()` → `input()`/`output()`
+- [x] `modules/about/about`
+- [x] `modules/account/account-new-form-organization`
+- [x] `modules/account/account-new-form-role`
+- [x] `modules/do-more/do-more-themes-item`
+- [x] `modules/tutorial/tutorial-section`
+- [x] `modules/welcome/do-more-banner`
 
 ### Commit 6 — modules/users
 
-- [ ] `users-edit-personal-info` — `@Input()` → `input.required()`, `drawerVisible` → `signal()`, `canEdit` → `computed()`
-- [ ] `users-edit-role` — `@Input()` → `input.required()`, drawer booleans → `signal()`, `canEdit` → `computed()`
-- [ ] `users-edit-role-drawer` — `@Input()` → `input.required()`, `visible` → `input(false)`, getters use `form().get()`
-- [ ] `users-edit-role-organization-contact-drawer` — `@Input()` → `input.required()`, `visible` → `input(false)`
-- [ ] `users-edit-role-organization-drawer` — `@Input()` → `input.required()`, `visible` → `input(false)`, button props → `computed()`
-- [ ] `user-delete-popup` — `@Input()`/`@Output()` → `input()`/`output()`, setter → `effect()` + `signal()`
-- [ ] `users-edit-publicist-role-popup` — `@Input()`/`@Output()` → `input()`/`output()`
-- [ ] `users-new-drawer` — `@Input() visible` → `input(false)`, `closeDrawer` emits false directly
+- [ ] `users-edit-personal-info`
+- [ ] `users-edit-role`
+- [ ] `users-edit-role-drawer`
+- [ ] `users-edit-role-organization-contact-drawer`
+- [ ] `users-edit-role-organization-drawer`
+- [ ] `user-delete-popup`
+- [ ] `users-edit-publicist-role-popup`
+- [ ] `users-new-drawer`
 
 ### Commit 7 — modules/standards
 
-- [ ] `standard-edit-header` — `@Input()`/`@Output()` → `input()`/`output()`
-- [ ] `version-form` — `@Input()`/`@Output()` → `input()`/`output()`
-- [ ] `standards-filters-aside` — `@ViewChildren` → `viewChildren()`
-- [ ] `standards-edit` — `@HostBinding('class')` → `host: { class: 'ntm-container' }`
+- [ ] `standard-edit-header`
+- [ ] `version-form`
+- [ ] `standards-filters-aside`
+- [ ] `standards-edit`
 
 ### Commit 8 — modules/publications
 
-- [ ] `publications-detail-contact` — `@Input()` → `input()`, getters → `computed()`
-- [ ] `publications-detail-data-exchanges` — `@Input()` → `input()`
-- [ ] `publications-detail-image` — `@Input()`/`OnChanges` → `input()`/`effect()`
-- [ ] `publications-detail-quality` — `@Input()` → `input()`
-- [ ] `publications-detail-scope` — `@Input()` → `input()`, `isPreview` → `input(false)`
-- [ ] `data-exchange-form` — `@Input()` → `input.required()`, getters use `form().get()`
-- [ ] `publication-edit-form-contact` — `@Input()` → `input.required()`
-- [ ] `publication-edit-form-data-exchange` — `@Input()` → `input.required()`, getter uses `form().get()`
-- [ ] `publication-edit-form-scope` — `@Input()`/`OnChanges` → `input()`/`effect()`
-- [ ] `publication-edit-header` — `@Input()`/`@Output()` → `input()`/`output()`
-- [ ] `publication-filters-aside` — `@ViewChildren` → `viewChildren()`, `forEach` uses `()`
-- [ ] `favorite-button` — `@Input()` → `input.required()`, accesses `publication().id`/`.favorite`
-- [ ] `linkedin-share-button` — `@Input()` → `input()`
-- [ ] `publication-share-popup` — `@Input()`/`@Output()` → `input()`/`output()`
-- [ ] `whatsapp-share-button` — `@Input()` → `input()`
-- [ ] `publications-edit` — `@HostBinding('class')` → `host: { class: 'ntm-container' }`
+- [ ] `publications-detail-contact`
+- [ ] `publications-detail-data-exchanges`
+- [ ] `publications-detail-image`
+- [ ] `publications-detail-quality`
+- [ ] `publications-detail-scope`
+- [ ] `data-exchange-form`
+- [ ] `publication-edit-form-contact`
+- [ ] `publication-edit-form-data-exchange`
+- [ ] `publication-edit-form-scope`
+- [ ] `publication-edit-header`
+- [ ] `publication-filters-aside`
+- [ ] `favorite-button`
+- [ ] `linkedin-share-button`
+- [ ] `publication-share-popup`
+- [ ] `whatsapp-share-button`
+- [ ] `publications-edit`
 
 ---
 
