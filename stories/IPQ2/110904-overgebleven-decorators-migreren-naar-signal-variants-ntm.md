@@ -2,8 +2,108 @@
 
 **Story:** #110904
 **Task:** #111093
-**Branch:** `chore/110904/migrate-remaining-inputs-outputs-to-signal-variants-ntm`
+**Branch:** `chore/110904/111093/migrate-remaining-decorators-to-signal-variants-ntm`
 **Date:** 2026-03-04
+
+---
+
+## Per-File Migration Checklist
+
+Apply this checklist to **every file** touched in this story. Go through each item in order.
+
+---
+
+### 1. `@Input()` → `input()`
+- Replace `@Input() foo: Type` → `readonly foo = input<Type>()`
+- Replace `@Input() foo: Type = default` → `readonly foo = input(default)`
+- Replace `@Input({ required: true }) foo!: Type` → `readonly foo = input.required<Type>()`
+- Update template: `foo` → `foo()` everywhere the input is read
+- Remove `Input` from `@angular/core` import if no longer used
+
+### 2. `@Output()` → `output()`
+- Replace `@Output() foo = new EventEmitter<Type>()` → `readonly foo = output<Type>()`
+- Replace `@Output() readonly foo: EventEmitter<Type> = new EventEmitter()` → same
+- `this.foo.emit(value)` stays the same ✓
+- Remove `Output`, `EventEmitter` from `@angular/core` import if no longer used
+- **Exception:** keep `EventEmitter` if something subscribes to it with `.pipe()` (e.g. stepper subscribes to step-header's `clickEmitter`)
+
+### 3. `@Input()` + `@Output() xChange` two-way binding → `model()`
+- Identify the pattern: `@Input() visible = false` + `@Output() visibleChange = new EventEmitter<boolean>()`
+- Replace both with: `readonly visible = model(false)`
+- Update internal emits: `this.visibleChange.emit(false)` → `this.visible.set(false)`
+- Update template binding in **parent**: `[visible]="x" (visibleChange)="x=$event"` → `[(visible)]="x"`
+- Remove `input`, `output` (or `Input`, `Output`, `EventEmitter`) from import if no longer needed, add `model`
+
+### 4. `@ViewChild()` / `@ViewChildren()` / `@ContentChildren()` → signal queries
+- Replace `@ViewChild(Foo) foo!: Foo` → `readonly foo = viewChild.required(Foo)` or `viewChild(Foo)`
+- Replace `@ViewChildren(Foo) foos!: QueryList<Foo>` → `readonly foos = viewChildren(Foo)`
+- Replace `@ContentChildren(Foo) foos!: QueryList<Foo>` → `readonly foos = contentChildren(Foo)`
+- Update usages: `this.foos` → `this.foos()`, `this.foos.forEach(...)` → `this.foos().forEach(...)`
+- Remove `ViewChild`, `ViewChildren`, `ContentChildren`, `QueryList` from import if no longer used
+- **Exception:** signal queries cannot use `#` private prefix — use `private readonly` instead
+
+### 5. `@HostBinding()` → `host: {}` in `@Component`
+- Replace `@HostBinding('class.foo') bar = true` → add `host: { '[class.foo]': 'bar' }` to `@Component`
+- Replace `@HostBinding('class')` with a static string → `host: { class: 'my-class' }`
+- Remove `HostBinding` from import
+
+### 6. `@HostListener()` → `host: {}` in `@Component`
+- Replace `@HostListener('click') onClick()` → `host: { '(click)': 'onClick()' }`
+- Remove `HostListener` from import
+
+### 7. `ngOnChanges` → `effect()`
+- Identify which `@Input()` the `ngOnChanges` is watching
+- Convert that `@Input()` to `input()` first (step 1 above)
+- Replace `ngOnChanges(changes)` with `effect(() => { ... })` in the constructor or as a field
+- Read the input signal value inside the effect: `this.foo()`
+- Remove `OnChanges`, `SimpleChanges` from import if no longer used
+
+### 8. Getter/setter → `signal()`
+- Identify pattern: private backing field + getter + setter that calls `cdr.detectChanges()`
+  ```ts
+  #foo = false;
+  get foo() { return this.#foo; }
+  set foo(v: boolean) { this.#foo = v; this.#cdr.detectChanges(); }
+  ```
+- Replace with: `readonly foo = signal(false)`
+- Update all internal reads: `this.foo` → `this.foo()`
+- Update template reads: `foo` → `foo()`
+- Update external writes: `component.foo = true` → `component.foo.set(true)`
+- Proceed to step 9 (cdr) — the setter was probably the only reason cdr existed
+
+### 9. `ChangeDetectorRef` → remove
+- Check if `cdr.detectChanges()` calls remain after steps 7 and 8
+- If none remain: remove `inject(ChangeDetectorRef)` and `ChangeDetectorRef` from import
+- If still needed: leave it and add a comment explaining why
+
+### 10. Plain mutable properties → `signal()` (if used reactively in template)
+- Identify properties that are assigned from outside the component (not via input binding)
+  and are read in the template or in `computed()`
+- Replace with `readonly foo = signal(initialValue)`
+- Update reads: `this.foo` → `this.foo()` in template and TS
+- Update writes: `this.foo = value` → `this.foo.set(value)`
+
+### 11. Plain getters → `computed()` (if derived from signals)
+- Identify getters that compute a value from signal inputs or other signals:
+  ```ts
+  get canEdit() { return this.authService.hasPermission(this.user()); }
+  ```
+- Replace with `computed()`:
+  ```ts
+  readonly canEdit = computed(() => this.authService.hasPermission(this.user()));
+  ```
+- Update template: `canEdit` → `canEdit()` if not already a function call
+- Leave getters that don't depend on signals as-is (no benefit from computed)
+
+### 12. `readonly` audit
+- Every `input()`, `output()`, `model()`, `signal()`, `computed()`, `viewChild()`, `viewChildren()` must be `readonly`
+- Enum/constant references assigned once: `readonly crudEnum = CRUD`
+- FormGroup assigned once at declaration: `readonly form = new FormGroup(...)`
+- Injected services: `readonly #service = inject(Service)` (already enforced by `#`)
+
+### 13. Private `#` audit
+- All injected services and private fields should use `#` prefix instead of `private` keyword
+- Exception: Angular signal queries (`viewChild`, `viewChildren`, `contentChildren`) — use `private readonly` instead of `#` due to compiler limitations
 
 ---
 
@@ -131,10 +231,51 @@ This story modernizes the NTM frontend by replacing old Angular decorator patter
 
 **New component API (`@Input`/`@Output`) = always use `input()`/`output()`.**
 - `input()` and `output()` are the modern Angular API — use them for all new and migrated component boundaries
+- For two-way binding (`[x]="val" (xChange)="val=$event"` pattern): replace both with `model()` — one signal that handles both directions
+  ```typescript
+  // BEFORE
+  @Input() visible = false;
+  @Output() visibleChange = new EventEmitter<boolean>();
+  // AFTER
+  readonly visible = model(false);
+  // In template: [(visible)]="visible" instead of [visible]="..." (visibleChange)="..."
+  // Internally: this.visible.set(false) instead of this.visibleChange.emit(false)
+  ```
+
+**`signal()` = use for writable internal state or state set imperatively from outside.**
+- A plain writable signal — anyone with a reference can call `.set()` on it
+- Use when the value is mutated over time, but is NOT an Angular input/output binding
+- Example: `readonly selected = signal(false)` — set by another component via `componentRef.selected.set(true)`
+- This is the replacement for plain mutable properties that needed `ChangeDetectorRef` with `OnPush`
+
+**Remove `ChangeDetectorRef` wherever possible.**
+- `cdr.detectChanges()` is an old Angular workaround for `OnPush` components where Angular couldn't detect external mutations
+- Signals are natively reactive — reading a signal in a template auto-subscribes to changes, so `.set()` triggers re-render automatically
+- If you see `ChangeDetectorRef` + `detectChanges()` in a component, look for the plain property being mutated from outside and replace it with `signal()` → then remove `cdr` entirely
+
+**Replace getter/setter patterns with `signal()`.**
+- Getter/setter was the old way to intercept property writes and call `cdr.detectChanges()` manually
+  ```typescript
+  // BEFORE: getter/setter + cdr
+  #selected = false;
+  get selected() { return this.#selected; }
+  set selected(value: boolean) { this.#selected = value; this.#cdr.detectChanges(); }
+  // AFTER: plain signal, no cdr needed
+  readonly selected = signal(false);
+  // Caller uses: component.selected.set(true)
+  // Template uses: selected()
+  ```
 
 **`computed()` = use for derived values from signals.**
 - Avoids recalculating on every change detection cycle
 - Memoized — only recalculates when its signal dependencies change
+- Use whenever a value can be expressed as a pure function of other signals
+  ```typescript
+  // BEFORE: plain getter (recalculates every change detection cycle)
+  get canEdit(): boolean { return this.authService.hasPermission(this.user()); }
+  // AFTER: computed (memoized, recalculates only when user() changes)
+  readonly canEdit = computed(() => this.authService.hasPermission(this.user()));
+  ```
 
 **`effect()` = use for side effects triggered by signal changes.**
 - Replaces `ngOnChanges` when watching an `input()` signal for changes
@@ -205,9 +346,9 @@ All changes are stashed. Unstash group by group, verify build, commit.
 
 ### Commit 3 — shared stepper
 
-- [ ] `shared/stepper` — `@ViewChild` → `viewChild()`
-- [ ] `shared/step-header` — kept `EventEmitter` (stepper subscribes with `.pipe()`)
-- [ ] `shared/step-panel` — kept `EventEmitter` (stepper subscribes with `.pipe()`)
+- [ ] `shared/stepper` — `@ViewChild` → `viewChild()`; replace `stepHeader.selected = true` with `stepHeader.selected.set(true)` etc.
+- [ ] `shared/step-header` — `selected`/`id` plain properties + getter/setter + `ChangeDetectorRef` → `signal()`; kept `EventEmitter` (stepper subscribes with `.pipe()`)
+- [ ] `shared/step-panel` — `selected`/`id`/`isFirstStep`/`isLastStep` plain properties + getter/setter + `ChangeDetectorRef` → `signal()`; kept `EventEmitter` (stepper subscribes with `.pipe()`)
 
 ### Commit 4 — shared list-card
 
