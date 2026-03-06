@@ -325,19 +325,19 @@ All changes are stashed. Unstash group by group, verify build, commit.
 
 ### Commit 1 — core/components + shared simple components
 
-- [ ] `core/navigation-small`
-- [ ] `shared/accordion/accordion-item`
-- [ ] `shared/accordion/accordion`
-- [ ] `shared/banner`
-- [ ] `shared/button`
-- [ ] `shared/carousel`
-- [ ] `shared/charts/pie-chart`
-- [ ] `shared/file-upload`
-- [ ] `shared/floating-action-button`
-- [ ] `shared/info-button`
-- [ ] `shared/multi-select-dropdown`
-- [ ] `shared/notification`
-- [ ] `shared/search-input`
+- [x] `core/navigation-small`
+- [x] `shared/accordion/accordion-item`
+- [x] `shared/accordion/accordion`
+- [x] `shared/banner`
+- [x] `shared/button`
+- [x] `shared/carousel`
+- [x] `shared/charts/pie-chart`
+- [x] `shared/file-upload`
+- [x] `shared/floating-action-button`
+- [x] `shared/info-button`
+- [x] `shared/multi-select-dropdown`
+- [x] `shared/notification`
+- [x] `shared/search-input`
 
 ### Commit 2 — shared overlays
 
@@ -387,22 +387,22 @@ All changes are stashed. Unstash group by group, verify build, commit.
 
 ### Commit 8 — modules/publications
 
-- [ ] `publications-detail-contact`
-- [ ] `publications-detail-data-exchanges`
-- [ ] `publications-detail-image`
-- [ ] `publications-detail-quality`
-- [ ] `publications-detail-scope`
-- [ ] `data-exchange-form`
-- [ ] `publication-edit-form-contact`
-- [ ] `publication-edit-form-data-exchange`
-- [ ] `publication-edit-form-scope`
-- [ ] `publication-edit-header`
-- [ ] `publication-filters-aside`
-- [ ] `favorite-button`
-- [ ] `linkedin-share-button`
-- [ ] `publication-share-popup`
-- [ ] `whatsapp-share-button`
-- [ ] `publications-edit`
+- [x] `publications-detail-contact`
+- [x] `publications-detail-data-exchanges`
+- [x] `publications-detail-image`
+- [x] `publications-detail-quality`
+- [x] `publications-detail-scope`
+- [x] `data-exchange-form`
+- [x] `publication-edit-form-contact`
+- [x] `publication-edit-form-data-exchange`
+- [x] `publication-edit-form-scope`
+- [x] `publication-edit-header`
+- [x] `publication-filters-aside`
+- [x] `favorite-button`
+- [x] `linkedin-share-button`
+- [x] `publication-share-popup`
+- [x] `whatsapp-share-button`
+- [x] `publications-edit`
 
 ---
 
