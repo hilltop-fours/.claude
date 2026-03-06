@@ -216,6 +216,7 @@ When doing a story specifically about migrating `@Input`/`@Output`/`@ViewChild` 
 
 **IN scope (forced by the migration):**
 - `@Input()` → `input()`, `@Output()` → `output()`, `@ViewChild()` → `viewChild()`, etc.
+- `@ContentChildren()` → `contentChildren()` — **only if the component does NOT use `ngAfterViewInit` with `.changes.subscribe()`**. See exception below.
 - `ngOnChanges` → `effect()` — signal inputs do not trigger `ngOnChanges`, so it breaks. Must be replaced.
 - `ChangeDetectorRef` removal — only when it becomes dead code as a direct result of the migration.
 
@@ -225,6 +226,9 @@ When doing a story specifically about migrating `@Input`/`@Output`/`@ViewChild` 
 - `Observable` + `async` pipe → `toSignal()` conversions — separate architectural decision.
 - `ChangeDetectionStrategy.OnPush` additions — separate story.
 - Array mutation bugs (`splice`, `push`) — unrelated bug fix.
+
+**`@ContentChildren` exception — keep as a unit:**
+`@ContentChildren` + `QueryList` + `ngAfterViewInit` (with `.changes.subscribe()`) form a coherent unit. Migrating `@ContentChildren` to `contentChildren()` signals removes `.changes` from the API, which breaks `ngAfterViewInit`. Since `ngAfterViewInit` is out of scope, you cannot migrate `@ContentChildren` either in that case — leave all three as-is. Only migrate `@Input`/`@Output`/`@HostListener` etc. on the same component.
 
 **Test:** if the change would not be required to keep the component compiling and working after the decorator swap, it does not belong in the PR.
 
