@@ -210,6 +210,28 @@ Discovered during IP-sprint implementation. These patterns appear across project
 
 ---
 
+### Decorator migration scope boundary (applicable to any project's decorator migration story)
+
+When doing a story specifically about migrating `@Input`/`@Output`/`@ViewChild` etc. to signal variants, the scope must be kept tight. The rule agreed for NTM story #110904/#111093:
+
+**IN scope (forced by the migration):**
+- `@Input()` → `input()`, `@Output()` → `output()`, `@ViewChild()` → `viewChild()`, etc.
+- `ngOnChanges` → `effect()` — signal inputs do not trigger `ngOnChanges`, so it breaks. Must be replaced.
+- `ChangeDetectorRef` removal — only when it becomes dead code as a direct result of the migration.
+
+**OUT of scope (leave untouched, defer to a separate story):**
+- `ngOnInit`, `ngAfterViewInit` — these work fine alongside signal inputs; not forced by the migration.
+- `ngOnDestroy` / `takeUntilDestroyed` / `@UntilDestroy()` — unrelated to decorator migration.
+- `Observable` + `async` pipe → `toSignal()` conversions — separate architectural decision.
+- `ChangeDetectionStrategy.OnPush` additions — separate story.
+- Array mutation bugs (`splice`, `push`) — unrelated bug fix.
+
+**Test:** if the change would not be required to keep the component compiling and working after the decorator swap, it does not belong in the PR.
+
+---
+
+---
+
 ### `@UntilDestroy()` + `untilDestroyed(this)` → `takeUntilDestroyed(destroyRef)`
 
 **Old pattern** (`@ngneat/until-destroy` — third-party library):

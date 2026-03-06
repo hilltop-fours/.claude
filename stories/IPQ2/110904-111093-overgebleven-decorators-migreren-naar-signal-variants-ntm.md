@@ -7,6 +7,41 @@
 
 ---
 
+## SCOPE BOUNDARY — STRICT
+
+**This story is ONLY about replacing decorator syntax with signal equivalents.**
+
+### What is IN scope
+
+| Change | Reason |
+|--------|--------|
+| `@Input()` → `input()` | Direct decorator replacement |
+| `@Output()` → `output()` | Direct decorator replacement |
+| `@ViewChild()` → `viewChild()` | Direct decorator replacement |
+| `@ViewChildren()` → `viewChildren()` | Direct decorator replacement |
+| `@ContentChildren()` → `contentChildren()` | Direct decorator replacement |
+| `@HostBinding()` → `host: {}` | Direct decorator replacement |
+| `@HostListener()` → `host: {}` | Direct decorator replacement |
+| `ngOnChanges` → `effect()` | **Forced** — signal inputs do not trigger `ngOnChanges`, so it breaks after the migration. Must be replaced. |
+| `ChangeDetectorRef` removal | **Forced** — only when the migration itself makes it dead code. |
+
+### What is OUT of scope — do NOT touch
+
+| Pattern | Reason deferred |
+|---------|----------------|
+| `ngOnInit` | Works fine alongside signal inputs. Not forced by the migration. |
+| `ngAfterViewInit` | Works fine alongside signal inputs. Not forced by the migration. |
+| `ngOnDestroy` / `takeUntilDestroyed` | Unrelated to decorator migration. |
+| `@UntilDestroy()` / `untilDestroyed(this)` | Unrelated to decorator migration. |
+| `Observable` + `async` pipe → `toSignal()` | Separate architectural decision. |
+| `ChangeDetectionStrategy.OnPush` additions | Separate story. |
+| Array mutation bugs (`splice`, `push`) | Unrelated bug fix. |
+| Any logic inside lifecycle hooks | Not a decorator change. |
+
+**The test:** if a change would not be required to keep the component compiling and working after the decorator swap, it does not belong in this PR.
+
+---
+
 ## Per-File Migration Checklist
 
 Apply this checklist to **every file** touched in this story. Go through each item in order.
