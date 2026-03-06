@@ -8,12 +8,12 @@ Complete reference for the traffic-sign-backend API. This is the core backend se
 
 | Item | Value | Date |
 |------|-------|------|
-| Last Verified Commit | c27aac9a | 2026-03-05 |
-| Commit Message | feat(api-v5): #105975 Add conditions and motives for C-series | |
-| Swagger Version | latest | 2026-03-05 |
+| Last Verified Commit | 4a6c054c | 2026-03-06 |
+| Commit Message | feat(ownership): #110156 Respond with 201 when finding created | |
+| Swagger Version | latest | 2026-03-06 |
 
-**Status**: ✓ Up to date as of 2026-03-05
-**Next Review**: Check commits after c27aac9a
+**Status**: ✓ Up to date as of 2026-03-06
+**Next Review**: Check commits after 4a6c054c
 
 ---
 
@@ -243,7 +243,7 @@ Complete reference for the traffic-sign-backend API. This is the core backend se
 **Path Parameters**:
 - `{id}` (UUID) - Traffic sign identifier
 
-**Description**: Change the owner (road authority) of a traffic sign. Returns 202 on direct success or 403 when a finding is created instead.
+**Description**: Change the owner (road authority) of a traffic sign. Returns 202 on direct success or 201 when a finding is created instead (ownership change pending approval).
 
 **Request Body**: OwnerDto
 
@@ -260,7 +260,7 @@ Complete reference for the traffic-sign-backend API. This is the core backend se
 | Response | Condition | Side effect |
 |----------|-----------|-------------|
 | **202 Accepted** | Caller is admin, OR org has matching road authority, OR org has globalMutation and owner type ≠ R | Ownership changed immediately |
-| **403 Forbidden** | Caller has ROLE_TRAFFIC_SIGN_WRITER but fails authorization | `TrafficSignFinding` created with `reason=TRANSFER_OWNERSHIP`, ownership NOT changed (pending approval) |
+| **201 Created** | Caller has ROLE_TRAFFIC_SIGN_WRITER but fails authorization | `TrafficSignFinding` created with `reason=TRANSFER_OWNERSHIP`, ownership NOT changed (pending approval). `Location` header points to `findings/traffic-signs/{id}/reasons/TRANSFER_OWNERSHIP` |
 
 **Authorization rules** (from `AuthorizationService.canOrganizationEditAt`):
 - `ROLE_ADMIN` → always 202, bypasses all checks
@@ -269,15 +269,17 @@ Complete reference for the traffic-sign-backend API. This is the core backend se
 - Org has road authority matching owner:
   - Type `R`: org entry with type=R matches any Rijk sign (code not checked)
   - Type `P/G/W`: org must have matching type AND matching code
-- Otherwise → 403 + finding created with `newOwnerRoadAuthorityType/Code` set to the requested values
+- Otherwise → 201 + finding created with `newOwnerRoadAuthorityType/Code` set to the requested values
+
+**Response Headers** (201 only):
+- `Location`: URL to the created finding — `{base}/findings/traffic-signs/{id}/reasons/TRANSFER_OWNERSHIP`
 
 **Error Responses**:
 - 400 Bad Request - Road authority not found or invalid combination
-- 403 Forbidden - Authorization failed; a `TrafficSignFinding` with reason `TRANSFER_OWNERSHIP` is created as a side effect
 
 **Notes**:
 - Asynchronous operation (returns 202 on success)
-- On 403, a finding IS created — the frontend should treat this as "pending approval" (not an error)
+- ⚠️ **Breaking change from previous behavior**: was 403 when finding created, now 201 — frontend must handle 201 (not 403) as "pending approval"
 - Road authority must exist in the system
 
 ---
