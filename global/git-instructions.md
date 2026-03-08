@@ -2,14 +2,14 @@
 
 > **Hook enforcement** (via `~/.claude/hooks/`):
 > - Commit message format is validated by `check-commit-message.sh` — wrong format is blocked
-> - Git commands outside `.clinerules/` or `*-frontend/` are blocked by `check-git-repo.sh`
+> - Git commands outside `.claude/` or `*-frontend/` are blocked by `check-git-repo.sh`
 > - Branch mismatch before push is flagged by `check-push-branch.sh`
 >
 > This file covers the *what and why* — the hooks handle enforcement.
 
 ## COMMIT CONTEXTS - FRONTEND REPOSITORIES
 
-Two distinct contexts for frontend commit message formatting. For .clinerules commits, see SPECIAL CASE section below.
+Two distinct contexts for frontend commit message formatting. For .claude commits, see SPECIAL CASE section below.
 
 ### During Frontend Development (Branch Commits)
 
@@ -68,9 +68,9 @@ Frontend PR titles (when asked):
 - `bug(api): #12345 #67890 fix user data not loading`
 - `chore(deps): #12345 #67890 update angular to v17`
 
-## SPECIAL CASE - .CLINERULES REPO
+## SPECIAL CASE - .CLAUDE REPO
 
-When committing to the .clinerules repository itself:
+When committing to the .claude repository itself:
 
 Format: `type(scope): description`
 
@@ -92,8 +92,8 @@ Scope naming:
 - Root level files: Use filename only
   - Examples: `claude`, `readme`
 
-Commit types (only these 3 for .clinerules repo):
-- `docs` - Documentation updates (most common for .clinerules)
+Commit types (only these 3 for .claude repo):
+- `docs` - Documentation updates (most common for .claude)
 - `feat` - New instruction sets or major additions
 - `chore` - Restructuring, file moves, cleanup
 
@@ -106,7 +106,7 @@ Examples:
 
 **Multiple commits strategy:**
 
-When changes span multiple folders in `.clinerules`:
+When changes span multiple folders in `.claude`:
 - Create SEPARATE commits for each folder/scope
 - Commit order: Root files first, then alphabetical by scope
 - Each commit focuses on one logical change area
@@ -162,7 +162,7 @@ Development process:
 
 ## WIP COMMIT SUGGESTIONS - FRONTEND ONLY
 
-**Applies to frontend repositories only.** .clinerules uses proper `type(scope): description` commit format (see SPECIAL CASE section).
+**Applies to frontend repositories only.** .claude uses proper `type(scope): description` commit format (see SPECIAL CASE section).
 
 Claude proactively suggests WIP commits at logical moments during frontend development. Always ASK the user before committing — never auto-commit.
 
