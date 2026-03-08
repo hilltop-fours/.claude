@@ -33,7 +33,7 @@ import { ComponentName } from '@shared/components/component-name';
 - Variable names, function names, class names, comments: English
 
 **Commit Messages**: English only
-- Follow rules in `$CLINERULES_ROOT/global/git-instructions.md`
+- Follow rules in `$CLAUDE_ROOT/global/git-instructions.md`
 
 **UI Text**: Dutch only
 - All user-facing text must be in Dutch
@@ -165,21 +165,21 @@ clearFilters() {
 
 When implementing features related to:
 
-- **Data Publications** → Read `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
+- **Data Publications** → Read `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
   - CRUD operations on data publications
   - Search, filtering, pagination
   - Approve, reject, hold, transfer ownership
   - Favorites on data publications
   - Import via DCAT dataset (`/data-publications/import`)
 
-- **Datasets & Imports** → Read `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-tracker-backend.md`
+- **Datasets & Imports** → Read `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-tracker-backend.md`
   - Dataset listing, retrieval, rejection
   - Dataset import (`/datasets/import`)
 
-- **Datasets (listing only)** → Read `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
+- **Datasets (listing only)** → Read `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
   - List all datasets (`/datasets`)
 
-- **Organizations** → Read `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
+- **Organizations** → Read `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
   - CRUD operations on organizations
   - Role requests (create, approve, deny)
   - User listing per organization
@@ -187,82 +187,82 @@ When implementing features related to:
   - Permissions / moderation settings
   - Organization repair utilities (`/repair/organizations`)
 
-- **Users** → Read `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
+- **Users** → Read `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
   - CRUD operations on users
   - Current user info (`/users/current`)
   - Password reset
 
-- **Notifications & Subscriptions** → Read `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
+- **Notifications & Subscriptions** → Read `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
   - Notification listing and count (`/notifications`)
   - Email subscription management (`/subscriptions/mine`)
 
-- **Favorites** → Read `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
+- **Favorites** → Read `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
   - List, add, delete favorites (`/favorites`)
 
-- **Regions** → Read `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
+- **Regions** → Read `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
   - Region lookup by code
   - Municipality listing (`/regions/municipalities`)
 
-- **Standards** → Read `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
+- **Standards** → Read `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
   - CRUD operations on standards
 
-- **Data Regulations** → Read `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
+- **Data Regulations** → Read `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
   - List all regulations and get by regulation type (RegulationType path param)
 
-- **Statistics** → Read `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
+- **Statistics** → Read `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
   - User, organization, and data publication counts
 
-- **Export** → Read `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
+- **Export** → Read `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
   - Export publications and users (`/export`)
 
-- **Info Messages** → Read `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
+- **Info Messages** → Read `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
   - CRUD operations on info messages
   - Current active messages and count
 
-- **Blobs / Images** → Read `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
+- **Blobs / Images** → Read `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
   - Upload and retrieve images (`/blobs/image`)
 
-- **Contact Requests** → Read `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
+- **Contact Requests** → Read `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
   - Submit contact request (`/contact-request`)
 
-- **Translations** → Read `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
+- **Translations** → Read `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
   - Translation usage info (`/translations/usage`)
 
-- **DCAT** → Read `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
+- **DCAT** → Read `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
   - DCAT-AP dataset endpoints (`/v1`)
 
-- **External Organizations** → Read `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-tracker-backend.md`
+- **External Organizations** → Read `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-tracker-backend.md`
   - List and get external organizations
 
-- **External Categories** → Read `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-tracker-backend.md`
+- **External Categories** → Read `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-tracker-backend.md`
   - List and get external categories
 
 ### By Endpoint Pattern
 
 When working with specific endpoints:
 
-- `/data-publications/**` → `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
-- `/data-publications/import` → `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
-- `/datasets` → `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md` (listing only)
-- `/datasets/**` → `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-tracker-backend.md` (import, reject, detail)
-- `/organizations/**` → `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
-- `/repair/organizations/**` → `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
-- `/users/**` → `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
-- `/notifications/**` → `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
-- `/subscriptions/**` → `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
-- `/favorites/**` → `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
-- `/regions/**` → `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
-- `/standards/**` → `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
-- `/data-regulations/**` → `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
-- `/statistics/**` → `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
-- `/export/**` → `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
-- `/info-messages/**` → `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
-- `/blobs/**` → `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
-- `/contact-request` → `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
-- `/translations/**` → `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
-- `/v1/**` → `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md` (DCAT-AP)
-- `/external-organizations/**` → `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-tracker-backend.md`
-- `/external-categories/**` → `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-tracker-backend.md`
+- `/data-publications/**` → `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
+- `/data-publications/import` → `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
+- `/datasets` → `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md` (listing only)
+- `/datasets/**` → `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-tracker-backend.md` (import, reject, detail)
+- `/organizations/**` → `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
+- `/repair/organizations/**` → `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
+- `/users/**` → `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
+- `/notifications/**` → `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
+- `/subscriptions/**` → `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
+- `/favorites/**` → `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
+- `/regions/**` → `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
+- `/standards/**` → `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
+- `/data-regulations/**` → `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
+- `/statistics/**` → `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
+- `/export/**` → `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
+- `/info-messages/**` → `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
+- `/blobs/**` → `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
+- `/contact-request` → `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
+- `/translations/**` → `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
+- `/v1/**` → `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md` (DCAT-AP)
+- `/external-organizations/**` → `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-tracker-backend.md`
+- `/external-categories/**` → `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/backend/ntm-tracker-backend.md`
 
 
 ## PATTERN DOCUMENTATION
@@ -270,7 +270,7 @@ When working with specific endpoints:
 NTM uses specific patterns for recurring implementation scenarios. Each pattern is documented in its own focused file:
 
 **WHEN working with services** (`*.service.ts` files):
-→ Read `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/patterns/service-patterns.md`
+→ Read `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/patterns/service-patterns.md`
 - Service categories (API/HTTP, complex, auth, URL coordination, framework, utility)
 - No BaseService — plain injectable classes only
 - `baseUrl` field convention, `share()` usage, `Accept-Language` header pattern
@@ -278,14 +278,14 @@ NTM uses specific patterns for recurring implementation scenarios. Each pattern 
 - File location rules and naming conventions
 
 **WHEN working with repositories** (`*.repository.ts` files):
-→ Read `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/patterns/repository-patterns.md`
+→ Read `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/patterns/repository-patterns.md`
 - Store structure and BaseRepository lifecycle methods
 - Observable field pattern (use `readonly field$`, not `get field$()` getter)
 - Standard action method shape (pending → HTTP → success/error → return observable)
 - Naming conventions, file location, refresh patterns, deduplication cache
 
 **WHEN working with accessible forms (WCAG 3.3.1 compliance)**:
-→ Read `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/patterns/form-accessibility.md`
+→ Read `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/patterns/form-accessibility.md`
 - Error message formatting
 - ARIA live regions & aria-invalid attributes
 - Focus management
@@ -295,7 +295,7 @@ NTM uses specific patterns for recurring implementation scenarios. Each pattern 
 - Testing checklists
 
 **WHEN working with query parameters for routing, filtering, or deep linking**:
-→ Read `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/patterns/query-params.md`
+→ Read `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/patterns/query-params.md`
 - Feature-specific deep linking
 - Navigation state preservation
 - Pagination patterns
@@ -309,6 +309,6 @@ NTM uses specific patterns for recurring implementation scenarios. Each pattern 
 
 **For backend API details**: Read the appropriate backend markdown file based on the mapping above
 
-**For updating backend API docs**: Read `$CLINERULES_ROOT/global/update-backend-api-instructions.md`
+**For updating backend API docs**: Read `$CLAUDE_ROOT/global/update-backend-api-instructions.md`
 
-**For code validation**: See `$CLINERULES_ROOT/validation/checklists/` for file-type-specific validation checklists. Each checklist consolidates ALL rules from the 6 validation rule files (angular-instructions, code-simplicity, angular-style, angular-class-structure, dead-code-detection, sonarqube-rules).
+**For code validation**: See `$CLAUDE_ROOT/validation/checklists/` for file-type-specific validation checklists. Each checklist consolidates ALL rules from the 6 validation rule files (angular-instructions, code-simplicity, angular-style, angular-class-structure, dead-code-detection, sonarqube-rules).

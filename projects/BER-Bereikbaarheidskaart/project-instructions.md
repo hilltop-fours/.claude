@@ -61,7 +61,7 @@ NEVER search for or work with: `.js`, `.jsx`, `.tsx`, `.css`, `.less`, `.vue` fi
 - Comments: English
 
 **Commit Messages**: English only
-- Follow rules in `.clinerules/global/git-instructions.md`
+- Follow rules in `.claude/global/git-instructions.md`
 
 **UI Text**: Dutch only
 - All user-facing text must be in Dutch
@@ -88,33 +88,33 @@ NEVER search for or work with: `.js`, `.jsx`, `.tsx`, `.css`, `.less`, `.vue` fi
 
 When implementing features related to:
 
-- **Traffic Signs (for maps)** → Read `$CLINERULES_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-backend.md`
+- **Traffic Signs (for maps)** → Read `$CLAUDE_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-backend.md`
   - Traffic sign CRUD, validation, removal
   - Traffic sign images and history
   - Map updates (GeoJSON)
 
-- **Organizations & Users** → Read `$CLINERULES_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-backend.md`
+- **Organizations & Users** → Read `$CLAUDE_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-backend.md`
   - Organization management
   - User management and roles (Keycloak)
   - Road authority lookups
 
-- **Findings / Issues** → Read `$CLINERULES_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-backend.md`
+- **Findings / Issues** → Read `$CLAUDE_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-backend.md`
   - Traffic sign findings and issue tracking
   - Black code uploads and validation
 
-- **Vehicle Restrictions (WKD)** → Read `$CLINERULES_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-wkd-backend.md`
+- **Vehicle Restrictions (WKD)** → Read `$CLAUDE_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-wkd-backend.md`
   - Speed limits, height/length/load/axle-load restrictions
   - Traffic type and driving direction mutations
   - School zones, road narrowings, road categories
   - NWB version-based mutations and exports
 
-- **Environmental & Emission Zones** → Read `$CLINERULES_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-area-backend.md`
+- **Environmental & Emission Zones** → Read `$CLAUDE_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-area-backend.md`
   - Environmental zones and emission zones
   - Parking bans and traffic regulations
   - Hazardous substance routes
   - Geographic areas, counties, towns
 
-- **User Feedback / Corrections** → Read `$CLINERULES_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-feedback-backend.md`
+- **User Feedback / Corrections** → Read `$CLAUDE_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-feedback-backend.md`
   - User-submitted corrections about road features
   - Location-based feedback (GeoJSON points)
 
@@ -122,32 +122,32 @@ When implementing features related to:
 
 When working with specific endpoints:
 
-- `/traffic-signs/**` → `$CLINERULES_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-backend.md`
-- `/images/**` → `$CLINERULES_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-backend.md`
-- `/organizations/**` → `$CLINERULES_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-backend.md`
-- `/users/**` → `$CLINERULES_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-backend.md`
-- `/findings/**` → `$CLINERULES_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-backend.md`
-- `/black-codes/**` → `$CLINERULES_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-backend.md`
-- `/info-messages/**` → `$CLINERULES_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-backend.md`
-- `/road-authorities/**` → `$CLINERULES_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-backend.md`
-- `/speeds/**` → `$CLINERULES_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-wkd-backend.md`
-- `/traffic-types/**` → `$CLINERULES_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-wkd-backend.md`
-- `/height-restrictions/**` → `$CLINERULES_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-wkd-backend.md`
-- `/length-restrictions/**` → `$CLINERULES_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-wkd-backend.md`
-- `/load-restrictions/**` → `$CLINERULES_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-wkd-backend.md`
-- `/axle-load-restrictions/**` → `$CLINERULES_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-wkd-backend.md`
-- `/schoolzones/**` → `$CLINERULES_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-wkd-backend.md`
-- `/road-narrowings/**` → `$CLINERULES_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-wkd-backend.md`
-- `/driving-directions/**` → `$CLINERULES_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-wkd-backend.md`
-- `/export/**` → `$CLINERULES_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-wkd-backend.md`
-- `/environmental-zones/**` → `$CLINERULES_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-area-backend.md`
-- `/emission-zones/**` → `$CLINERULES_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-area-backend.md`
-- `/parking-bans/**` → `$CLINERULES_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-area-backend.md`
-- `/traffic-regulations/**` → `$CLINERULES_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-area-backend.md`
-- `/routes/hazardous-substances/**` → `$CLINERULES_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-area-backend.md`
-- `/areas/**` → `$CLINERULES_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-area-backend.md`
-- `/counties/**` → `$CLINERULES_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-area-backend.md`
-- `/corrections/**` → `$CLINERULES_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-feedback-backend.md`
+- `/traffic-signs/**` → `$CLAUDE_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-backend.md`
+- `/images/**` → `$CLAUDE_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-backend.md`
+- `/organizations/**` → `$CLAUDE_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-backend.md`
+- `/users/**` → `$CLAUDE_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-backend.md`
+- `/findings/**` → `$CLAUDE_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-backend.md`
+- `/black-codes/**` → `$CLAUDE_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-backend.md`
+- `/info-messages/**` → `$CLAUDE_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-backend.md`
+- `/road-authorities/**` → `$CLAUDE_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-backend.md`
+- `/speeds/**` → `$CLAUDE_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-wkd-backend.md`
+- `/traffic-types/**` → `$CLAUDE_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-wkd-backend.md`
+- `/height-restrictions/**` → `$CLAUDE_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-wkd-backend.md`
+- `/length-restrictions/**` → `$CLAUDE_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-wkd-backend.md`
+- `/load-restrictions/**` → `$CLAUDE_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-wkd-backend.md`
+- `/axle-load-restrictions/**` → `$CLAUDE_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-wkd-backend.md`
+- `/schoolzones/**` → `$CLAUDE_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-wkd-backend.md`
+- `/road-narrowings/**` → `$CLAUDE_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-wkd-backend.md`
+- `/driving-directions/**` → `$CLAUDE_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-wkd-backend.md`
+- `/export/**` → `$CLAUDE_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-wkd-backend.md`
+- `/environmental-zones/**` → `$CLAUDE_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-area-backend.md`
+- `/emission-zones/**` → `$CLAUDE_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-area-backend.md`
+- `/parking-bans/**` → `$CLAUDE_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-area-backend.md`
+- `/traffic-regulations/**` → `$CLAUDE_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-area-backend.md`
+- `/routes/hazardous-substances/**` → `$CLAUDE_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-area-backend.md`
+- `/areas/**` → `$CLAUDE_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-area-backend.md`
+- `/counties/**` → `$CLAUDE_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-area-backend.md`
+- `/corrections/**` → `$CLAUDE_ROOT/projects/BER-Bereikbaarheidskaart/backend/traffic-sign-feedback-backend.md`
 
 **Note**: This mapping is incomplete. If you need comprehensive endpoint mapping, use the backend crawl prompt provided separately.
 
@@ -164,7 +164,7 @@ BER-Bereikbaarheidskaart/
 ├── traffic-sign-area-backend/        ← Reference only (shared from GRG)
 ├── traffic-sign-feedback-backend/    ← Reference only (shared from GRG)
 ├── ndw-design/                       ← Reference only (shared GRG design system)
-└── .clinerules/                      ← Editable (documentation only)
+└── .claude/                      ← Editable (documentation only)
     └── projects/BER-Bereikbaarheidskaart/
         ├── project-instructions.md   ← You are here
         └── backend/
@@ -180,6 +180,6 @@ BER-Bereikbaarheidskaart/
 
 **For backend API details**: Read the appropriate backend markdown file based on the mapping above
 
-**For updating backend API docs**: Read `$CLINERULES_ROOT/global/update-backend-api-instructions.md`
+**For updating backend API docs**: Read `$CLAUDE_ROOT/global/update-backend-api-instructions.md`
 
-**For code validation**: See `$CLINERULES_ROOT/validation/checklists/` for file-type-specific validation checklists. Each checklist consolidates ALL rules from the 6 validation rule files (angular-instructions, code-simplicity, angular-style, angular-class-structure, dead-code-detection, sonarqube-rules).
+**For code validation**: See `$CLAUDE_ROOT/validation/checklists/` for file-type-specific validation checklists. Each checklist consolidates ALL rules from the 6 validation rule files (angular-instructions, code-simplicity, angular-style, angular-class-structure, dead-code-detection, sonarqube-rules).

@@ -42,7 +42,7 @@ The interceptor replaces the org API response with the active persona's org data
 Use **Bash `cp -r`** to copy the entire folder in one command (do NOT use Write tool — it wastes tokens):
 
 ```bash
-cp -r /Users/daniel/Developer/GRG-Wegkenmerken-verkeersborden/.clinerules/projects/GRG-Wegkenmerken-verkeersborden/patterns/dev /Users/daniel/Developer/GRG-Wegkenmerken-verkeersborden/traffic-sign-frontend/src/app/core/dev
+cp -r /Users/daniel/Developer/GRG-Wegkenmerken-verkeersborden/.claude/projects/GRG-Wegkenmerken-verkeersborden/patterns/dev /Users/daniel/Developer/GRG-Wegkenmerken-verkeersborden/traffic-sign-frontend/src/app/core/dev
 ```
 
 That's it — all 5 files land in place in one operation:
