@@ -2,7 +2,7 @@
 
 ## ⚠️ PURPOSE - READ FIRST
 
-**Everything in this `.clinerules/` repository is written EXCLUSIVELY for Claude Code.**
+**Everything in this `.claude/` repository is written EXCLUSIVELY for Claude Code.**
 
 This is not human documentation. Every file, every structure, every detail exists for one purpose only:
 - **For Claude to read and understand**
@@ -10,7 +10,7 @@ This is not human documentation. Every file, every structure, every detail exist
 - **For Claude to write better code**
 - **For Claude to locate information quickly**
 
-When creating or editing files in `.clinerules/`:
+When creating or editing files in `.claude/`:
 - Optimize for Claude's comprehension, not human readability
 - Structure for Claude's navigation patterns
 - Write explanations for Claude's task-based reading
@@ -20,32 +20,19 @@ The user should never need to read this. If the user needs information, Claude r
 
 ---
 
-## CLAUDE.MD FILE SYNCHRONIZATION - CRITICAL
+## EDITING THIS FILE
 
 **When user asks to edit/update this claude.md file:**
 
-1. **ALWAYS edit `.clinerules/claude.md` FIRST** (the source of truth, version controlled in git)
-2. **Commit the change** to .clinerules repository with git
-3. **THEN sync to root claude.md** (copy the exact same content to `$PROJECT_ROOT/claude.md`)
-   - Root file is NOT version controlled (reference copy only)
-   - Root file must match .clinerules file exactly
+Edit `.claude/claude.md` directly in the current project's `.claude/` folder — it is version controlled in git. No syncing or copying needed.
 
-**NEVER edit only the root `claude.md`** - changes will not be in git history and will be lost.
-
-**Workflow**:
-```
-Edit .clinerules/claude.md
-  ↓
-Commit to .clinerules with git
-  ↓
-Copy exact content to root claude.md (no commit needed)
-```
+Since all 3 projects share the same `.claude` git repository, changes committed here apply to all projects automatically on next pull.
 
 ---
 
 ## FOLDER STRUCTURE REFERENCE
 
-Quick overview of `.clinerules/` organization:
+Quick overview of `.claude/` organization:
 
 - `global/` - Shared rules for all projects
   - `git-instructions.md` - Git workflow, commit messages, branch naming, pushing
@@ -82,31 +69,31 @@ Check your current working directory path and match it against these patterns:
 
 **IF path contains `/NTM-Publicatie-overzicht`**:
 - Project: NTM Publicatie Overzicht
-- $CLINERULES_ROOT = `/Users/daniel/Developer/NTM-Publicatie-overzicht/.clinerules`
-- Read: `$CLINERULES_ROOT/projects/NTM-Publicatie-overzicht/project-instructions.md`
+- $CLAUDE_ROOT = `/Users/daniel/Developer/NTM-Publicatie-overzicht/.claude`
+- Read: `$CLAUDE_ROOT/projects/NTM-Publicatie-overzicht/project-instructions.md`
 
 **IF path contains `/GRG-Wegkenmerken-verkeersborden`**:
 - Project: GRG Wegkenmerken Verkeersborden
-- $CLINERULES_ROOT = `/Users/daniel/Developer/GRG-Wegkenmerken-verkeersborden/.clinerules`
-- Read: `$CLINERULES_ROOT/projects/GRG-Wegkenmerken-verkeersborden/project-instructions.md`
+- $CLAUDE_ROOT = `/Users/daniel/Developer/GRG-Wegkenmerken-verkeersborden/.claude`
+- Read: `$CLAUDE_ROOT/projects/GRG-Wegkenmerken-verkeersborden/project-instructions.md`
 
 **IF path contains `/BER-Bereikbaarheidskaart`**:
 - Project: BER Bereikbaarheidskaart
-- $CLINERULES_ROOT = `/Users/daniel/Developer/BER-Bereikbaarheidskaart/.clinerules`
-- Read: `$CLINERULES_ROOT/projects/BER-Bereikbaarheidskaart/project-instructions.md`
+- $CLAUDE_ROOT = `/Users/daniel/Developer/BER-Bereikbaarheidskaart/.claude`
+- Read: `$CLAUDE_ROOT/projects/BER-Bereikbaarheidskaart/project-instructions.md`
 
 ---
 
 ## PATH VARIABLES
 
-For file references in `.clinerules/` documentation, use the `$CLINERULES_ROOT` variable:
+For file references in `.claude/` documentation, use the `$CLAUDE_ROOT` variable:
 
-**$CLINERULES_ROOT** = Absolute path to `.clinerules/` directory for the current project
-- NTM: `/Users/daniel/Developer/NTM-Publicatie-overzicht/.clinerules`
-- GRG: `/Users/daniel/Developer/GRG-Wegkenmerken-verkeersborden/.clinerules`
-- BER: `/Users/daniel/Developer/BER-Bereikbaarheidskaart/.clinerules`
+**$CLAUDE_ROOT** = Absolute path to `.claude/` directory for the current project
+- NTM: `/Users/daniel/Developer/NTM-Publicatie-overzicht/.claude`
+- GRG: `/Users/daniel/Developer/GRG-Wegkenmerken-verkeersborden/.claude`
+- BER: `/Users/daniel/Developer/BER-Bereikbaarheidskaart/.claude`
 
-All file references use this pattern: `$CLINERULES_ROOT/path/to/file.md`
+All file references use this pattern: `$CLAUDE_ROOT/path/to/file.md`
 
 ---
 
@@ -117,49 +104,49 @@ All file references use this pattern: `$CLINERULES_ROOT/path/to/file.md`
 → Extract any numeric IDs from the branch path segments (e.g., `chore/110904/111093/desc` → IDs: `110904`, `111093`)
 → IF branch is `main` or `master` → tell user there is no story file for main/master
 → IF no numeric IDs found in branch → tell user no story IDs were found in the branch name
-→ OTHERWISE: search `$CLINERULES_ROOT/stories/` (all subfolders) for a file whose name begins with those IDs (e.g., `110904-111093-*.md`)
+→ OTHERWISE: search `$CLAUDE_ROOT/stories/` (all subfolders) for a file whose name begins with those IDs (e.g., `110904-111093-*.md`)
 → IF file found → read it and briefly summarize the story context and current checklist state to the user
 → IF no file found → tell user no story file was found for those IDs
 
 ---
 
 **WHEN user starts a new story, task, or bug** (says "new story", "start story", "here's the story", "new task", "new bug", or posts Azure DevOps screenshots):
-→ **IMMEDIATELY** read `$CLINERULES_ROOT/global/new-story-instructions.md` and follow it step by step
+→ **IMMEDIATELY** read `$CLAUDE_ROOT/global/new-story-instructions.md` and follow it step by step
 
 **BEFORE any git operation** (commit, branch, push, pull, status, checkout):
-→ **ALWAYS** read `$CLINERULES_ROOT/global/git-instructions.md` first — no exceptions, even if read earlier in the session
-→ **CRITICAL FOR .CLINERULES COMMITS**: Single line only, `type(scope): description` format, separate commits per scope (see git-instructions.md SPECIAL CASE section)
+→ **ALWAYS** read `$CLAUDE_ROOT/global/git-instructions.md` first — no exceptions, even if read earlier in the session
+→ **CRITICAL FOR .CLAUDE COMMITS**: Single line only, `type(scope): description` format, separate commits per scope (see git-instructions.md SPECIAL CASE section)
 
 **WHEN user says "commit this" / "commit" / "stage and commit"** (without specifying a repo):
-→ Read `$CLINERULES_ROOT/global/git-instructions.md` first
+→ Read `$CLAUDE_ROOT/global/git-instructions.md` first
 → Check BOTH repositories for uncommitted changes:
-  1. Run `git status --short` in `.clinerules/` directory
+  1. Run `git status --short` in the current project's `.claude/` directory
   2. Run `git status --short` in `{project-prefix}-frontend/` directory
 → Commit changes in whichever repo(s) have them
 → If both repos have changes, commit each repo separately following git-instructions rules
 → If user specifies a repo (e.g., "commit the frontend changes"), only commit that repo
 
 **BEFORE editing ANY code** (components, services, templates, styles):
-→ Read `$CLINERULES_ROOT/global/angular-instructions.md`
-→ Read `$CLINERULES_ROOT/global/code-simplicity.md`
-→ Reference `$CLINERULES_ROOT/validation/angular-*.md` files for detailed style and validation rules
+→ Read `$CLAUDE_ROOT/global/angular-instructions.md`
+→ Read `$CLAUDE_ROOT/global/code-simplicity.md`
+→ Reference `$CLAUDE_ROOT/validation/angular-*.md` files for detailed style and validation rules
 
 **WHEN user asks to update backend API docs**:
-→ Read `$CLINERULES_ROOT/global/update-backend-api-instructions.md`
+→ Read `$CLAUDE_ROOT/global/update-backend-api-instructions.md`
 
 **WHEN implementing features or need project context**:
 → Read project-specific `project-instructions.md` (found via project identification above)
 
 **WHEN implementing features that use backend APIs**:
-→ Project's `project-instructions.md` has backend mapping with `$CLINERULES_ROOT` paths
+→ Project's `project-instructions.md` has backend mapping with `$CLAUDE_ROOT` paths
 
 **IF confused about backend API documentation format**:
-→ Read `$CLINERULES_ROOT/global/backend-api-format.md` (reference only)
+→ Read `$CLAUDE_ROOT/global/backend-api-format.md` (reference only)
 
 **WHEN user asks to validate code** (validate, review, check code quality):
-→ Run the validation script: `bash $CLINERULES_ROOT/scripts/validate.sh`
-→ Read the generated report: `$CLINERULES_ROOT/scripts/report.md`
-→ Read ALL checklist files in `$CLINERULES_ROOT/validation/checklists/`: `typescript-component.md`, `typescript-interface.md`, `html-template.md`, `scss-style.md`
+→ Run the validation script: `bash $CLAUDE_ROOT/scripts/validate.sh`
+→ Read the generated report: `$CLAUDE_ROOT/scripts/report.md`
+→ Read ALL checklist files in `$CLAUDE_ROOT/validation/checklists/`: `typescript-component.md`, `typescript-interface.md`, `html-template.md`, `scss-style.md`
 → Apply the full checklist (all numbered checks) to each changed file of the matching type
 → Read project-specific `project-instructions.md` for project patterns
 → Present combined findings to user (automated report summary + full checklist findings)
@@ -167,17 +154,17 @@ All file references use this pattern: `$CLINERULES_ROOT/path/to/file.md`
 → **Note**: Do not auto-fix. Present findings only unless explicitly asked.
 
 **WHEN responding to a PR comment on your own PR** (reviewer gave feedback, asked a question, or flagged something):
-→ Read `$CLINERULES_ROOT/global/pr-review-workflow.md` + `$CLINERULES_ROOT/global/daniel-voice.md`
+→ Read `$CLAUDE_ROOT/global/pr-review-workflow.md` + `$CLAUDE_ROOT/global/daniel-voice.md`
 
 **WHEN leaving a comment on someone else's PR** (reviewing their code, flagging an issue, asking a question):
-→ Read `$CLINERULES_ROOT/global/daniel-voice.md`
+→ Read `$CLAUDE_ROOT/global/daniel-voice.md`
 
 **WHEN writing code comments** (inline or block comments inside source files):
-→ Read `$CLINERULES_ROOT/global/daniel-voice.md`
+→ Read `$CLAUDE_ROOT/global/daniel-voice.md`
 
 **WHEN user asks to "load" / "set up" / "add" / "remove" the dev panel** (or "dev auth panel", "dev panel", "put in the dev panel"):
-→ Read `$CLINERULES_ROOT/projects/{PROJECT}/patterns/dev-auth-panel-instructions.md` and follow it step by step
-→ This file is project-specific — use the correct `$CLINERULES_ROOT` and `{PROJECT}` for the current project (e.g. `GRG-Wegkenmerken-verkeersborden`)
+→ Read `$CLAUDE_ROOT/projects/{PROJECT}/patterns/dev-auth-panel-instructions.md` and follow it step by step
+→ This file is project-specific — use the correct `$CLAUDE_ROOT` and `{PROJECT}` for the current project (e.g. `GRG-Wegkenmerken-verkeersborden`)
 
 ---
 
@@ -186,7 +173,7 @@ All file references use this pattern: `$CLINERULES_ROOT/path/to/file.md`
 **WHEN user asks to update backends** (update backend, update backends, check backend, scan backends, backend status, backend updates):
 → Execute automated backend update workflow for CURRENT project only
 → This is autonomous - Automatically updates all backend markdown files with detected API changes
-→ Read `$CLINERULES_ROOT/global/update-backend-api-instructions.md` for documentation format reference
+→ Read `$CLAUDE_ROOT/global/update-backend-api-instructions.md` for documentation format reference
 
 ### Trigger Phrases
 
@@ -211,32 +198,32 @@ All file references use this pattern: `$CLINERULES_ROOT/path/to/file.md`
 ```
 IF cwd contains /GRG-Wegkenmerken-verkeersborden:
   → Project = GRG
-  → $CLINERULES_ROOT = /Users/daniel/Developer/GRG-Wegkenmerken-verkeersborden/.clinerules
+  → $CLAUDE_ROOT = /Users/daniel/Developer/GRG-Wegkenmerken-verkeersborden/.claude
 
 ELSE IF cwd contains /NTM-Publicatie-overzicht:
   → Project = NTM
-  → $CLINERULES_ROOT = /Users/daniel/Developer/NTM-Publicatie-overzicht/.clinerules
+  → $CLAUDE_ROOT = /Users/daniel/Developer/NTM-Publicatie-overzicht/.claude
 
 ELSE IF cwd contains /BER-Bereikbaarheidskaart:
   → Project = BER
-  → $CLINERULES_ROOT = /Users/daniel/Developer/BER-Bereikbaarheidskaart/.clinerules
+  → $CLAUDE_ROOT = /Users/daniel/Developer/BER-Bereikbaarheidskaart/.claude
 ```
 
 **Step 2: Extract Backend Registry**
 
-Read `$CLINERULES_ROOT/projects/{PROJECT}/project-instructions.md`
+Read `$CLAUDE_ROOT/projects/{PROJECT}/project-instructions.md`
 
 Parse the "Backend Services (Reference Only - Never Edit)" section:
 - Extract backend name (e.g., "traffic-sign-backend")
 - Extract absolute repo path (e.g., `/Users/daniel/Developer/GRG-Wegkenmerken-verkeersborden/traffic-sign-backend/`)
-- Calculate doc path: `$CLINERULES_ROOT/projects/{PROJECT}/backend/{backend-name}.md`
+- Calculate doc path: `$CLAUDE_ROOT/projects/{PROJECT}/backend/{backend-name}.md`
 
 Build backend registry array for THIS project only.
 
 **Step 3: For Each Backend in THIS Project**
 
 a. **Read backend markdown file**
-   - Path: `$CLINERULES_ROOT/projects/{PROJECT}/backend/{backend-name}.md`
+   - Path: `$CLAUDE_ROOT/projects/{PROJECT}/backend/{backend-name}.md`
    - Parse COMMIT TRACKING table
    - Extract: Last Verified Commit (short hash like `46ecff61`)
    - Extract: Last Verified Date
@@ -374,7 +361,7 @@ g. **Handle Errors Gracefully**
 After processing all backends:
 
 ```bash
-cd $CLINERULES_ROOT
+cd $CLAUDE_ROOT
 
 # Stage all modified backend markdown files
 git add projects/{PROJECT}/backend/*.md
@@ -450,7 +437,7 @@ Present output to user:
 
 ## Changes Committed
 
-Committed to `.clinerules` repository:
+Committed to `.claude` repository:
 ```
 docs(backend): automated update for {PROJECT} backends
 
@@ -459,7 +446,7 @@ Updated {count} of {total} backends
 
 **Next steps:**
 - Review the updated markdown files if needed
-- Sync to root CLAUDE.md if you edited .clinerules/claude.md
+- Sync to root CLAUDE.md if you edited .claude/claude.md
 - All changes are in git, easily reversible if needed
 ```
 
@@ -521,8 +508,7 @@ File editing is enforced by a system hook (`~/.claude/hooks/check-edit-path.sh`)
 
 **Allowed edit locations** (hook enforces this automatically):
 - `{frontend-repo}/src/` — frontend source code only
-- `.clinerules/` — rules and documentation
-- Root `claude.md` in each project
+- `.claude/` — rules and documentation
 
 **You CAN read (but not edit) outside these locations**:
 - Configuration files: `package.json`, `angular.json`, `tsconfig.json`, etc.
@@ -535,18 +521,18 @@ File editing is enforced by a system hook (`~/.claude/hooks/check-edit-path.sh`)
 ## EXECUTION FLOW
 
 1. **Identify project** using working directory path
-2. **Define $CLINERULES_ROOT** based on project (see PROJECT IDENTIFICATION section)
-3. **Read `project-instructions.md`** at `$CLINERULES_ROOT/projects/{PROJECT}/project-instructions.md`
+2. **Define $CLAUDE_ROOT** based on project (see PROJECT IDENTIFICATION section)
+3. **Read `project-instructions.md`** at `$CLAUDE_ROOT/projects/{PROJECT}/project-instructions.md`
 4. **Based on task**, read additional files:
-   - New story/task/bug → Read `$CLINERULES_ROOT/global/new-story-instructions.md`
-   - Git operation → Read `$CLINERULES_ROOT/global/git-instructions.md`
-   - Code editing → Read `$CLINERULES_ROOT/global/angular-instructions.md` + `$CLINERULES_ROOT/global/code-simplicity.md` + `$CLINERULES_ROOT/validation/angular-*.md`
-   - Code validation → Run `bash $CLINERULES_ROOT/scripts/validate.sh`, read report, do judgment checks
-   - PR review comment → Read `$CLINERULES_ROOT/global/pr-review-workflow.md` + `$CLINERULES_ROOT/global/daniel-voice.md`
-   - Leaving a comment on someone else's PR → Read `$CLINERULES_ROOT/global/daniel-voice.md`
-   - Writing code comments → Read `$CLINERULES_ROOT/global/daniel-voice.md`
+   - New story/task/bug → Read `$CLAUDE_ROOT/global/new-story-instructions.md`
+   - Git operation → Read `$CLAUDE_ROOT/global/git-instructions.md`
+   - Code editing → Read `$CLAUDE_ROOT/global/angular-instructions.md` + `$CLAUDE_ROOT/global/code-simplicity.md` + `$CLAUDE_ROOT/validation/angular-*.md`
+   - Code validation → Run `bash $CLAUDE_ROOT/scripts/validate.sh`, read report, do judgment checks
+   - PR review comment → Read `$CLAUDE_ROOT/global/pr-review-workflow.md` + `$CLAUDE_ROOT/global/daniel-voice.md`
+   - Leaving a comment on someone else's PR → Read `$CLAUDE_ROOT/global/daniel-voice.md`
+   - Writing code comments → Read `$CLAUDE_ROOT/global/daniel-voice.md`
    - Backend API work → Read appropriate backend `.md` file (path in project-instructions.md)
-   - Update backend docs → Read `$CLINERULES_ROOT/global/update-backend-api-instructions.md`
+   - Update backend docs → Read `$CLAUDE_ROOT/global/update-backend-api-instructions.md`
 5. **Apply all rules** from the files you read to every action
 
 ---
@@ -566,10 +552,10 @@ Frontend projects use build commands to identify issues:
 
 **Git commands execute from these subdirectories ONLY** (project roots are NOT git repos):
 
-1. **For `.clinerules/**` changes** (rules, docs, API documentation):
-   - Execute git from: `{project-root}/.clinerules/` directory
-   - Example: `/Users/daniel/Developer/NTM-Publicatie-overzicht/.clinerules`
-   - Example: `/Users/daniel/Developer/GRG-Wegkenmerken-verkeersborden/.clinerules`
+1. **For `.claude/` changes** (rules, docs, API documentation):
+   - Execute git from the current project's `.claude/` directory
+   - Example: `/Users/daniel/Developer/NTM-Publicatie-overzicht/.claude`
+   - **Note**: All 3 projects share the same git repo — commits here apply everywhere on next pull
 
 2. **For frontend code changes** (components, services, styles):
    - Execute git from: `{project-root}/{project-prefix}-frontend/` directory
@@ -585,5 +571,6 @@ Frontend projects use build commands to identify issues:
 - Backend is **reference only** - Never edit backend source code
 - Design system is **reference only** - Never edit design system code
 - Project root directories are **NOT git repositories** - Git commands will fail there
-- Git operations MUST execute from specified subdirectories (see Git Execution Context above)
+- Git operations MUST execute from `.claude/` or `*-frontend/` subdirectories
+- `.claude/` is a shared git repo — changes committed in any project apply to all 3 on next pull
 - When in doubt, refer to the project's `project-instructions.md`
