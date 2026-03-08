@@ -382,7 +382,7 @@ Purpose: Prevent duplication, centralize updates
 ## DEAD CODE CLEANUP - MANDATORY
 
 **For formal validation rules and detection methods, see:**
-→ `$CLINERULES_ROOT/validation/dead-code-detection.md` - Custom dead code validation rules
+→ `$CLAUDE_ROOT/validation/dead-code-detection.md` - Custom dead code validation rules
 → Automated checks are part of the validation workflow in CLAUDE.md
 
 AFTER any change that removes or replaces functionality, actively check for and remove code that is no longer used. Claude Code does not have IDE greying-out indicators, so this check must be done manually.

@@ -16,7 +16,7 @@ Every rule below serves one goal: the output should look like a competent human 
 
 **CRITICAL DISTINCTION**:
 
-- **.clinerules files** → Written FOR Claude, optimized for Claude's comprehension
+- **.claude files** → Written FOR Claude, optimized for Claude's comprehension
 - **Angular code (src/)** → Written FOR humans, optimized for human readability
 
 The Angular code you write will be:

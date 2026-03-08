@@ -33,7 +33,7 @@ This is the most critical step — the original text gets lost when conversation
 
 ### Where to save
 
-Create a markdown file in the **`$CLINERULES_ROOT/stories/`** folder (inside the `.clinerules` repo, not the project root).
+Create a markdown file in the **`$CLAUDE_ROOT/stories/`** folder (inside the `.claude` repo, not the project root).
 
 **Filename convention:**
 - Format: `storyId-taskId-description.md`
@@ -44,7 +44,7 @@ Create a markdown file in the **`$CLINERULES_ROOT/stories/`** folder (inside the
 
 Examples:
 - PR title: `feat(map): #12345 #67890 add map zoom controls`
-- Filename: `$CLINERULES_ROOT/stories/12345-67890-add-map-zoom-controls.md`
+- Filename: `$CLAUDE_ROOT/stories/12345-67890-add-map-zoom-controls.md`
 
 **This English requirement applies to all three:**
 1. Story filename description
@@ -100,7 +100,7 @@ Examples:
 
 **IMPORTANT:** Save this file immediately after extracting text. Do not wait until later steps.
 
-**CRITICAL — NO CODE CHANGES IN THIS STEP:** Creating the story file is the ONLY action in Step 1. Do NOT edit, create, or modify any source code files. Do NOT create pipes, enums, components, or any other code. The `$CLINERULES_ROOT/stories/` markdown file is the only output.
+**CRITICAL — NO CODE CHANGES IN THIS STEP:** Creating the story file is the ONLY action in Step 1. Do NOT edit, create, or modify any source code files. Do NOT create pipes, enums, components, or any other code. The `$CLAUDE_ROOT/stories/` markdown file is the only output.
 
 ---
 

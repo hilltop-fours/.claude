@@ -45,4 +45,4 @@ the dutch response text here
 
 ## PR COMMENT RESPONSE STYLE
 
-→ See `$CLINERULES_ROOT/global/daniel-voice.md` for full style rules (punctuation, capitalization, tone, output format, examples)
+→ See `$CLAUDE_ROOT/global/daniel-voice.md` for full style rules (punctuation, capitalization, tone, output format, examples)

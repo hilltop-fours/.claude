@@ -18,9 +18,9 @@ Read the project-specific `project-instructions.md` to find:
 
 **Example**:
 - User: "ntm-backend has updated"
-- Read: `.clinerules/projects/NTM-Publicatie-overzicht/project-instructions.md`
+- Read: `.claude/projects/NTM-Publicatie-overzicht/project-instructions.md`
 - Find: Backend repo at `/Users/daniel/Developer/NTM-Publicatie-overzicht/ntm-backend/`
-- Update file: `.clinerules/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
+- Update file: `.claude/projects/NTM-Publicatie-overzicht/backend/ntm-backend.md`
 
 ### Step 2: Find the Registry File
 
@@ -92,7 +92,7 @@ Look for changes in:
 
 ### Step 6: Update the Markdown File
 
-Read `.clinerules/global/backend-api-format.md` for format specifications.
+Read `.claude/global/backend-api-format.md` for format specifications.
 
 Update the affected sections:
 - **Quick Reference table** (if new features/endpoints)
@@ -148,7 +148,7 @@ Before finalizing updates:
 ## FORMAT REFERENCE
 
 If unsure about documentation format, read:
-`.clinerules/global/backend-api-format.md`
+`.claude/global/backend-api-format.md`
 
 This reference file contains:
 - Detailed endpoint documentation format

@@ -1,6 +1,6 @@
 # BACKEND API DOCUMENTATION FORMAT
 
-This document defines the standard format for documenting backend APIs in the `.clinerules/projects/backend/` folder. This format is optimized for quick scanning, easy maintenance, and serving as a reference for frontend development.
+This document defines the standard format for documenting backend APIs in the `.claude/projects/backend/` folder. This format is optimized for quick scanning, easy maintenance, and serving as a reference for frontend development.
 
 ---
 
