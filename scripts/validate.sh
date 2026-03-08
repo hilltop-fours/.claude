@@ -2,8 +2,8 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-CLINERULES_ROOT="$(dirname "$SCRIPT_DIR")"
-PROJECT_ROOT="$(dirname "$CLINERULES_ROOT")"
+CLAUDE_ROOT="$(dirname "$SCRIPT_DIR")"
+PROJECT_ROOT="$(dirname "$CLAUDE_ROOT")"
 REPORT_FILE="$SCRIPT_DIR/report.md"
 
 # ===== PROJECT DETECTION =====
