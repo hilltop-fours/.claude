@@ -342,6 +342,48 @@ Per user confirmation: holistic cleanup included — fix missing `takeUntilDestr
 
 ---
 
+## Merge Strategy — One PR Per Commit
+
+**Decision (2026-03-09):** Instead of one large PR for the entire branch, merge in small batches: **one PR per commit group.**
+
+**Rationale:** Easier to review, easier to revert if something breaks, and keeps main history clean with logical atomic units.
+
+**Workflow per commit — "do it again" instructions for Claude:**
+1. Find the next `pending` row in the commits table below
+2. Note the commit hash and scope
+3. Daniel creates a task in Azure DevOps → provides the task ID
+4. Create branch: `chore/110904/{task-id}/{kebab-case-scope}` off `main`
+5. `git cherry-pick {commit-hash}` onto the new branch
+6. Amend the commit message to PR title format: `chore({scope}): #110904 #{task-id} {description}`
+   - Write the description yourself from the changed files — ignore the WIP message entirely
+   - Format: `type(scope): #story-id #task-id lowercase description`
+7. Mark the row in the table as `✅ branch: chore/110904/{task-id}/...`
+8. Commit story file update in `.claude` repo
+9. Repeat from step 1 for the next row
+
+**Branch naming:** `chore/110904/{task-id}/{kebab-case-description}` — always off `main`.
+**Commit message:** PR title format only — `chore({scope}): #110904 #{task-id} description`. No WIP prefix, no body.
+
+**Commits to ship (in order):**
+
+| # | Commit | Scope | Task title (Azure DevOps) | Status |
+|---|--------|-------|--------------------------|--------|
+| 1 | `1db185d6` — stepper, step-header, step-panel | `shared/stepper` | `[FE] signals: stepper components` | ✅ branch: `chore/110904/111259/signals-stepper-components` |
+| 2 | `348c3804` — account-new-form-organization, account-new-form-role | `modules/account` | `[FE] signals: account form components` | pending |
+| 3 | `ce54e103` — about, do-more-themes-item, tutorial-section, do-more-banner | `modules/small` | `[FE] signals: small page modules` | pending |
+| 4 | `c39ea9ed` — drawer, popup | `shared/overlays` | `[FE] signals: drawer & popup` | pending |
+| 5 | `4d460689` — list-card components | `shared/list-card` | `[FE] signals: list-card components` | pending |
+| 6 | `6e437ac3` — standards components | `modules/standards` | `[FE] signals: standards components` | pending |
+| 7 | `8f1edd6c` — publications shared components | `modules/publications` | `[FE] signals: publications shared` | pending |
+| 8 | `7bd0b9ec` — publications details section components | `modules/publications` | `[FE] signals: publications detail` | pending |
+| 9 | `40b015ab` — publications edit components + pages | `modules/publications` | `[FE] signals: publications edit` | pending |
+| 10 | `68fe8f89` — publication-filters-aside | `modules/publications` | `[FE] signals: publications filters` | pending |
+| 11 | `84d60f08` — users module | `modules/users` | `[FE] signals: users module` | pending |
+
+> Note: commits 1–5 map to commit groups 3–5 in the original plan below (commit groups 1 and 2 appear to already be merged into main).
+
+---
+
 ## Implementation Checklist
 
 All changes are stashed. Unstash group by group, verify build, commit.
