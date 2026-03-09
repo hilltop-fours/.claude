@@ -8,12 +8,12 @@ Complete reference for the NTM Backend API. This service manages data publicatio
 
 | Item | Value | Date |
 |------|-------|------|
-| Last Verified Commit | 031b0b9 | 2026-03-05 |
-| Commit Message | feat(organization): #110023 Rename 'RWS' to 'R' | |
-| Swagger Version | latest | 2026-03-05 |
+| Last Verified Commit | 130c7b5 | 2026-03-09 |
+| Commit Message | Feature #105837 Add usecases | |
+| Swagger Version | latest | 2026-03-09 |
 
-**Status**: ✓ Up to date as of 2026-03-05
-**Next Review**: Check commits after 031b0b9
+**Status**: ✓ Up to date as of 2026-03-09
+**Next Review**: Check commits after 130c7b5
 
 ---
 
@@ -33,6 +33,7 @@ Complete reference for the NTM Backend API. This service manages data publicatio
 | **Data Regulations** | `/data-regulations`, `/data-regulations/{regulation}` | GET | Keycloak NTM | Retrieve data regulations by type |
 | **Favorites** | `/favorites` | GET, POST, DELETE | Keycloak NTM | Manage favorite publications |
 | **Info Messages** | `/info-messages`, `/info-messages/{id}`, `/info-messages/current` | GET, POST, PUT, DELETE | Keycloak NTM | System-wide notifications |
+| **Use Cases** | `/use-cases`, `/use-cases/{id}` | GET, POST, PUT, DELETE | Keycloak NTM (ROLE_USER / ROLE_ADMIN_EDITOR) | Manage use cases with data needs |
 
 ---
 
@@ -1160,6 +1161,116 @@ Complete reference for the NTM Backend API. This service manages data publicatio
 
 ---
 
+### Use Cases
+
+#### GET /use-cases
+
+**Authentication**: None required (public)
+
+**Description**: Retrieve all use cases with optional filtering.
+
+**Query Parameters**:
+- `title` (string, optional) - Filter by title (partial match)
+- `description` (string, optional) - Filter by description (partial match)
+- `targetAudience` (string, optional) - Filter by target audience (partial match)
+- `organizationType` (OrganizationType, optional) - Filter by organization type
+- `dataNeedDescription` (string, optional) - Filter by data need description (partial match)
+
+**Response** (HTTP 200): `List<UseCaseDto>`
+```json
+[
+  {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "title": "Real-time fietsdata voor routeplanning",
+    "description": { "plain": "...", "formatted": { "ops": [] } },
+    "targetAudience": { "plain": "...", "formatted": { "ops": [] } },
+    "themes": ["BIKES", "MAAS"],
+    "dataNeeds": [
+      {
+        "id": "660e8400-e29b-41d4-a716-446655440001",
+        "description": { "plain": "...", "formatted": { "ops": [] } },
+        "dataTypes": ["REALTIME"]
+      }
+    ],
+    "organisationName": "Gemeente Amsterdam",
+    "organizationType": "COUNTY",
+    "organisationNamePublic": true
+  }
+]
+```
+
+---
+
+#### GET /use-cases/{id}
+
+**Authentication**: None required (public)
+
+**Description**: Retrieve a single use case by ID.
+
+**Path Parameters**:
+- `id` (UUID, required) - Use case ID
+
+**Response** (HTTP 200): `UseCaseDto`
+
+---
+
+#### POST /use-cases
+
+**Authentication**: Keycloak NTM — `ROLE_USER` required
+
+**Description**: Create a new use case.
+
+**Request Body**: `UseCaseDto`
+```json
+{
+  "title": "Real-time fietsdata voor routeplanning",
+  "description": { "formatted": { "ops": [{ "insert": "Beschrijving..." }] } },
+  "targetAudience": { "formatted": { "ops": [{ "insert": "Doelgroep..." }] } },
+  "themes": ["BIKES"],
+  "dataNeeds": [
+    {
+      "description": { "formatted": { "ops": [{ "insert": "Data behoefte..." }] } },
+      "dataTypes": ["REALTIME"]
+    }
+  ],
+  "organisationName": "Gemeente Amsterdam",
+  "organizationType": "COUNTY",
+  "organisationNamePublic": true
+}
+```
+
+**Response** (HTTP 200): `UseCaseDto` (created use case with generated `id`)
+
+---
+
+#### PUT /use-cases/{id}
+
+**Authentication**: Keycloak NTM — `ROLE_ADMIN_EDITOR` required
+
+**Description**: Update an existing use case.
+
+**Path Parameters**:
+- `id` (UUID, required) - Use case ID
+
+**Request Body**: `UseCaseDto` (same structure as POST)
+
+**Response** (HTTP 200): `UseCaseDto` (updated use case)
+
+---
+
+#### DELETE /use-cases/{id}
+
+**Authentication**: Keycloak NTM — `ROLE_ADMIN_EDITOR` required
+
+**Description**: Delete a use case by ID.
+
+**Path Parameters**:
+- `id` (UUID, required) - Use case ID
+
+**Response** (HTTP 200): void
+
+---
+
 ---
 
 ## DATA TYPES (DTOs)
@@ -1382,6 +1493,46 @@ Complete reference for the NTM Backend API. This service manages data publicatio
 
 ---
 
+### UseCaseDto
+
+**Used in**: GET/POST/PUT `/use-cases` endpoints
+
+| Field | Type | Required | Constraints | Description |
+|-------|------|----------|-------------|-------------|
+| `id` | UUID | No (auto-generated) | - | Use case identifier |
+| `title` | String | Yes | not blank | Title of the use case |
+| `description` | RichTextDto | Yes | max 2500 chars (rich text) | Description of the use case |
+| `targetAudience` | RichTextDto | Yes | max 2500 chars (rich text) | Description of the target audience |
+| `themes` | List\<Theme\> | Yes | not empty | List of applicable themes |
+| `dataNeeds` | List\<DataNeedDto\> | Yes | not empty | List of data needs |
+| `organisationName` | String | Yes | not blank | Name of the submitting organization |
+| `organizationType` | OrganizationType | Yes | - | Type of organization |
+| `organisationNamePublic` | boolean | No | default false | Whether the organization name is publicly visible |
+
+**RichTextDto structure**:
+```json
+{
+  "plain": "plain text (read-only, computed)",
+  "formatted": {
+    "ops": [{ "insert": "rich text content" }]
+  }
+}
+```
+
+---
+
+### DataNeedDto
+
+**Used in**: UseCaseDto.dataNeeds
+
+| Field | Type | Required | Constraints | Description |
+|-------|------|----------|-------------|-------------|
+| `id` | UUID | No (auto-generated) | - | Data need identifier |
+| `description` | RichTextDto | Yes | max 2500 chars (rich text) | Description of the data need |
+| `dataTypes` | List\<DataType\> | Yes | not empty | List of required data types (REALTIME, HISTORICAL) |
+
+---
+
 ## ENUMS
 
 ### UserRole
@@ -1425,7 +1576,7 @@ Complete reference for the NTM Backend API. This service manages data publicatio
 
 ### ThemeType
 
-**Used in**: DataPublicationDto, StandardDto
+**Used in**: DataPublicationDto, StandardDto, UseCaseDto
 
 | Value | Description |
 |-------|-------------|
@@ -1443,7 +1594,7 @@ Complete reference for the NTM Backend API. This service manages data publicatio
 
 ### OrganizationType
 
-**Used in**: OrganizationDto
+**Used in**: OrganizationDto, UseCaseDto
 
 | Value | Description |
 |-------|-------------|
@@ -1596,6 +1747,17 @@ Each value also carries an `isPublic` boolean: `R`, `PROVINCE`, `COUNTY`, `OTHER
 | NEVER | Not updated |
 | UNKNOWN | Update frequency unknown |
 | Other frequencies | Various time-based frequencies (ANNUAL_2, BIWEEKLY, AS_NEEDED, etc.) |
+
+---
+
+### DataType
+
+**Used in**: DataNeedDto.dataTypes
+
+| Value | Description |
+|-------|-------------|
+| `REALTIME` | Real-time data (live feeds, current state) |
+| `HISTORICAL` | Historical data (past records, archives) |
 
 ---
 
