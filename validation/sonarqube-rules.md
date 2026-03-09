@@ -476,6 +476,16 @@ dates.sort((a, b) => a.localeCompare(b))[0]  // ✅ Locale-aware compare
 
 Note: This applies even when sorting ISO date strings (e.g. `"2025-12-31"`), where plain `.sort()` would technically work — Sonar still flags it.
 
+## Web:ItemTagNotWithinContainerTagCheck — Item tag not within a container tag
+
+Sonar flags `<li>` elements that it cannot statically determine are inside a `<ul>` or `<ol>`.
+
+**This rule produces false positives with Angular `ng-template` + `ngTemplateOutlet`** — when a component template contains bare `<li>` elements inside `<ng-template>`, Sonar cannot see that the template is projected into an `<ol>` in the parent component. At runtime the HTML is valid, but Sonar only sees the isolated template.
+
+**Do NOT wrap the `<li>` in a redundant container** — this would break the DOM structure. Suppress on the Sonar server side for `ng-template` based components that render into a known list context.
+
+Real violations (non-`ng-template` context where `<li>` genuinely has no parent list) should still be fixed.
+
 ## Web:S6853 — Form label must be associated with a control
 
 Labels must be associated with their input controls. Use either:
