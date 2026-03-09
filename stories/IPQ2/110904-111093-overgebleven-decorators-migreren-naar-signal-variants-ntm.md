@@ -369,7 +369,7 @@ Per user confirmation: holistic cleanup included — fix missing `takeUntilDestr
 | # | Commit | Scope | Task title (Azure DevOps) | Status |
 |---|--------|-------|--------------------------|--------|
 | 1 | `1db185d6` — stepper, step-header, step-panel | `shared/stepper` | `[FE] signals: stepper components` | ✅ branch: `chore/110904/111259/signals-stepper-components` |
-| 2 | `348c3804` — account-new-form-organization, account-new-form-role | `modules/account` | `[FE] signals: account form components` | pending |
+| 2 | `348c3804` — account-new-form-organization, account-new-form-role | `modules/account` | `[FE] signals: account form components` | ✅ branch: `chore/110904/111299/signals-account-form-components` |
 | 3 | `ce54e103` — about, do-more-themes-item, tutorial-section, do-more-banner | `modules/small` | `[FE] signals: small page modules` | pending |
 | 4 | `c39ea9ed` — drawer, popup | `shared/overlays` | `[FE] signals: drawer & popup` | pending |
 | 5 | `4d460689` — list-card components | `shared/list-card` | `[FE] signals: list-card components` | pending |
