@@ -486,6 +486,18 @@ Sonar flags `<li>` elements that it cannot statically determine are inside a `<u
 
 Real violations (non-`ng-template` context where `<li>` genuinely has no parent list) should still be fixed.
 
+## Web:S6851 — Remove redundant word from alt attribute
+
+Sonar flags `[alt]` bindings that it detects contain words like "image", "photo", "picture", or "icon" in the binding expression — not the rendered value.
+
+**This produces false positives in Angular** when the signal or variable name contains "image" (e.g. `image().alt`). The actual rendered alt text is a translation key — "image" is just the input's name, not the alt text content.
+
+**Do NOT add `@let` workarounds just to rename the variable** — that is code smell to satisfy a static analysis tool.
+
+**Suppress on the Sonar server side** for bindings like `[alt]="image().alt | translate"` where the input is named `image` but the alt text is a translation key.
+
+Real violations (where the alt text itself literally says "image" or "photo") should still be fixed.
+
 ## Web:S6853 — Form label must be associated with a control
 
 Labels must be associated with their input controls. Use either:
