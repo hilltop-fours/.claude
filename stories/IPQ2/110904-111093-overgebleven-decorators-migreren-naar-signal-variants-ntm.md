@@ -374,7 +374,7 @@ Per user confirmation: holistic cleanup included — fix missing `takeUntilDestr
 | 5 | `4d460689` — list-card components | `shared/list-card` | `[FE] signals: list-card components` | ✅ branch: `chore/110904/111366/signals-list-card-components` |
 | 6 | `6e437ac3` — standards components | `modules/standards` | `[FE] signals: standards components` | ✅ branch: `chore/110904/111373/signals-standards-components` |
 | 7 | `8f1edd6c` — publications shared components | `modules/publications` | `[FE] signals: publications shared` | ✅ branch: `chore/110904/111376/signals-publications-shared` |
-| 8 | `7bd0b9ec` — publications details section components | `modules/publications` | `[FE] signals: publications detail` | pending |
+| 8 | `7bd0b9ec` — publications details section components | `modules/publications` | `[FE] signals: publications detail` | ✅ branch: `chore/110904/111378/signals-publications-detail` |
 | 9 | `40b015ab` — publications edit components + pages | `modules/publications` | `[FE] signals: publications edit` | pending |
 | 10 | `68fe8f89` — publication-filters-aside | `modules/publications` | `[FE] signals: publications filters` | pending |
 | 11 | `84d60f08` — users module | `modules/users` | `[FE] signals: users module` | pending |
