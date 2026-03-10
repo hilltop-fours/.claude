@@ -20,7 +20,7 @@
 | `@ViewChild()` → `viewChild()` | Direct decorator replacement |
 | `@ViewChildren()` → `viewChildren()` | Direct decorator replacement |
 | `@ContentChildren()` → `contentChildren()` | Direct decorator replacement — **but only if `ngAfterViewInit` is not present**. If the component uses `ngAfterViewInit` with `.changes.subscribe()`, keep `@ContentChildren` + `QueryList` + `ngAfterViewInit` as a unit and defer to a later story. |
-| `@HostBinding()` → `host: {}` | Direct decorator replacement |
+| ~~`@HostBinding()` → `host: {}`~~ | **NOT done** — out of scope per user decision. Revert if already migrated. |
 | ~~`@HostListener()` → `host: {}`~~ | **NOT done** — reviewer prefers `@HostListener` on the method. Revert if already migrated. |
 | `ngOnChanges` → `effect()` | **Forced** — signal inputs do not trigger `ngOnChanges`, so it breaks after the migration. Must be replaced. |
 | `ChangeDetectorRef` removal | **Forced** — only when the migration itself makes it dead code. |
@@ -78,9 +78,8 @@ Apply this checklist to **every file** touched in this story. Go through each it
 - **Exception:** signal queries cannot use `#` private prefix — use `private readonly` instead
 
 ### 5. `@HostBinding()` → `host: {}` in `@Component`
-- Replace `@HostBinding('class.foo') bar = true` → add `host: { '[class.foo]': 'bar' }` to `@Component`
-- Replace `@HostBinding('class')` with a static string → `host: { class: 'my-class' }`
-- Remove `HostBinding` from import
+- **DO NOT perform this migration** — out of scope per user decision (2026-03-10)
+- If `@HostBinding` was already migrated to `host: {}` in any file on this branch → **revert it** back to `@HostBinding` on the property and restore `HostBinding` to the import
 
 ### 6. `@HostListener()` → `host: {}` in `@Component`
 - **DO NOT perform this migration** — reviewer confirmed `@HostListener` is not deprecated and is preferred (PR #111306)
