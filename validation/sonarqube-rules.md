@@ -505,3 +505,47 @@ Labels must be associated with their input controls. Use either:
 - Implicit: nest the `<input>` directly inside the `<label>`
 
 Note: This rule can produce false positives in Angular standalone components where Sonar cannot statically resolve `for`/`id` pairs. If the association is correct and Sonar still flags it, suppress on the Sonar server side rather than changing working code.
+
+## typescript:S4157 — Redundant type parameter can be omitted
+
+When a type parameter is the default for that position, TypeScript allows omitting it entirely. Sonar flags it as redundant.
+
+Fix: Remove the explicit type argument.
+
+Example - WRONG:
+```typescript
+readonly closeEmitter = output<void>();  // ❌ <void> is the default
+```
+
+Example - CORRECT:
+```typescript
+readonly closeEmitter = output();  // ✅ default inferred
+```
+
+## typescript:S4798 — Provide a default value for optional parameters
+
+Optional parameters (`param?: Type`) with no default value make the absence case implicit. Sonar prefers an explicit default value so the function behavior is obvious when the parameter is omitted.
+
+Fix: Replace `param?: Type` with `param = defaultValue`.
+
+Example - WRONG:
+```typescript
+closePopup(confirm?: boolean): void {
+  this.closeEmitter.emit(confirm ?? false);  // ❌ caller must guess default
+}
+```
+
+Example - CORRECT:
+```typescript
+closePopup(confirm = false): void {
+  this.closeEmitter.emit(confirm);  // ✅ default is explicit, ?? not needed
+}
+```
+
+## Web:S6819 — Use `<dialog>` instead of `role="dialog"`
+
+Sonar flags `role="dialog"` on non-`<dialog>` elements and recommends using the native `<dialog>` HTML element instead.
+
+**This is a real rule but out of scope for decorator migration PRs.** The `<dialog>` element has different CSS behavior, requires the `open` attribute to show/hide, and requires JS changes (`showModal()` / `close()`). Migrating `<aside role="dialog">` to `<dialog>` is a structural change that belongs in a dedicated accessibility story.
+
+**Do NOT fix this during signal migration PRs** — suppress on the Sonar server side and track as a follow-up accessibility task.
