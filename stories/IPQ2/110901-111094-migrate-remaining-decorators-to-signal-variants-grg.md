@@ -110,7 +110,7 @@ One row per group. Update as work progresses.
 
 | # | Group | Scope | Task title (Azure DevOps) | Branch | PR | Merged |
 |---|-------|-------|--------------------------|--------|----|--------|
-| A | `shared/` — input/output/model (safe) | `shared` | `[FE] signals: shared components input output` | — | — | — |
+| A | `shared/` — input/output/model (safe) | `shared` | `[FE] signals: shared components input output` | `chore/110901/111400/signals-shared-components-input-output` | open | — |
 | B | `mutations-table/` — output only (safe) | `mutations-table` | `[FE] signals: mutations table components input output` | — | — | — |
 | C | `detail-cards/` — input/output (safe) | `detail-cards` | `[FE] signals: detail card components input output` | — | — | — |
 | D | `feature-forms/` simple — input/output/model (safe) | `feature-forms` | `[FE] signals: feature form components input output` | — | — | — |
