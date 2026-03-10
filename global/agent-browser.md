@@ -1,6 +1,14 @@
 # agent-browser
 
-Source: https://github.com/vercel-labs/agent-browser — SKILL.md + all 6 references/
+Sources (check these to validate any commands/behavior documented here):
+- SKILL.md (intro/overview): https://github.com/vercel-labs/agent-browser/blob/main/skills/agent-browser/SKILL.md
+- authentication.md: https://github.com/vercel-labs/agent-browser/blob/main/skills/agent-browser/references/authentication.md
+- commands.md: https://github.com/vercel-labs/agent-browser/blob/main/skills/agent-browser/references/commands.md
+- profiling.md: https://github.com/vercel-labs/agent-browser/blob/main/skills/agent-browser/references/profiling.md
+- proxy-support.md: https://github.com/vercel-labs/agent-browser/blob/main/skills/agent-browser/references/proxy-support.md
+- session-management.md: https://github.com/vercel-labs/agent-browser/blob/main/skills/agent-browser/references/session-management.md
+- snapshot-refs.md: https://github.com/vercel-labs/agent-browser/blob/main/skills/agent-browser/references/snapshot-refs.md
+- video-recording.md: https://github.com/vercel-labs/agent-browser/blob/main/skills/agent-browser/references/video-recording.md
 
 ---
 
@@ -12,6 +20,29 @@ Source: https://github.com/vercel-labs/agent-browser — SKILL.md + all 6 refere
 | Re-snapshot after any nav/DOM change | Refs (@e1) invalidate on navigation or dynamic updates |
 | `--headed` required for 2FA | Opens visible Chromium window for manual intervention |
 | Chain with `&&` when no intermediate output needed | `open && wait --load networkidle && screenshot` |
+| **NEVER click on the map canvas** | MapLibre GL map interactions (clicking roads, signs, zones) do NOT work via agent-browser. Always use deep-link URLs instead (see GRG URLs below). |
+
+---
+
+## GRG deep-link URLs (use these instead of map clicks)
+
+### Single road section
+`http://localhost:4200/kaart/wegvakken/600935682/kenmerken/maximumsnelheid?kaartlagen=SPEED_LIMIT,BRT,TRAFFIC_SIGN_DRAFT&zichtbaar-gebied=5.12256,52.07926,5.183,52.11129&maxsnelheidfilter=1f5451a0.________Dw`
+
+- Road section 600935682 = Archimedeslaan, Utrecht, 30 km/h
+- Change feature type via the "Wegkenmerk" dropdown in the left panel (Maximumsnelheden, Wegcategorieën, Rijrichtingen, RVM, etc.)
+
+### Multi-select with 1 road pre-loaded (correct approach)
+There is NO multi-select deep-link URL that pre-selects roads. Instead:
+1. Open the single road section URL above
+2. Click the mode toggle button: `agent-browser find text "Modus: Single select" click`
+3. App navigates to `/kaart/wegvakken/multiselect/maximumsnelheid` with road 600935682 already in the list
+4. Right panel shows: "1 snelheidssegment:", speed pill (30), "Archimedeslaan [600935682]", "van 0 tot 447 - Beide", × button
+5. Bottom bar now reads "Modus: Multi-select" — confirmed in multi-select mode
+
+No need to dismiss tour — run `agent-browser storage local set intro-tour-finished true` after open (see NDW login flow below).
+
+More URLs (traffic signs, zones, etc.) to be added when needed.
 
 ---
 
@@ -34,18 +65,25 @@ Source: https://github.com/vercel-labs/agent-browser — SKILL.md + all 6 refere
 ```bash
 agent-browser state load ~/.claude/agent-browser/<profile>.json
 agent-browser open http://localhost:<port>
+agent-browser wait --load networkidle
 URL=$(agent-browser get url)
 # if URL contains /login → state expired, proceed to login flow below
 ```
 
 Saved states: `~/.claude/agent-browser/grg-admin.json`, `~/.claude/agent-browser/ntm-admin.json`
 
+**After opening GRG — always set this before interacting:**
+```bash
+agent-browser storage local set intro-tour-finished true
+```
+This suppresses the "Welkom!" tour modal. Run it once after `open`, before any `snapshot` or clicks. Then `state save` will persist it automatically.
+
 ### NTM login (no 2FA — fully automated):
 ```bash
 agent-browser open http://localhost:4202
 agent-browser snapshot -i
 agent-browser fill @e_email "daniel.wildschut+admin@ndw.nu"
-agent-browser click @e_password && agent-browser keyboard inserttext "bUzpos-hopdaf-jyqgo3"
+agent-browser click @e_password && agent-browser keyboard type "bUzpos-hopdaf-jyqgo3"
 agent-browser click @e_submit
 agent-browser wait --load networkidle
 agent-browser state save ~/.claude/agent-browser/ntm-admin.json
@@ -58,7 +96,7 @@ agent-browser state save ~/.claude/agent-browser/ntm-admin.json
 agent-browser open http://localhost:4200
 agent-browser snapshot -i
 agent-browser fill @e_email "daniel.wildschut@ndw.nu"
-agent-browser click @e_password && agent-browser keyboard inserttext "bumpyn-hombok-3fIdwi"
+agent-browser click @e_password && agent-browser keyboard type "bumpyn-hombok-3fIdwi"
 agent-browser click @e_submit
 agent-browser wait --load networkidle
 # Step 2: ask user in chat for 6-digit 2FA code
@@ -116,8 +154,8 @@ Goal: confirm PR doesn't break existing functionality and new behavior works.
 
 Protocol:
 1. Checkout PR branch locally, run dev server
-2. Diff against main visually: `agent-browser diff url http://localhost:<port>/route http://localhost:<port2>/route`
-   (run two servers on different ports — PR branch vs main branch)
+2. Diff against main visually: screenshot both branches, compare with `agent-browser diff screenshot --baseline /tmp/main.png`
+   (run two servers on different ports — screenshot main branch first, then PR branch)
 3. Run regression assertions on affected routes
 4. Check `agent-browser errors` and `agent-browser console` for runtime issues
 5. If PR adds new feature: run feature validation flow (use case 2)
@@ -151,8 +189,10 @@ agent-browser close
 ### Snapshot
 ```bash
 agent-browser snapshot -i              # interactive elements only (recommended)
-agent-browser snapshot -s "#selector"  # scope to element (reduces noise)
 agent-browser snapshot -i -C           # include cursor-interactive divs/spans
+agent-browser snapshot @e5             # scope to specific ref (reduces noise)
+agent-browser snapshot -c              # compact output
+agent-browser snapshot -d 3            # limit depth
 ```
 
 ### Interact
@@ -160,7 +200,7 @@ agent-browser snapshot -i -C           # include cursor-interactive divs/spans
 agent-browser click @e1
 agent-browser fill @e2 "text"              # clears then types
 agent-browser type @e2 "text"              # types without clearing
-agent-browser keyboard inserttext "text"   # insert without key events (best for passwords)
+agent-browser keyboard type "text"        # insert text via keyboard (best for passwords — avoids fill clearing)
 agent-browser select @e1 "option"
 agent-browser check @e1 / uncheck @e1
 agent-browser hover @e1
@@ -173,10 +213,15 @@ agent-browser press Enter / Control+a
 ### Semantic locators (when refs unreliable)
 ```bash
 agent-browser find text "Inloggen" click
+agent-browser find text "Submit" click --exact   # exact match only
 agent-browser find role button click --name "Submit"
 agent-browser find label "Email" fill "user@example.com"
+agent-browser find placeholder "Search" type "query"
+agent-browser find alt "Logo" click
 agent-browser find testid "submit-btn" click
 agent-browser find nth 2 "a" hover
+agent-browser find first ".item" click
+agent-browser find last ".item" click
 ```
 
 ### Get info
@@ -200,12 +245,13 @@ agent-browser is checked @e1
 
 ### Wait
 ```bash
-agent-browser wait --load networkidle          # best for Angular/SPA pages
-agent-browser wait --url "**/dashboard"        # URL pattern
-agent-browser wait --text "Gelukt"             # text appears
-agent-browser wait @e1                         # element appears
-agent-browser wait 2000                        # ms (last resort)
-agent-browser wait --fn "window.ready"         # JS condition
+agent-browser wait --load networkidle                        # best for Angular/SPA pages
+agent-browser wait --url "**/dashboard"                      # URL pattern
+agent-browser wait --url "**/dashboard" --timeout 120000     # with custom timeout (ms)
+agent-browser wait --text "Gelukt"                           # text appears
+agent-browser wait @e1                                       # element appears
+agent-browser wait 2000                                      # ms (last resort)
+agent-browser wait --fn "window.ready"                       # JS condition
 ```
 
 ### Screenshot / diff
@@ -222,8 +268,38 @@ agent-browser screenshot --full
 agent-browser screenshot --annotate            # numbered labels, caches refs — read back when debugging layout
 agent-browser diff snapshot                    # current vs last snapshot (text, no token cost)
 agent-browser diff screenshot --baseline /tmp/before.png  # visual pixel diff — read result image back once
-agent-browser diff url <url1> <url2>           # compare two pages (PR vs main)
 agent-browser pdf output.pdf
+```
+
+### Cookies and storage
+```bash
+agent-browser cookies                          # get all cookies
+agent-browser cookies set name value           # set a cookie
+agent-browser cookies clear                    # clear all cookies
+agent-browser storage local                    # get all localStorage
+agent-browser storage local key                # get specific key
+agent-browser storage local set key value      # set a value (e.g. intro-tour-finished true)
+agent-browser storage local clear              # clear all localStorage
+```
+
+### Tabs and frames
+```bash
+agent-browser tab                              # list tabs
+agent-browser tab new [url]                    # open new tab
+agent-browser tab 2                            # switch to tab by index
+agent-browser tab close                        # close current tab
+agent-browser frame "#iframe"                  # switch into iframe
+agent-browser frame main                       # back to main frame
+agent-browser dialog accept                    # accept a browser dialog/alert
+agent-browser dialog dismiss                   # dismiss a dialog
+```
+
+### Mouse
+```bash
+agent-browser mouse move 100 200
+agent-browser mouse down left
+agent-browser mouse up left
+agent-browser mouse wheel 100
 ```
 
 ### Debug
@@ -293,7 +369,10 @@ Token cost: zero — recording writes to disk, never fed back to Claude. Use fre
 |-------|-----|
 | `--headed` not showing window | Must be BEFORE command: `agent-browser --headed open <url>` |
 | Ref stops working after click | Re-snapshot — invalidated after nav/DOM change |
-| Password field clears | Use `keyboard inserttext` instead of `fill` |
+| Password field clears | Use `keyboard type` instead of `fill` (documented) — `keyboard inserttext` also worked in practice but is not in the official docs |
 | Page still loading | `wait --load networkidle` before snapshot |
 | Keycloak `auth login` fails | Use `fill` directly |
 | State expired | Re-run headed 2FA flow, re-save state |
+| **WebGL context creation failed** | Pre-existing in headless mode — no GPU available. Not a bug. Ignore this error. |
+| **`zoomIn`/`zoomOut` on undefined** | Cascade of WebGL failure — map object is null. Pre-existing. Ignore. |
+| **Map canvas clicks don't work** | MapLibre GL requires real GPU pointer events. Never attempt. Use deep-link URLs (see GRG URLs section above). To test a different road type, use the same deep-link URL and change the feature type in the dropdown (or navigate to a different road via URL). |
