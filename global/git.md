@@ -86,13 +86,17 @@ Commit order: root files first, then alphabetical by scope.
 ## Branch Naming
 
 Format: `type/[story-id]/[task-id]/[description]`
-Types: `bug`, `feature`
+Types: `bug`, `feature`, `chore`
 Description: kebab-case
-Always branch from `main`.
+**Always branch from `origin/main`** — never from another feature/task branch.
+
+```
+git checkout -b new-branch origin/main
+```
 
 Example: `bug/106187/108922/fix-verkeersbesluit-id-uppercase-validation`
 
-**Never commit work onto a branch that belongs to a different story/task.** Checkout `main` and create a new branch first.
+**Never commit work onto a branch that belongs to a different story/task.** Checkout `origin/main` and create a new branch first.
 
 ---
 
