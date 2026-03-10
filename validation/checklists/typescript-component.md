@@ -65,17 +65,22 @@ This checklist consolidates ALL applicable validation rules from:
 - [ ] No unused private methods/properties → ✓/✗ with names
 - [ ] No unreachable code → ✓/✗ with lines
 
-## SonarQube Rules (9 checks)
+## SonarQube Rules (14 checks)
 
 - [ ] No any type (S4202) → ✓/✗ with lines
 - [ ] No magic numbers (S109) → ✓/✗ with lines
 - [ ] Max nesting depth 3 (S134) → ✓/✗ with lines
-- [ ] No duplicate strings (S1192) → ✓/✗ with lines
-- [ ] No console.log/warn/error (S106) → ✓/✗ with lines
+- [ ] No duplicate strings 3+ times (S1192) → ✓/✗ with lines
+- [ ] No console.log/warn/error/debug (S106) → ✓/✗ with lines
 - [ ] No unused imports (S1128) → ✓/✗
 - [ ] Merge nested if statements (S1066) → ✓/✗ with lines
 - [ ] Control structures use braces (S121) → ✓/✗ with lines
 - [ ] No variable shadowing (S1117) → ✓/✗ with lines
+- [ ] No non-null assertion `!` (S2966) → ✓/✗ with lines
+- [ ] No unnecessary type assertions (S4325) — use generic param instead → ✓/✗ with lines
+- [ ] No redundant `<void>` type param on output() (S4157) → ✓/✗ with lines
+- [ ] Optional params use default value not `?` (S4798) → ✓/✗ with lines
+- [ ] `.sort()` on strings has compare function (S2871) → ✓/✗ with lines
 
 ---
 
@@ -83,8 +88,8 @@ This checklist consolidates ALL applicable validation rules from:
 
 After completing all checks:
 
-**Total checks completed:** ____/48
+**Total checks completed:** ____/53
 
-✅ All 48 checks performed
+✅ All 53 checks performed
 ✅ No checks skipped
 ✅ All violations documented with line numbers

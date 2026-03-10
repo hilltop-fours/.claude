@@ -27,10 +27,15 @@ This checklist consolidates ALL applicable validation rules from:
 - [ ] Event handlers describe action not event → ✓/✗ with lines
 - [ ] No complex event handler expressions → ✓/✗
 
-## Accessibility (2 checks)
+## Accessibility (7 checks)
 
 - [ ] aria-required on fieldset not radio/checkbox (Web:S6811) → ✓/✗ with lines
-- [ ] Form labels associated with controls (Web:S6853) → ✓/✗ with lines
+- [ ] Form labels associated with controls via for/id or nesting (Web:S6853) → ✓/✗ with lines
+- [ ] autocomplete uses valid HTML spec tokens (Web:S6840) → ✓/✗ with lines
+- [ ] No `role="dialog"` on non-`<dialog>` elements (Web:S6819) — suppress + note follow-up if found → ✓/✗ with lines
+- [ ] No `<div (click)="...">` without keyboard handler (Web:MouseEventWithoutKeyboard) — false positive on ndw/ntm design system components → ✓/✗ with lines
+- [ ] `<li>` inside list container — false positive OK when using ng-template projection (Web:ItemTagNotWithinContainer) → ✓/✗ with lines
+- [ ] alt text not literally "image"/"photo" (Web:S6851) — false positive OK when signal/variable name contains "image" → ✓/✗ with lines
 
 ---
 
@@ -38,8 +43,8 @@ This checklist consolidates ALL applicable validation rules from:
 
 After completing all checks:
 
-**Total checks completed:** ____/10
+**Total checks completed:** ____/15
 
-✅ All 10 checks performed
+✅ All 15 checks performed
 ✅ No checks skipped
 ✅ All violations documented with line numbers
