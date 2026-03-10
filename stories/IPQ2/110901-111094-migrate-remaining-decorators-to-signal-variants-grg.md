@@ -110,13 +110,13 @@ One row per group. Update as work progresses.
 
 | # | Group | Scope | Task title (Azure DevOps) | Branch | PR | Merged |
 |---|-------|-------|--------------------------|--------|----|--------|
-| A | `shared/` — input/output/model (safe) | `shared` | `[FE] signals: shared components input output model` | — | — | — |
-| B | `mutations-table/` — output only (safe) | `mutations-table` | `[FE] signals: mutations table output` | — | — | — |
-| C | `detail-cards/` — input/output (safe) | `detail-cards` | `[FE] signals: detail cards input output` | — | — | — |
-| D | `feature-forms/` simple — input/output/model (safe) | `feature-forms` | `[FE] signals: feature forms simple input output` | — | — | — |
-| E | `shared/` — input + ngOnChanges (coupled) | `shared` | `[FE] signals: shared components ngonchanges to effect` | — | — | — |
-| F | `multi-select/` + `multi-*-list-item/` — input + ngOnChanges (coupled) | `multi-select` | `[FE] signals: multi-select items ngonchanges to effect` | — | — | — |
-| G | `feature-forms/` — input + ngOnChanges (coupled) | `feature-forms` | `[FE] signals: feature forms ngonchanges to effect` | — | — | — |
+| A | `shared/` — input/output/model (safe) | `shared` | `[FE] signals: shared components input output` | — | — | — |
+| B | `mutations-table/` — output only (safe) | `mutations-table` | `[FE] signals: mutations table components input output` | — | — | — |
+| C | `detail-cards/` — input/output (safe) | `detail-cards` | `[FE] signals: detail card components input output` | — | — | — |
+| D | `feature-forms/` simple — input/output/model (safe) | `feature-forms` | `[FE] signals: feature form components input output` | — | — | — |
+| E | `shared/` — input + ngOnChanges (coupled) | `shared` | `[FE] signals: shared components input output effect` | — | — | — |
+| F | `multi-select/` + `multi-*-list-item/` — input + ngOnChanges (coupled) | `multi-select` | `[FE] signals: multi-select components input output effect` | — | — | — |
+| G | `feature-forms/` — input + ngOnChanges (coupled) | `feature-forms` | `[FE] signals: feature form components input output effect` | — | — | — |
 
 > **Branch format:** `chore/110901/{task-id}/{kebab-case-scope}`
 > **Commit format:** `chore({scope}): #110901 #{task-id} description`
