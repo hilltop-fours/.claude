@@ -8,12 +8,12 @@ Complete reference for the NTM Backend API. This service manages data publicatio
 
 | Item | Value | Date |
 |------|-------|------|
-| Last Verified Commit | 130c7b5 | 2026-03-09 |
-| Commit Message | Feature #105837 Add usecases | |
-| Swagger Version | latest | 2026-03-09 |
+| Last Verified Commit | ba41e02 | 2026-03-10 |
+| Commit Message | Feature #110189 JDK25 compatibility (no API changes) | |
+| Swagger Version | latest | 2026-03-10 |
 
-**Status**: ✓ Up to date as of 2026-03-09
-**Next Review**: Check commits after 130c7b5
+**Status**: ✓ Up to date as of 2026-03-10
+**Next Review**: Check commits after ba41e02
 
 ---
 
