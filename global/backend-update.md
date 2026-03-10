@@ -105,27 +105,27 @@ Update affected sections:
 
 ---
 
-## Step 7 — Commit Changes
+## Step 7 — Pre-commit Check
+
+Before committing, write this in chat and check each item:
+
+- [ ] All commits since last verified commit reviewed
+- [ ] `git show` run for each HIGH/MEDIUM commit
+- [ ] Quick Reference updated if new endpoints added
+- [ ] Endpoint documentation added/modified for each change
+- [ ] DTO documentation added/modified
+- [ ] Enum documentation added/modified
+- [ ] COMMIT TRACKING updated with latest hash + date
+
+---
+
+## Step 8 — Commit Changes
 
 ```bash
 cd $CLAUDE_ROOT
 git add projects/{P}/backend/*.md
 git commit  # heredoc: "docs(projects/{P}/backend/{name}): update api docs"
 ```
-
----
-
-## Update Checklist
-
-- [ ] All commits since last verified commit reviewed
-- [ ] `git show` run for each HIGH/MEDIUM commit
-- [ ] Quick Reference updated if new endpoints
-- [ ] Endpoint documentation added/modified
-- [ ] DTO documentation added/modified
-- [ ] Enum documentation added/modified
-- [ ] Auth/authorization section updated if roles changed
-- [ ] COMMIT TRACKING updated with latest hash + date
-- [ ] JSON examples valid and accurate
 
 ---
 

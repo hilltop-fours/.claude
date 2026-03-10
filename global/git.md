@@ -43,6 +43,18 @@ chore(deps): #12345 #67890 update angular to v17
 
 ---
 
+## `.claude` Commit Pre-flight
+
+Before writing the commit command, write this in chat and check each item:
+
+- [ ] Single line only — no body, no line breaks after the message
+- [ ] No Co-Authored-By
+- [ ] Type is `docs`, `feat`, or `chore` only
+- [ ] Scope matches the changed files (see naming rules below)
+- [ ] Description is lowercase
+
+---
+
 ## SPECIAL CASE — `.claude` Repo Commits
 
 Single line only. No body. No story/task IDs. No Co-Authored-By. No exceptions, even for large changes.
