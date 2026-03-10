@@ -1,0 +1,227 @@
+# chore(signals): #110901 #111094 migrate remaining decorators to signal variants (GRG)
+
+**Story:** #110901 / **Task:** #111094
+**Branch:** `chore/110901/111094/migrate-remaining-decorators-to-signal-variants-grg`
+**Date:** 2026-03-10
+
+---
+
+## SCOPE BOUNDARY — STRICT
+
+**This story replaces decorator syntax with signal equivalents, in small safe phases. GRG is more sensitive than NTM — changes are kept minimal and independently verifiable per phase.**
+
+### What is IN scope
+
+| Change | Phase | Notes |
+|--------|-------|-------|
+| `@Input()` → `input()` | Phase 1 | Update template reads to `foo()` |
+| `@Output()` → `output()` | Phase 1 | Keep `EventEmitter` only if something `.pipe()`s it |
+| `@Input` + `@Output xChange` pair → `model()` | Phase 1 | Only 2 candidates: `collapsible` + `speed-limit-control` |
+| `ngOnChanges` → `effect()` | Phase 2 | **Forced** — signal inputs break `ngOnChanges`. 14 files affected. Separate PRs per component group. |
+
+### What is OUT of scope — do NOT touch
+
+| Pattern | Reason |
+|---------|--------|
+| `@ViewChild` / `@ViewChildren` / `@ContentChildren` | Not present in GRG codebase — nothing to do |
+| `@HostBinding()` / `@HostListener()` | Not present in GRG codebase — nothing to do |
+| `ChangeDetectorRef` removal | Only remove if migration makes it dead code. Most cdr files are unrelated to input/output. Do not proactively remove. |
+| Getter/setter → `signal()` | Separate story — not forced by decorator migration |
+| Plain getters → `computed()` | Separate story — not forced by decorator migration |
+| Plain mutable properties → `signal()` | Separate story |
+| `BehaviorSubject` cleanup | Covered by story #110901 original scope (separate concern) |
+| `Observable` + `async` pipe → `toSignal()` | Separate architectural decision |
+| `ChangeDetectionStrategy.OnPush` additions | Separate story |
+| `ngOnInit`, `ngAfterViewInit`, `ngOnDestroy` | Not forced by decorator migration — leave as-is |
+| `takeUntilDestroyed` additions | Unrelated to decorator migration |
+| Any logic inside lifecycle hooks | Not a decorator change |
+
+**The test:** if a change would not be required to keep the component compiling and working after the decorator swap, it does not belong in this PR.
+
+---
+
+## Codebase Scan Results (2026-03-10)
+
+| Pattern | Count |
+|---------|-------|
+| `@Input()` | 27 files |
+| `@Output()` | 35 files |
+| `model()` candidates (`@Input` + `@Output xChange`) | 2 files |
+| `ngOnChanges` | 14 files |
+| `@ViewChild/Children/ContentChildren` | 0 — not in GRG |
+| `@HostBinding/Listener` | 0 — not in GRG |
+| `ChangeDetectorRef` | 6 files (mostly unrelated to input/output) |
+
+### model() candidates
+
+1. `app/shared/components/collapsible/collapsible.component.ts`
+   - `@Input() open` + `@Output() openChange` → `readonly open = model(false)`
+
+2. `app/modules/road-feature/components/overview/feature-forms/speed-limit/speed-limit-control/speed-limit-control.component.ts`
+   - `@Input() ...` + `@Output() speedLimitChange` → `readonly speedLimit = model<ESpeedLimit>()`
+   - Note: verify the input name matches the output name minus `Change` — may need renaming
+
+---
+
+## Per-File Migration Checklist
+
+Apply to every file touched in Phase 1. Go through each item in order.
+
+### 1. `@Input()` → `input()`
+- `@Input() foo: Type` → `readonly foo = input<Type>()`
+- `@Input() foo: Type = default` → `readonly foo = input(default)`
+- `@Input({ required: true }) foo!: Type` → `readonly foo = input.required<Type>()`
+- Update template: `foo` → `foo()` everywhere the input is read
+- Update TS: `this.foo` → `this.foo()` everywhere the input is read in the class body
+- Remove `Input` from `@angular/core` import if no longer used
+
+### 2. `@Output()` → `output()`
+- `@Output() foo = new EventEmitter<Type>()` → `readonly foo = output<Type>()`
+- `this.foo.emit(value)` stays the same ✓
+- Remove `Output`, `EventEmitter` from import if no longer used
+- **Exception:** keep `EventEmitter` if something subscribes to it with `.pipe()`
+
+### 3. `@Input()` + `@Output() xChange` → `model()`
+- Replace both with: `readonly x = model(defaultValue)`
+- Internal emits: `this.xChange.emit(value)` → `this.x.set(value)`
+- Parent template: `[x]="val" (xChange)="val=$event"` → `[(x)]="val"`
+- Add `model` to import, remove `Input`, `Output`, `EventEmitter` if no longer needed
+
+### 4. `ngOnChanges` check (per file, after steps 1–3)
+- If the component has `ngOnChanges`: **do not remove it in Phase 1**
+- Mark it as "needs Phase 2 treatment" — Phase 2 converts it to `effect()`
+- Exception: if `ngOnChanges` is empty or only watches inputs that are now signals and does nothing meaningful → can remove in Phase 1, but be careful
+
+### 5. `ChangeDetectorRef` check (per file)
+- Only remove if ALL `cdr.detectChanges()` calls are now dead code after steps 1–3
+- If still used for any reason → leave it completely untouched
+
+### 6. `readonly` audit
+- Every `input()`, `output()`, `model()` must be `readonly`
+
+### 7. Private `#` audit
+- Injected services should use `#` prefix — but only fix if already touching the class
+
+---
+
+## Phase 1 — `@Input()` / `@Output()` / `model()` migration
+
+**Goal:** Replace all decorator-based inputs and outputs with signal equivalents. No behavior changes.
+
+**Files with `@Input()` (27):**
+- `app/modules/road-feature/components/overview/feature-forms/school-zone/school-zone-form/school-zone-form.component.ts`
+- `app/modules/road-feature/components/overview/feature-forms/speed-limit/speed-limit-form/speed-limit-form.component.ts`
+- `app/modules/road-feature/components/overview/feature-forms/speed-limit/speed-limit-control/speed-limit-control.component.ts` ← model candidate
+- `app/modules/road-feature/components/overview/feature-forms/rvm/rvm-type-select/rvm-type-select.component.ts`
+- `app/modules/road-feature/components/overview/feature-forms/road-narrowing/road-narrowing-form/road-narrowing-form.component.ts`
+- `app/modules/road-feature/components/overview/feature-forms/road-category/road-category-control/road-category-control.component.ts`
+- `app/modules/road-feature/components/overview/feature-forms/load-restriction/load-restriction-form/load-restriction-form.component.ts`
+- `app/modules/road-feature/components/overview/feature-forms/length-restriction/form/length-restriction-form.component.ts`
+- `app/modules/road-feature/components/overview/feature-forms/hgv-charge/multi-hgv-charge-list-item/multi-hgv-charge-list-item.component.ts`
+- `app/modules/road-feature/components/overview/feature-forms/height-restriction/height-restriction-form/height-restriction-form.component.ts`
+- `app/modules/road-feature/components/overview/feature-forms/driving-direction/driving-direction-select/driving-direction-select.component.ts`
+- `app/modules/road-feature/components/overview/feature-forms/feature-form-base/feature-form-base.component.ts`
+- `app/modules/road-feature/components/overview/feature-forms/axle-load-restriction/form/axle-load-restriction-form.component.ts`
+- `app/modules/road-feature/components/overview/detail-cards/feature-title/feature-title.component.ts`
+- `app/modules/road-feature/components/overview/detail-cards/details-base/details-base.component.ts`
+- `app/modules/road-feature/components/overview/multi-select/multi-driving-direction-item/multi-driving-direction-item.component.ts`
+- `app/modules/road-feature/components/overview/multi-select/multi-carriageway-type-item/multi-carriageway-type-item.component.ts`
+- `app/modules/road-feature/components/overview/feature-forms/speed-limit/multi-speed-limit-list-item/multi-speed-limit-list-item.component.ts`
+- `app/modules/road-feature/components/overview/feature-forms/rvm/multi-rvm-list-item/multi-rvm-list-item.component.ts`
+- `app/modules/road-feature/components/overview/feature-forms/road-category/multi-road-category-list-item/multi-road-category-list-item.component.ts`
+- `app/shared/components/detail-page-header/detail-page-header.component.ts`
+- `app/shared/components/edit-bar/edit-bar.component.ts`
+- `app/shared/components/sprite-image/sprite-image.component.ts`
+- `app/shared/components/traffic-sign-image/traffic-sign-image.component.ts`
+- `app/shared/components/upload-page-header/upload-page-header.component.ts`
+- `app/shared/components/collapsible/collapsible.component.ts` ← model candidate
+- `app/modules/road-feature/components/overview/feature-forms/speed-limit/speed-limit-form-array/speed-limit-form-array.component.ts`
+
+**Additional files with only `@Output()` (no `@Input`, ~8 more):**
+- All mutation table components: `school-zone`, `rvm`, `speed-limit`, `traffic-types`, `road-authority`, `road-category`, `road-narrowing`, `length-restriction`, `load-restriction`, `driving-direction`, `height-restriction`, `axle-load-restriction`, `carriageway-type`
+- `app/modules/road-feature/components/overview/detail-cards/school-zone-details/school-zone-details.component.ts`
+- `app/modules/road-feature/components/overview/detail-cards/school-zone-details-display/school-zone-details-display.component.ts`
+- `app/modules/road-feature/components/overview/feature-forms/road-category/road-category-form/road-category-form.component.ts`
+
+**Verification:** `npm run build` from `traffic-sign-frontend/` — 0 errors.
+
+**Suggested commit groupings for Phase 1 PRs:**
+- PR 1a: `shared/` components (collapsible, detail-page-header, edit-bar, sprite-image, traffic-sign-image, upload-page-header)
+- PR 1b: `multi-select/` items (multi-driving-direction-item, multi-carriageway-type-item)
+- PR 1c: `feature-forms/` — form controls and selects (simple ones without ngOnChanges)
+- PR 1d: `feature-forms/` — form components with ngOnChanges (do inputs/outputs only, leave ngOnChanges for Phase 2)
+- PR 1e: `detail-cards/` + `mutations-table/` components
+
+---
+
+## Phase 2 — `ngOnChanges` → `effect()` migration
+
+**Goal:** Replace `ngOnChanges` with `effect()` in all components migrated in Phase 1. This is forced — signal inputs do not trigger `ngOnChanges`.
+
+**Files with `ngOnChanges` (14):**
+- `app/modules/road-feature/components/overview/feature-forms/speed-limit/speed-limit-form/speed-limit-form.component.ts`
+- `app/modules/road-feature/components/overview/feature-forms/road-narrowing/road-narrowing-form/road-narrowing-form.component.ts`
+- `app/modules/road-feature/components/overview/feature-forms/load-restriction/load-restriction-form/load-restriction-form.component.ts`
+- `app/modules/road-feature/components/overview/feature-forms/length-restriction/form/length-restriction-form.component.ts`
+- `app/modules/road-feature/components/overview/feature-forms/hgv-charge/multi-hgv-charge-list-item/multi-hgv-charge-list-item.component.ts`
+- `app/modules/road-feature/components/overview/feature-forms/height-restriction/height-restriction-form/height-restriction-form.component.ts`
+- `app/modules/road-feature/components/overview/feature-forms/axle-load-restriction/form/axle-load-restriction-form.component.ts`
+- `app/modules/road-feature/components/overview/multi-select/multi-driving-direction-item/multi-driving-direction-item.component.ts`
+- `app/modules/road-feature/components/overview/multi-select/multi-carriageway-type-item/multi-carriageway-type-item.component.ts`
+- `app/modules/road-feature/components/overview/feature-forms/speed-limit/multi-speed-limit-list-item/multi-speed-limit-list-item.component.ts`
+- `app/modules/road-feature/components/overview/feature-forms/rvm/multi-rvm-list-item/multi-rvm-list-item.component.ts`
+- `app/modules/road-feature/components/overview/feature-forms/road-category/multi-road-category-list-item/multi-road-category-list-item.component.ts`
+- `app/shared/components/sprite-image/sprite-image.component.ts`
+- `app/shared/components/traffic-sign-image/traffic-sign-image.component.ts`
+
+**How to convert per file:**
+- Identify which `@Input()` the `ngOnChanges` is watching (it's now `input()` after Phase 1)
+- Replace `ngOnChanges(changes: SimpleChanges)` with `effect(() => { ... })` in the constructor or as a field initializer
+- Read the input signal value inside the effect: `this.foo()`
+- Remove `OnChanges`, `SimpleChanges` from import if no longer used
+- If `ngOnChanges` watches multiple inputs → one `effect()` that reads all of them is fine (effect re-runs when any dependency changes)
+
+**Note on `effect()` initial run:** `effect()` runs immediately on construction with the current signal value. If the old `ngOnChanges` only ran on subsequent changes (not on init), guard with a flag or use `afterNextRender()` if needed. Read each case carefully.
+
+**Verification:** `npm run build` after each component group — 0 errors.
+
+**Suggested commit groupings for Phase 2 PRs:**
+- PR 2a: `shared/` — sprite-image, traffic-sign-image
+- PR 2b: `multi-select/` items — multi-driving-direction-item, multi-carriageway-type-item, multi-speed-limit-list-item, multi-rvm-list-item, multi-road-category-list-item, multi-hgv-charge-list-item
+- PR 2c: `feature-forms/` — speed-limit-form, road-narrowing-form, load-restriction-form, length-restriction-form, height-restriction-form, axle-load-restriction-form
+
+---
+
+## Story — Original Text
+
+### Description
+
+GRG [FE] overgebleven inputs en outputs migreren naar signal variants
+
+### Acceptance Criteria
+
+(Not provided in Azure DevOps — derived from IPQ2 research file IP-8)
+
+### Discussion
+
+None
+
+---
+
+## Task — Original Text
+
+### Description
+
+overgebleven @ decorators migreren naar signal variants
+
+### Discussion
+
+None
+
+---
+
+## Reference
+
+- NTM equivalent story: `110904-111093-overgebleven-decorators-migreren-naar-signal-variants-ntm.md`
+- IPQ2 research: `ip-8-grg-modernize-old-angular-patterns.md`
+- Related GRG stories (separate scope): IP-2 (NgRx Signals store), IP-4 (@defer), IP-5 (BaseMutationRepository), IP-7 (detail card base generics)
