@@ -95,6 +95,15 @@ No non-null assertion (`!`). Two approaches:
 
 ---
 
+## typescript:S4325
+Unnecessary type assertion — remove it or use the generic type parameter instead.
+```typescript
+❌ scope.querySelectorAll(selector) as NodeListOf<HTMLElement>
+✅ scope.querySelectorAll<HTMLElement>(selector)
+```
+
+---
+
 ## typescript:S4157
 Omit redundant default type parameters.
 ```typescript
