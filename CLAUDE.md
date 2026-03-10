@@ -47,7 +47,8 @@ Match cwd path to set `$CLAUDE_ROOT`:
 | Any git operation (commit/branch/push/pull) | `$CLAUDE_ROOT/global/git.md` |
 | Edit any code (components, services, styles) | `$CLAUDE_ROOT/global/coding.md` + `$CLAUDE_ROOT/projects/{P}/context.md` |
 | Validate code | Run `bash $CLAUDE_ROOT/scripts/validate.sh` → read `scripts/report.md` → read all 4 `validation/checklists/*.md` → read `projects/{P}/context.md` → present findings |
-| PR comment on own PR | `$CLAUDE_ROOT/global/pr-review.md` + `$CLAUDE_ROOT/global/voice.md` |
+| Respond to PR review comment on own PR | `$CLAUDE_ROOT/global/pr-review.md` + `$CLAUDE_ROOT/global/voice.md` |
+| Leave a comment on own PR (not a review response) | `$CLAUDE_ROOT/global/voice.md` |
 | Comment on someone else's PR | `$CLAUDE_ROOT/global/voice.md` |
 | Write code comments | `$CLAUDE_ROOT/global/voice.md` |
 | Implement feature | `$CLAUDE_ROOT/projects/{P}/context.md` + relevant `projects/{P}/backend/*.md` |
