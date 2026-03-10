@@ -21,7 +21,7 @@
 | `@ViewChildren()` → `viewChildren()` | Direct decorator replacement |
 | `@ContentChildren()` → `contentChildren()` | Direct decorator replacement — **but only if `ngAfterViewInit` is not present**. If the component uses `ngAfterViewInit` with `.changes.subscribe()`, keep `@ContentChildren` + `QueryList` + `ngAfterViewInit` as a unit and defer to a later story. |
 | `@HostBinding()` → `host: {}` | Direct decorator replacement |
-| `@HostListener()` → `host: {}` | Direct decorator replacement |
+| ~~`@HostListener()` → `host: {}`~~ | **NOT done** — reviewer prefers `@HostListener` on the method. Revert if already migrated. |
 | `ngOnChanges` → `effect()` | **Forced** — signal inputs do not trigger `ngOnChanges`, so it breaks after the migration. Must be replaced. |
 | `ChangeDetectorRef` removal | **Forced** — only when the migration itself makes it dead code. |
 
@@ -83,8 +83,8 @@ Apply this checklist to **every file** touched in this story. Go through each it
 - Remove `HostBinding` from import
 
 ### 6. `@HostListener()` → `host: {}` in `@Component`
-- Replace `@HostListener('click') onClick()` → `host: { '(click)': 'onClick()' }`
-- Remove `HostListener` from import
+- **DO NOT perform this migration** — reviewer confirmed `@HostListener` is not deprecated and is preferred (PR #111306)
+- If `@HostListener` was already migrated to `host: {}` in any file on this branch → **revert it** back to `@HostListener` on the method and restore `HostListener` to the import
 
 ### 7. `ngOnChanges` → `effect()`
 - Identify which `@Input()` the `ngOnChanges` is watching
