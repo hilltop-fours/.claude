@@ -53,12 +53,16 @@ If a pattern exists for the same kind of problem, use it.
 If a similar component/service/pipe exists, reference its approach.
 Do not reinvent solutions that already exist in the project.
 
+**Mandatory step**: Before writing any new service call, subscription, async pattern, or helper — grep the codebase for how the same thing is done elsewhere. Use that exact pattern. Only deviate if no existing pattern covers the case.
+
 ### 3. Match the codebase vocabulary
 
 Use the same methods, patterns, and structures the team already uses.
 If the team writes `filter().map()` chains, do not introduce `reduce()` for the same thing.
 If the team uses simple property assignments, do not introduce computed signals for the same thing.
 The code should look like it belongs.
+
+**If you find yourself writing something not seen elsewhere in the project — stop and search first.**
 
 ### 4. Every addition needs a justification
 
@@ -173,6 +177,11 @@ These examples calibrate Claude's sense of what "too complex" means in practice.
 **What happened**: Added `"ITS 2023/2661"` as a translation value for the ITS card title. The regulation number was not in the codebase, the story, or any user input — it came from Claude's training data about EU ITS regulations.
 **Why it was flagged**: The user was asked by colleagues why they wrote that specific regulation number. It immediately looked AI-generated because no human would know that detail without explicitly sourcing it.
 **What it should have been**: Ask the user what the title should be, or use a minimal placeholder like `"ITS"`. Never fill in domain-specific text (regulation names, official terminology, specific numbers) from assumed knowledge.
+
+### Entry 3: Invented async pattern instead of searching codebase
+**What happened**: Needed to read `loggedInUser` in `ngOnInit` — wrote a new `take(1)` + `filter` pipe combination from scratch, inventing a "better" approach.
+**Why it was flagged**: The project already uses `authService.loggedInUser$.pipe(untilDestroyed(this)).subscribe(...)` in multiple components for exactly this case. A search would have found it immediately.
+**What it should have been**: Search the codebase first (`grep loggedInUser$`), find the existing pattern, copy it exactly. Do not introduce new RxJS operator combinations when an existing pattern already covers the scenario.
 
 ---
 
