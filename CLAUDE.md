@@ -54,6 +54,7 @@ Match cwd path to set `$CLAUDE_ROOT`:
 | Implement feature | `$CLAUDE_ROOT/projects/{P}/context.md` + relevant `projects/{P}/backend/*.md` |
 | Update backend docs | `$CLAUDE_ROOT/global/backend-update.md` |
 | Dev panel (load/set up/add/remove) | `$CLAUDE_ROOT/projects/{P}/patterns/dev-auth-panel-instructions.md` |
+| Implement skeleton screen / loading placeholder | `$CLAUDE_ROOT/global/skeleton-screens.md` |
 | Story file lookup ("read story file" / "load story") | Extract numeric IDs from branch name → search `$CLAUDE_ROOT/stories/` for matching file |
 | Debug build errors | Run `npm run build` from frontend dir, read output |
 
