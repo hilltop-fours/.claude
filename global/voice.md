@@ -78,6 +78,26 @@ response goes here
 
 New lessons added here as encountered. When section grows, consolidate into voice modes above then delete entries.
 
+### Entry 2 — Proactive comment on own PR (2026-03-10)
+
+**Context:** leaving a comment explaining why `@typescript-eslint/no-unnecessary-type-assertion` was added to ESLint.
+
+**Claude wrote:**
+> `@typescript-eslint/no-unnecessary-type-assertion` toegevoegd zodat deze Sonar-regel (`typescript:S4325`) al lokaal gecheckt wordt
+
+**Daniel wrote:**
+> `@typescript-eslint/no-unnecessary-type-assertion` toegevoegd voor sonar regel `typescript:S4325`
+
+**Lessons:**
+
+1. **`voor` implies purpose without stating it** — "toegevoegd voor X" is enough; "zodat" + explanation is over-engineering the sentence when the receiver can infer the why.
+
+2. **Drop the article on rule references** — "sonar regel `typescript:S4325`" not "deze Sonar-regel (`typescript:S4325`)" — the code ref speaks for itself, no need to point at it with "deze".
+
+3. **Never explain what technical people can infer** — teammates know why you add an ESLint rule for a Sonar rule; saying "zodat het lokaal gecheckt wordt" is noise.
+
+---
+
 ### Entry 1 — Inquisitive comment on someone else's PR (2026-02-25)
 
 **Original comment by Daniel:**
