@@ -1,566 +1,178 @@
-# SonarQube Validation Rules
+# SonarQube Rules
 
-These SonarQube rules are actively enforced in the project. When making changes, avoid triggering them.
+Active rules in this project. Match rule ID from Sonar error → find entry → apply fix.
 
-## typescript:S4202 — Do not use `any` type
+---
 
-NEVER use `any`. Always define proper interfaces, types, or use generics. If data structure is unknown, use `unknown` and add type guards.
-
-Example - WRONG:
+## typescript:S4202
+No `any`. Use proper types, generics, or `unknown` + type guards.
 ```typescript
-getCategoryDisplay(categories: any[]): string {
-  return categories.map(c => c.name).join(', ');
-}
+❌ fn(items: any[])
+✅ fn(items: Category[])
 ```
 
-Example - CORRECT:
-```typescript
-interface Category {
-  id: string;
-  name: string;
-}
+---
 
-getCategoryDisplay(categories: Category[]): string {
-  return categories.map(c => c.name).join(', ');
-}
+## typescript:S109
+Extract magic numbers as named constants. Exception: 0, 1, -1 are fine.
+**IMPORTANT**: This is about bare numbers only — not enum arrays. `[StatusEnum.ACTIVE, StatusEnum.PENDING]` is already named, do NOT extract it.
+```typescript
+❌ readonly showMoreAfter = input(3);
+✅ const DEFAULT_SHOW_MORE_THRESHOLD = 3; ... readonly showMoreAfter = input(DEFAULT_SHOW_MORE_THRESHOLD);
 ```
 
-## typescript:S109 — Magic numbers should not be used
+---
 
-Do not use numeric literals directly in code when their meaning is unclear. Extract them as named constants to improve readability.
+## typescript:S134
+Max 3 levels of nested control flow (`if`/`for`/`while`/`switch`/`try`).
+Fix: extract inner logic into a private method.
 
-Fix: Define constants with descriptive names at the file or component level.
+---
 
-Exceptions: Common values like 0, 1, -1 are generally acceptable.
-
-**IMPORTANT**: This rule is about NUMBERS, not arrays or named values. Do NOT extract:
-- Arrays of enum values used once (e.g., `[StatusEnum.ACTIVE, StatusEnum.PENDING]`)
-- Named constants/enums that are already self-explanatory
-- Values that are only used in one place and are already readable
-
-The goal is readability. If a value is already self-explanatory (like named enum values), extracting it to a constant just adds indirection.
-
-Example - WRONG (magic numbers):
+## typescript:S1192
+Same string literal used 3+ times → extract as named constant.
+Exception: short strings (`''`, single chars) that serve different semantic purposes.
 ```typescript
-export class MyComponent {
-  readonly showMoreAfter = input(3);  // ❌ What does 3 represent?
-  readonly maxItems = 10;             // ❌ Magic number
-
-  calculate(value: number) {
-    return value * 100;               // ❌ What does 100 represent?
-  }
-}
+❌ 'theme-date-pill-owner-menu' used 3× inline
+✅ const DEFAULT_COLUMN_LAYOUT: ColumnLayout = 'theme-date-pill-owner-menu';
 ```
 
-Example - CORRECT (extracted numbers):
+---
+
+## css:S4666
+No duplicate selectors in SCSS. Consolidate all rules for a selector into one block.
+Happens when modifier class + parent-selector `&` resolve to the same compiled selector.
+
+---
+
+## typescript:S106
+Allowed console methods: `assert`, `clear`, `count`, `group`, `groupCollapsed`, `groupEnd`, `info`, `table`, `time`, `timeEnd`, `trace`.
+Forbidden: `log`, `warn`, `error`, `debug`.
+
+---
+
+## typescript:S1128
+Remove unused imports. Check after every refactor.
+
+---
+
+## typescript:S1066
+Merge nested `if` with no other code between them using `&&` / `||`.
 ```typescript
-const DEFAULT_SHOW_MORE_THRESHOLD = 3;
-const MAX_DISPLAY_ITEMS = 10;
-const PERCENTAGE_MULTIPLIER = 100;
-
-export class MyComponent {
-  readonly showMoreAfter = input(DEFAULT_SHOW_MORE_THRESHOLD);
-  readonly maxItems = MAX_DISPLAY_ITEMS;
-
-  calculate(value: number) {
-    return value * PERCENTAGE_MULTIPLIER;
-  }
-}
+❌ if (a) { if (b) { fn(); } }
+✅ if (a && b) { fn(); }
 ```
 
-Example - CORRECT (self-explanatory enum values, no extraction needed):
-```typescript
-// ✅ GOOD - enum values are already named and self-explanatory
-[ReviewStatusEnum.IMPORTED, ReviewStatusEnum.PENDING_REVIEW].map((status) => ...)
+---
 
-// ❌ UNNECESSARY - adds indirection for no readability benefit
-const ALLOWED_STATUSES = [ReviewStatusEnum.IMPORTED, ReviewStatusEnum.PENDING_REVIEW];
-ALLOWED_STATUSES.map((status) => ...)
+## typescript:S121
+All control flow bodies need curly braces, even single-statement.
+```typescript
+❌ if (x) return y;
+✅ if (x) { return y; }
 ```
 
-## typescript:S134 — Control flow statements should not be nested too deeply
+---
 
-Do not nest more than 3 levels of `if`/`for`/`while`/`switch`/`try` statements. Deeply nested code is harder to read, test, and maintain.
+## typescript:S1117
+No variable with the same name in overlapping scopes (shadowing).
+Common case: importing `input` from Angular then using `const input = ...` locally → rename local to `inputElement`.
 
-Fix: Extract nested logic into separate private methods. Each method should handle one level of the logic tree.
+---
 
-Example - WRONG (4 levels of nesting):
-```typescript
-for (const option of this.options()) {              // Level 1
-  if (option.value === value) {                     // Level 2
-    return option;
-  }
-  if (option.children) {                            // Level 2
-    for (const child of option.children) {          // Level 3
-      if (child.value === value) {                  // Level 4 ❌ TOO DEEP
-        return child;
-      }
-    }
-  }
-}
-```
-
-Example - CORRECT (max 3 levels):
-```typescript
-for (const option of this.options()) {              // Level 1
-  if (option.value === value) {                     // Level 2
-    return option;
-  }
-  const childMatch = this.#findChild(option.children, value);  // Level 2
-  if (childMatch) {                                 // Level 2
-    return childMatch;
-  }
-}
-
-// Extract nested logic into separate method
-#findChild(children: Item[] | undefined, value: string): Item | null {
-  if (!children) {                                  // Level 1
-    return null;
-  }
-  for (const child of children) {                   // Level 1
-    if (child.value === value) {                    // Level 2
-      return child;
-    }
-  }
-  return null;
-}
-```
-
-## typescript:S1192 — String literals should not be duplicated
-
-Do not duplicate string literals more than 2 times (i.e., the same literal appearing 3+ times). Duplicated strings make maintenance harder and are error-prone when values need to change.
-
-Fix: Extract the duplicated string into a named constant. If the string represents a type union member or specific value, create both a type and a constant.
-
-Exceptions: Short strings like empty strings `''`, single characters, or common tokens may not need extraction if they serve different semantic purposes.
-
-Example - WRONG (string duplicated 3 times):
-```typescript
-export class MyComponent {
-  columnLayout = input<'theme-date' | 'theme-date-menu' | 'theme-date-pill-owner-menu'>(
-    'theme-date-pill-owner-menu'  // Duplication 1
-  );
-
-  headerClass = computed(() => {
-    const layout = this.columnLayout();
-    return {
-      'header--theme-date': layout === 'theme-date',
-      'header--theme-date-pill-owner-menu': layout === 'theme-date-pill-owner-menu', // Duplication 2
-    };
-  });
-
-  showOwner = computed(() => {
-    return this.columnLayout() === 'theme-date-pill-owner-menu'; // Duplication 3 ❌
-  });
-}
-```
-
-Example - CORRECT (extracted constant):
-```typescript
-type ColumnLayout = 'theme-date' | 'theme-date-menu' | 'theme-date-pill-owner-menu';
-
-const DEFAULT_COLUMN_LAYOUT: ColumnLayout = 'theme-date-pill-owner-menu';
-
-export class MyComponent {
-  columnLayout = input<ColumnLayout>(DEFAULT_COLUMN_LAYOUT);
-
-  headerClass = computed(() => {
-    const layout = this.columnLayout();
-    return {
-      'header--theme-date': layout === 'theme-date',
-      'header--theme-date-pill-owner-menu': layout === DEFAULT_COLUMN_LAYOUT, // ✅
-    };
-  });
-
-  showOwner = computed(() => {
-    return this.columnLayout() === DEFAULT_COLUMN_LAYOUT; // ✅
-  });
-}
-```
-
-## css:S4666 — Duplicate CSS selectors
-
-Do not declare the same selector twice in a stylesheet. This happens when layout overrides are split across modifier classes and parent-selector blocks that resolve to the same compiled selector.
-
-Fix: Consolidate all rules for a selector into one place. If a modifier class already targets an element, do not also use a parent-selector (`&`) pattern to target the same element.
-
-## typescript:S106 — Unexpected console statement
-
-Only these console methods are allowed: `assert`, `clear`, `count`, `group`, `groupCollapsed`, `groupEnd`, `info`, `table`, `time`, `timeEnd`, `trace`.
-
-Do NOT use: `log`, `warn`, `error`, `debug`.
-
-Fix: Remove the console statement or replace with an allowed method. For development warnings, use a comment instead. For production logging, use a proper logging service.
-
-Example - WRONG:
-```typescript
-if (!isValid) {
-  console.warn('Validation failed');  // ❌ warn is not allowed
-}
-```
-
-Example - CORRECT (comment):
-```typescript
-if (!isValid) {
-  // Validation failed - early return
-  return;
-}
-```
-
-Example - CORRECT (allowed method):
-```typescript
-if (!isValid) {
-  console.info('Validation failed');  // ✅ info is allowed
-}
-```
-
-## typescript:S1128 — Remove unused imports
-
-Remove any import statements that are not used in the code. Unused imports add unnecessary clutter and increase bundle size.
-
-Fix: Delete the unused import statement completely.
-
-Example - WRONG (ElementRef imported but never used):
-```typescript
-import {
-  Component,
-  ElementRef,  // ❌ Unused
-  inject,
-} from '@angular/core';
-
-@Component({...})
-export class MyComponent {
-  readonly #router = inject(Router);
-}
-```
-
-Example - CORRECT (only used imports):
-```typescript
-import {
-  Component,
-  inject,
-} from '@angular/core';
-
-@Component({...})
-export class MyComponent {
-  readonly #router = inject(Router);
-}
-```
-
-This is caught automatically by Sonar and ESLint. Always review your imports after refactoring to ensure all are still needed.
-
-## typescript:S1066 — Merge duplicate or unnecessary nested if statements
-
-When an if statement is nested directly inside another if statement with no other code between them, merge the conditions using logical operators (&&, ||) to simplify the code.
-
-Fix: Combine the conditions into a single if statement.
-
-Example - WRONG (unnecessary nesting):
-```typescript
-if (stepIndex === 2) {
-  if (this.selectedRole === RoleEnum.EDITOR) {    // ❌ Unnecessary nesting
-    this.resetFields();
-  }
-}
-```
-
-Example - CORRECT (merged conditions):
-```typescript
-if (stepIndex === 2 && this.selectedRole === RoleEnum.EDITOR) {  // ✅ Combined
-  this.resetFields();
-}
-```
-
-Example - WRONG (multiple nested conditions):
-```typescript
-if (isValid) {
-  if (isUser || isAdmin) {              // ❌ Nested without other logic
-    if (hasPermission) {                // ❌ More unnecessary nesting
-      processRequest();
-    }
-  }
-}
-```
-
-Example - CORRECT (all merged):
-```typescript
-if (isValid && (isUser || isAdmin) && hasPermission) {  // ✅ Single condition
-  processRequest();
-}
-```
-
-Rationale: Merging nested if statements reduces indentation depth and improves code readability.
-
-## typescript:S121 — Control structures should use curly braces
-
-All control flow statements (`if`, `else`, `for`, `while`, `switch`, `do-while`) MUST be enclosed in curly braces, even if the body contains only a single statement.
-
-Fix: Add curly braces around all single-statement blocks.
-
-Example - WRONG (missing braces):
-```typescript
-if (condition) return value;          // ❌ Missing braces
-if (isValid) doSomething();           // ❌ Missing braces
-for (let i = 0; i < 10; i++) total++; // ❌ Missing braces
-```
-
-Example - CORRECT (with braces):
-```typescript
-if (condition) {
-  return value;  // ✅ Braces on single statement
-}
-
-if (isValid) {
-  doSomething();
-}
-
-for (let i = 0; i < 10; i++) {
-  total++;
-}
-```
-
-Rationale: This prevents errors when code is later modified and improves code clarity and consistency.
-
-## typescript:S1117 — Variable declared multiple times in same scope
-
-Do not declare a variable with the same name in overlapping scopes. This causes confusion and can lead to bugs where the wrong variable is referenced.
-
-Fix: Rename one of the duplicate variables to have a unique name within its scope.
-
-Example - WRONG (variable declared twice):
-```typescript
-import { input } from '@angular/core';  // ❌ 'input' imported
-
-#getInputElement() {
-  const input = this.inputElement();    // ❌ 'input' redeclared locally
-  if (input) {
-    return input.nativeElement;
-  }
-}
-```
-
-Example - CORRECT (unique variable names):
-```typescript
-import { input } from '@angular/core';  // ✅ 'input' imported
-
-#getInputElement() {
-  const inputElement = this.inputElement();  // ✅ Different name
-  if (inputElement) {
-    return inputElement.nativeElement;
-  }
-}
-```
-
-Example - WRONG (same variable in overlapping scopes):
-```typescript
-control.statusChanges.subscribe(() => {
-  const hasUserInteracted = control.touched || !control.pristine;  // ❌ First declaration
-  const isInvalid = control.invalid && hasUserInteracted;
-});
-
-const hasUserInteracted = control.touched || !control.pristine;    // ❌ Second declaration (conflict!)
-const isInvalid = control.invalid && hasUserInteracted;
-```
-
-Example - CORRECT (unique names in different scopes):
-```typescript
-control.statusChanges.subscribe(() => {
-  const userInteracted = control.touched || !control.pristine;     // ✅ Renamed
-  const invalid = control.invalid && userInteracted;
-});
-
-const hasUserInteracted = control.touched || !control.pristine;    // ✅ Different names
-const isInvalid = control.invalid && hasUserInteracted;
-```
-
-Always ensure variable names are unique within their scope to avoid shadowing and confusion.
-
-## typescript:S2966 — Forbidden non-null assertion
-
-Do not use the non-null assertion operator (`!`) to bypass TypeScript's type safety. Fix the root cause instead.
-
-**Two correct approaches depending on the situation:**
-
-**1. Fix the type at the source** — if the data is always present (e.g. backend always returns it), make the field required in the interface. This eliminates the need for any assertion downstream.
+## typescript:S2966
+No non-null assertion (`!`). Two approaches:
+1. Fix the interface — make the field required if it's always present
+2. Store signal result in a variable first, then use optional chaining
 
 ```typescript
-// ❌ WRONG — interface too permissive, assertion needed downstream
-interface IObligation {
-  id?: string;
-}
-items.map((item) => item.id!) // forced to assert
+❌ this.inputRef()!.nativeElement.value = ''
+✅ const ref = this.inputRef(); if (ref) { ref.nativeElement.value = ''; }
 
-// ✅ CORRECT — fix the interface, no assertion needed
-interface IObligation {
-  id: string;
-}
-items.map((item) => item.id) // clean
+❌ .filter((x): x is typeof x & { networkType: DataNetworkEnum } => x.networkType != null)
+✅ .filter((x) => x.networkType != null).map((x) => x.networkType as DataNetworkEnum)
 ```
 
-**2. Narrow with a local variable or `as` cast** — if the field is genuinely optional but you've already filtered/guarded it.
+---
 
+## typescript:S4157
+Omit redundant default type parameters.
 ```typescript
-// ❌ WRONG — calling signal twice, asserting on second call
-if (this.inputRef()?.nativeElement) {
-  this.inputRef()!.nativeElement.value = ''; // non-null assertion
-}
-
-// ✅ CORRECT — store result once, use optional chaining
-const inputRef = this.inputRef();
-if (inputRef?.nativeElement) {
-  inputRef.nativeElement.value = '';
-}
-
-// ❌ WRONG — type predicate verbose and hard to read
-.filter((x): x is typeof x & { networkType: DataNetworkEnum } => x.networkType != null)
-.map((x) => x.networkType)
-
-// ✅ CORRECT — filter null, cast in map (safe because filter already excluded null)
-.filter((x) => x.networkType != null)
-.map((x) => x.networkType as DataNetworkEnum)
+❌ readonly closeEmitter = output<void>();
+✅ readonly closeEmitter = output();
 ```
 
-## Web:S6811 — Ensure aria-required is applied to the correct element
+---
 
-The `aria-required` attribute is not supported on certain input types like radio buttons and checkboxes. Instead, place `aria-required="true"` on the parent `fieldset` or a wrapper element that groups the radio/checkbox controls together.
+## typescript:S4798
+Replace `param?: Type` with `param = defaultValue` for optional parameters.
+```typescript
+❌ closePopup(confirm?: boolean): void { this.closeEmitter.emit(confirm ?? false); }
+✅ closePopup(confirm = false): void { this.closeEmitter.emit(confirm); }
+```
 
-Fix: Move `aria-required` from individual radio/checkbox inputs to their parent `fieldset`.
+---
 
-Example - WRONG (aria-required on individual radio buttons):
+## typescript:S2871
+Always pass compare function to `.sort()` on strings.
+```typescript
+❌ dates.sort()[0]
+✅ dates.sort((a, b) => a.localeCompare(b))[0]
+```
+
+---
+
+## Web:S6811
+`aria-required` not valid on individual radio/checkbox inputs. Move to parent `<fieldset>`.
 ```html
-<fieldset>
-  <legend>Choose an option</legend>
-  <input type="radio" name="choice" value="1" aria-required="true" />  <!-- ❌ Wrong -->
-  <input type="radio" name="choice" value="2" aria-required="true" />  <!-- ❌ Wrong -->
-</fieldset>
+❌ <input type="radio" aria-required="true" />
+✅ <fieldset aria-required="true"> ... <input type="radio" /> ... </fieldset>
 ```
 
-Example - CORRECT (aria-required on fieldset):
-```html
-<fieldset aria-required="true">  <!-- ✅ Correct -->
-  <legend>Choose an option</legend>
-  <input type="radio" name="choice" value="1" />
-  <input type="radio" name="choice" value="2" />
-</fieldset>
-```
+---
 
-Rationale: Radio buttons and checkboxes inherit their role implicitly, so ARIA attributes like `aria-required` should be placed on the grouping element (fieldset) rather than individual inputs.
+## Web:MouseEventWithoutKeyboardEquivalentCheck
+**FALSE POSITIVE** on `<ntm-button>`, `<ndw-button>` — they render a real `<button>` internally.
+Do NOT add keyboard handlers to design system components.
+Real violation: `<div (click)="...">` with no keyboard handler → replace with `<button>`.
+Suppress false positives server-side.
 
-## Web:MouseEventWithoutKeyboardEquivalentCheck — Mouse events must have keyboard equivalents
+---
 
-Sonar requires that elements with `(click)` also handle `(keydown)`, `(keyup)`, or `(keypress)` for keyboard accessibility.
+## Web:ItemTagNotWithinContainerTagCheck
+**FALSE POSITIVE** with Angular `ng-template` + `ngTemplateOutlet` — Sonar can't see the `<li>` is projected into an `<ol>` at runtime.
+Do NOT wrap `<li>` in a redundant container. Suppress server-side.
+Real violations (bare `<li>` genuinely outside a list) still need fixing.
 
-**This rule produces false positives on design system button components** (`<ntm-button>`, `<ndw-button>`, etc.) because Sonar cannot see through the component abstraction — it doesn't know the component renders a real `<button>` element internally, which already handles keyboard events natively.
+---
 
-**Do NOT add keyboard event handlers to design system button components** — they already handle keyboard interaction correctly.
+## Web:S6851
+**FALSE POSITIVE** when signal/variable name contains "image" (e.g. `image().alt`) — Sonar flags the binding expression, not the rendered value.
+Do NOT add `@let` workarounds to rename the variable.
+Suppress server-side for `[alt]="image().alt | translate"` patterns.
+Real violations (alt text literally says "image"/"photo") still need fixing.
 
-If Sonar flags this on a native non-interactive element (e.g. `<div (click)="...">`) — that is a real issue. Fix it by using a proper `<button>` element instead.
+---
 
-**Suppress on the Sonar server side** for false positives on design system components, rather than adding unnecessary event handlers.
+## Web:S6853
+Labels must be associated with controls: explicit `for`/`id` pair or implicit nesting.
+**Can produce false positives** in Angular when Sonar can't statically resolve `for`/`id` pairs. If the association is correct, suppress server-side.
 
-## typescript:S2871 — Array sort should use a compare function
+---
 
-Do not call `.sort()` on an array of strings without a compare function. The default sort is locale-inconsistent and can produce different results across environments.
+## Web:S6840
+`autocomplete` must use valid HTML spec tokens. Invalid values are silently ignored by browsers.
 
-Fix: Always pass `(a, b) => a.localeCompare(b)` as the compare function when sorting strings.
-
-Example - WRONG:
-```typescript
-dates.sort()[0]  // ❌ No compare function
-```
-
-Example - CORRECT:
-```typescript
-dates.sort((a, b) => a.localeCompare(b))[0]  // ✅ Locale-aware compare
-```
-
-Note: This applies even when sorting ISO date strings (e.g. `"2025-12-31"`), where plain `.sort()` would technically work — Sonar still flags it.
-
-## Web:ItemTagNotWithinContainerTagCheck — Item tag not within a container tag
-
-Sonar flags `<li>` elements that it cannot statically determine are inside a `<ul>` or `<ol>`.
-
-**This rule produces false positives with Angular `ng-template` + `ngTemplateOutlet`** — when a component template contains bare `<li>` elements inside `<ng-template>`, Sonar cannot see that the template is projected into an `<ol>` in the parent component. At runtime the HTML is valid, but Sonar only sees the isolated template.
-
-**Do NOT wrap the `<li>` in a redundant container** — this would break the DOM structure. Suppress on the Sonar server side for `ng-template` based components that render into a known list context.
-
-Real violations (non-`ng-template` context where `<li>` genuinely has no parent list) should still be fixed.
-
-## Web:S6851 — Remove redundant word from alt attribute
-
-Sonar flags `[alt]` bindings that it detects contain words like "image", "photo", "picture", or "icon" in the binding expression — not the rendered value.
-
-**This produces false positives in Angular** when the signal or variable name contains "image" (e.g. `image().alt`). The actual rendered alt text is a translation key — "image" is just the input's name, not the alt text content.
-
-**Do NOT add `@let` workarounds just to rename the variable** — that is code smell to satisfy a static analysis tool.
-
-**Suppress on the Sonar server side** for bindings like `[alt]="image().alt | translate"` where the input is named `image` but the alt text is a translation key.
-
-Real violations (where the alt text itself literally says "image" or "photo") should still be fixed.
-
-## Web:S6853 — Form label must be associated with a control
-
-Labels must be associated with their input controls. Use either:
-- Explicit: `<label for="myId">` paired with `<input id="myId">`
-- Implicit: nest the `<input>` directly inside the `<label>`
-
-Note: This rule can produce false positives in Angular standalone components where Sonar cannot statically resolve `for`/`id` pairs. If the association is correct and Sonar still flags it, suppress on the Sonar server side rather than changing working code.
-
-## Web:S6840 — Use valid `autocomplete` attribute values
-
-The `autocomplete` attribute must use valid HTML token values as defined by the spec. Invalid values are silently ignored by browsers (no autocomplete suggestions are shown).
-
-Common mistakes and their correct alternatives:
-
-| Wrong | Correct |
-|-------|---------|
+| ❌ Wrong | ✅ Correct |
+|----------|-----------|
 | `organization-name` | `organization` |
 | `country-name` | `country` |
 
-Valid tokens include: `name`, `given-name`, `family-name`, `email`, `tel`, `url`, `organization`, `country`, `postal-code`, `street-address`, `address-line1`, `address-line2`, `address-level1`, `address-level2`, etc.
+Other valid tokens: `name`, `given-name`, `family-name`, `email`, `tel`, `url`, `postal-code`, `street-address`, `address-line1`, `address-line2`, `address-level1`, `address-level2`
 
-Fix: Replace invalid tokens with their correct spec equivalents.
+---
 
-## typescript:S4157 — Redundant type parameter can be omitted
-
-When a type parameter is the default for that position, TypeScript allows omitting it entirely. Sonar flags it as redundant.
-
-Fix: Remove the explicit type argument.
-
-Example - WRONG:
-```typescript
-readonly closeEmitter = output<void>();  // ❌ <void> is the default
-```
-
-Example - CORRECT:
-```typescript
-readonly closeEmitter = output();  // ✅ default inferred
-```
-
-## typescript:S4798 — Provide a default value for optional parameters
-
-Optional parameters (`param?: Type`) with no default value make the absence case implicit. Sonar prefers an explicit default value so the function behavior is obvious when the parameter is omitted.
-
-Fix: Replace `param?: Type` with `param = defaultValue`.
-
-Example - WRONG:
-```typescript
-closePopup(confirm?: boolean): void {
-  this.closeEmitter.emit(confirm ?? false);  // ❌ caller must guess default
-}
-```
-
-Example - CORRECT:
-```typescript
-closePopup(confirm = false): void {
-  this.closeEmitter.emit(confirm);  // ✅ default is explicit, ?? not needed
-}
-```
-
-## Web:S6819 — Use `<dialog>` instead of `role="dialog"`
-
-Sonar flags `role="dialog"` on non-`<dialog>` elements and recommends using the native `<dialog>` HTML element instead.
-
-**This is a real rule but out of scope for decorator migration PRs.** The `<dialog>` element has different CSS behavior, requires the `open` attribute to show/hide, and requires JS changes (`showModal()` / `close()`). Migrating `<aside role="dialog">` to `<dialog>` is a structural change that belongs in a dedicated accessibility story.
-
-**Do NOT fix this during signal migration PRs** — suppress on the Sonar server side and track as a follow-up accessibility task.
+## Web:S6819
+`role="dialog"` on non-`<dialog>` elements → Sonar recommends native `<dialog>`.
+**Do NOT fix during signal migration PRs** — migrating `<aside role="dialog">` to `<dialog>` requires CSS, `open` attribute, and JS changes (`showModal()`/`close()`). Belongs in a dedicated accessibility story.
+Suppress server-side, track as follow-up.

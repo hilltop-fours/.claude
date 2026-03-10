@@ -5,8 +5,7 @@
 **Total checks:** 12
 
 This checklist consolidates ALL applicable validation rules from:
-- angular-instructions.md
-- code-simplicity.md
+- coding.md
 - sonarqube-rules.md
 
 ---

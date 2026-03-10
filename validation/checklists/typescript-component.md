@@ -5,10 +5,7 @@
 **Total checks:** 48
 
 This checklist consolidates ALL applicable validation rules from:
-- angular-instructions.md
-- code-simplicity.md
-- angular-style.md
-- angular-class-structure.md
+- coding.md
 - dead-code-detection.md
 - sonarqube-rules.md
 

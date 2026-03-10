@@ -5,7 +5,7 @@
 **Total checks:** 4
 
 This checklist consolidates ALL applicable validation rules from:
-- code-simplicity.md
+- coding.md
 - sonarqube-rules.md
 
 ---
