@@ -8,12 +8,12 @@ Complete reference for the traffic-sign-feedback-backend API. This service manag
 
 | Item | Value | Date |
 |------|-------|------|
-| Last Verified Commit | 20f8f99 | 2026-02-11 |
-| Commit Message | chore(deps): update all non-major dependencies to v7.6.0 (no API changes) | |
-| Swagger Version | latest | 2026-02-11 |
+| Last Verified Commit | 8f57066 | 2026-03-10 |
+| Commit Message | Feature #110189 JDK25 compatibility (no API changes) | |
+| Swagger Version | latest | 2026-03-10 |
 
-**Status**: ✓ Up to date as of 2026-02-11
-**Next Review**: Check commits after 20f8f99
+**Status**: ✓ Up to date as of 2026-03-10
+**Next Review**: Check commits after 8f57066
 
 ---
 

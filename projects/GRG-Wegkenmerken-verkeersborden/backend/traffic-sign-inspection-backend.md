@@ -8,12 +8,12 @@ Complete reference for the traffic-sign-inspection-backend API. This service han
 
 | Item | Value | Date |
 |------|-------|------|
-| Last Verified Commit | 4e034bd | 2026-02-11 |
-| Commit Message | chore(deps): update all non-major dependencies (no API changes) | |
-| Swagger Version | latest | 2026-02-11 |
+| Last Verified Commit | f16ddce | 2026-03-10 |
+| Commit Message | Feature #110189 JDK25 compatibility (no API changes) | |
+| Swagger Version | latest | 2026-03-10 |
 
-**Status**: ✓ Up to date as of 2026-02-11
-**Next Review**: Check commits after 4e034bd
+**Status**: ✓ Up to date as of 2026-03-10
+**Next Review**: Check commits after f16ddce
 
 ---
 

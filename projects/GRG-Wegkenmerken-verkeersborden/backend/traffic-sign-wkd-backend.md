@@ -8,12 +8,12 @@ Complete reference for the traffic-sign-wkd-backend API. This service manages ve
 
 | Item | Value | Date |
 |------|-------|------|
-| Last Verified Commit | 685a5d3 | 2026-03-05 |
-| Commit Message | Feature #108981 Send emails for exports | |
-| Swagger Version | latest | 2026-03-05 |
+| Last Verified Commit | 3856557 | 2026-03-10 |
+| Commit Message | Feature #110189 JDK25 compatibility (no API changes) | |
+| Swagger Version | latest | 2026-03-10 |
 
-**Status**: ✓ Up to date as of 2026-03-05
-**Next Review**: Check commits after 685a5d3
+**Status**: ✓ Up to date as of 2026-03-10
+**Next Review**: Check commits after 3856557
 
 ---
 

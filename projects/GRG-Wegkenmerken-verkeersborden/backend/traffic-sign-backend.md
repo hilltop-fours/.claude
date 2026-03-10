@@ -8,12 +8,12 @@ Complete reference for the traffic-sign-backend API. This is the core backend se
 
 | Item | Value | Date |
 |------|-------|------|
-| Last Verified Commit | 4a6c054c | 2026-03-06 |
-| Commit Message | feat(ownership): #110156 Respond with 201 when finding created | |
-| Swagger Version | latest | 2026-03-06 |
+| Last Verified Commit | 627de93a | 2026-03-10 |
+| Commit Message | Feature #110189 JDK25 compatibility (no API changes) | |
+| Swagger Version | latest | 2026-03-10 |
 
-**Status**: ✓ Up to date as of 2026-03-06
-**Next Review**: Check commits after 4a6c054c
+**Status**: ✓ Up to date as of 2026-03-10
+**Next Review**: Check commits after 627de93a
 
 ---
 

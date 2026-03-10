@@ -8,12 +8,12 @@ Complete reference for the traffic-sign-wkd-derivation-backend API. This service
 
 | Item | Value | Date |
 |------|-------|------|
-| Last Verified Commit | 55dab1e | 2026-02-11 |
-| Commit Message | chore(deps): update all non-major dependencies (no API changes) | |
-| Swagger Version | latest | 2026-02-11 |
+| Last Verified Commit | 0a05a4d | 2026-03-10 |
+| Commit Message | Feature #110189 JDK25 compatibility (no API changes) | |
+| Swagger Version | latest | 2026-03-10 |
 
-**Status**: ✓ Up to date as of 2026-02-11
-**Next Review**: Check commits after 55dab1e
+**Status**: ✓ Up to date as of 2026-03-10
+**Next Review**: Check commits after 0a05a4d
 
 ---
 
