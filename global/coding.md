@@ -322,6 +322,57 @@ Needed `loggedInUser` in `ngOnInit` — wrote a new `take(1)` + `filter` pipe fr
 
 ---
 
+## Skeleton Screens
+
+Use when: a page loads async data and currently shows a spinner or nothing. Replace with a skeleton component that mirrors the real layout.
+
+**Process — always do this before writing:**
+1. Use agent-browser to screenshot the real loaded page
+2. Measure actual card heights via `getBoundingClientRect()` in eval
+3. Match the skeleton dimensions exactly to the real elements so nothing jumps on load
+
+**Conventions:**
+- Component: `[feature]-skeleton.component.ts` — inline template (no separate .html), own .scss
+- Class naming: `.skeleton-card` for card shells, `.bone` for placeholder elements within
+- BEM modifier on bones: `bone--title`, `bone--subtitle`, `bone--meter` etc.
+- Use `:host { display: grid; ... }` when the skeleton must participate in a parent grid
+- Use `min-height` + `max-height` to lock skeleton card to exact real card height
+- Shimmer: single `@keyframes shimmer` in the component scss, applied via `::after` pseudo-element with `overflow: hidden` on parent
+
+**Loading state pattern:**
+```html
+@if (response.pending) {
+  <ntm-[feature]-skeleton />
+} @else if (response.success) {
+  <!-- real content -->
+}
+```
+
+**Shimmer template (copy this):**
+```scss
+@keyframes shimmer {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
+
+.bone {
+  position: relative;
+  overflow: hidden;
+  background-color: $grey-5;
+  border-radius: 0.25rem;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+    animation: shimmer 1.5s infinite;
+  }
+}
+```
+
+---
+
 ## Manual Simplicity Review
 
 Triggered by: "review the code", "check complexity", "simplicity check"
