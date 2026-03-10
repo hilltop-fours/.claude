@@ -114,7 +114,7 @@ One row per group. Update as work progresses.
 | B | `mutations-table/` — output only (safe) | `mutations-table` | `[FE] signals: mutations table components input output` | `chore/110901/111401/signals-mutations-table-components-input-output` | open | — |
 | C | `detail-cards/` — input/output (safe) | `detail-cards` | `[FE] signals: detail card components input output` | `chore/110901/111402/signals-detail-card-components-input-output` | open | — |
 | D | `feature-forms/` simple — input/output/model (safe) | `feature-forms` | `[FE] signals: feature form components input output` | `chore/110901/111403/signals-feature-form-components-input-output` | open | — |
-| E | `shared/` — input + ngOnChanges (coupled) | `shared` | `[FE] signals: shared components input output effect` | — | — | — |
+| E | `shared/` — input + ngOnChanges (coupled) | `shared` | `[FE] signals: shared components input output effect` | `chore/110901/111404/signals-shared-components-input-output-effect` | open | — |
 | F | `multi-select/` + `multi-*-list-item/` — input + ngOnChanges (coupled) | `multi-select` | `[FE] signals: multi-select components input output effect` | — | — | — |
 | G | `feature-forms/` — input + ngOnChanges (coupled) | `feature-forms` | `[FE] signals: feature form components input output effect` | — | — | — |
 
