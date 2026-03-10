@@ -121,7 +121,7 @@ One row per group. Update as work progresses.
 > **Branch format:** `chore/110901/{task-id}/{kebab-case-scope}`
 > **Commit format (squashed PR title):** `chore({scope}): #110901 #{task-id} description`
 >
-> **Workflow per group:** Do the migration first (edit files), then commit directly with the PR title format — no WIP commits. Squash = commit immediately as PR title.
+> **Workflow per group:** Do the migration first (edit files), then commit directly with the PR title format — no WIP commits. Squash = commit immediately as PR title. Then push with `git push -u origin {branch}`.
 
 ---
 
