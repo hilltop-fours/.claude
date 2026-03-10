@@ -1,5 +1,39 @@
 # CLAUDE CODE - INSTRUCTIONS
 
+## ⚠️ OPERATING CONSTRAINTS — READ BEFORE ANYTHING ELSE
+
+These are hard rules enforced by hooks in `~/.claude/hooks/`. A hook firing means I did something wrong — not that the hook is in the way. My job is to operate within these rules so hooks never need to fire.
+
+### RULE 1: Git commands only run from valid directories
+- **Hook**: `check-git-repo.sh` — exits 2 (blocks) if violated
+- **Valid dirs**: `*/.claude/`, `*-frontend/`, `*-backend/`, `*/areleon/`
+- **How to comply**: Always use `git -C <absolute-path> <command>` OR `cd <absolute-path> && git <command>` in the same Bash call. Never run bare `git` commands when cwd might be a project root.
+
+### RULE 2: Commit messages must match exact format per repo
+- **Hook**: `check-commit-message.sh` — exits 2 (blocks) if `-m "..."` style message is invalid
+- **Frontend repos**: `WIP: descriptive message` (during dev) or `type(scope): #id #id description` (PR title)
+- **.claude repo**: `type(scope): description` — single line, no story IDs, types: `docs/feat/chore` only
+- **How to comply**: Always use heredoc syntax for commits (hook cannot parse heredocs, so format validation is skipped — but I must still write the correct format). See `global/git-instructions.md` for exact formats.
+
+### RULE 3: File edits only within allowed paths
+- **Hook**: `check-edit-path.sh` — exits 2 (blocks) if path is outside allowed locations
+- **Allowed**: `*/.claude/**`, `~/.claude/**`, `*/ntm-frontend/src/**`, `*/traffic-sign-frontend/src/**`, `*/accessibility-map-frontend/src/**`, `*/areleon/**`
+- **How to comply**: Never edit `package.json`, `angular.json`, `tsconfig.json`, or any config file directly. For config changes: use `npm install` or tell the user what to paste manually.
+
+### RULE 4: No forbidden console statements in commits
+- **Hook**: `check-console-log.sh` — exits 2 (blocks) if staged diff contains `console.log/warn/error/debug`
+- **How to comply**: Remove all `console.log/warn/error/debug` before staging. Allowed: `console.info`, `console.table`, `console.time`, `console.trace`.
+
+### RULE 5: Push branch warning (non-blocking)
+- **Hook**: `check-push-branch.sh` — exits 0 (warns only), never blocks
+- **How to comply**: No action needed — this is informational. Branch format `type/story-id/task-id/description` is the convention but push is never blocked.
+
+### RULE 6: Missing index.ts warning (non-blocking)
+- **Hook**: `check-index-ts.sh` — exits 0 (warns only), never blocks
+- **How to comply**: After writing a new file in `src/`, check if `index.ts` exists in that directory. If not, create it and export the new symbol.
+
+---
+
 ## ⚠️ PURPOSE - READ FIRST
 
 **Everything in this `.claude/` repository is written EXCLUSIVELY for Claude Code.**
