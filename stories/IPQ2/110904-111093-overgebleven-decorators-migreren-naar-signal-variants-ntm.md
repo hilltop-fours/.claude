@@ -373,7 +373,7 @@ Per user confirmation: holistic cleanup included — fix missing `takeUntilDestr
 | 3 | `ce54e103` — about, do-more-themes-item, tutorial-section, do-more-banner | `modules/small` | `[FE] signals: small page modules` | ✅ branch: `chore/110904/111301/signals-small-page-modules` |
 | 4 | `c39ea9ed` — drawer, popup | `shared/overlays` | `[FE] signals: drawer & popup` | ✅ branch: `chore/110904/111306/signals-drawer-popup` |
 | 5 | `4d460689` — list-card components | `shared/list-card` | `[FE] signals: list-card components` | ✅ branch: `chore/110904/111366/signals-list-card-components` |
-| 6 | `6e437ac3` — standards components | `modules/standards` | `[FE] signals: standards components` | pending |
+| 6 | `6e437ac3` — standards components | `modules/standards` | `[FE] signals: standards components` | ✅ branch: `chore/110904/111373/signals-standards-components` |
 | 7 | `8f1edd6c` — publications shared components | `modules/publications` | `[FE] signals: publications shared` | pending |
 | 8 | `7bd0b9ec` — publications details section components | `modules/publications` | `[FE] signals: publications detail` | pending |
 | 9 | `40b015ab` — publications edit components + pages | `modules/publications` | `[FE] signals: publications edit` | pending |
