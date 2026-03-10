@@ -32,6 +32,13 @@ Real consequence of skipping: required-publications feature uses `toSignal()` + 
 | `@for (item of items; track item.id)` | `*ngFor` |
 | `@let variable = expression` | — |
 
+**Loop/iteration variable naming**: Always use the full descriptive name of what the item represents — in templates (`@for`), TypeScript (`forEach`, `map`, `filter`, `reduce`, etc.), and anywhere a variable names a single element from a collection. Never shorten, abbreviate, or use placeholders. The name must communicate what the item is.
+
+```
+✅ regulation, organization, skeletonCard, dataItem
+❌ _, o, el, item, x, reg, org
+```
+
 ---
 
 ## Signals & Reactivity
