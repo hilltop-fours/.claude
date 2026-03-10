@@ -506,6 +506,21 @@ Labels must be associated with their input controls. Use either:
 
 Note: This rule can produce false positives in Angular standalone components where Sonar cannot statically resolve `for`/`id` pairs. If the association is correct and Sonar still flags it, suppress on the Sonar server side rather than changing working code.
 
+## Web:S6840 — Use valid `autocomplete` attribute values
+
+The `autocomplete` attribute must use valid HTML token values as defined by the spec. Invalid values are silently ignored by browsers (no autocomplete suggestions are shown).
+
+Common mistakes and their correct alternatives:
+
+| Wrong | Correct |
+|-------|---------|
+| `organization-name` | `organization` |
+| `country-name` | `country` |
+
+Valid tokens include: `name`, `given-name`, `family-name`, `email`, `tel`, `url`, `organization`, `country`, `postal-code`, `street-address`, `address-line1`, `address-line2`, `address-level1`, `address-level2`, etc.
+
+Fix: Replace invalid tokens with their correct spec equivalents.
+
 ## typescript:S4157 — Redundant type parameter can be omitted
 
 When a type parameter is the default for that position, TypeScript allows omitting it entirely. Sonar flags it as redundant.
