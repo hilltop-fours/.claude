@@ -57,6 +57,7 @@ Match cwd path to set `$CLAUDE_ROOT`:
 | Implement skeleton screen / loading placeholder | `$CLAUDE_ROOT/global/skeleton-screens.md` |
 | Story file lookup ("read story file" / "load story") | Extract numeric IDs from branch name → search `$CLAUDE_ROOT/stories/` for matching file |
 | Debug build errors | Run `npm run build` from frontend dir, read output |
+| Browser test / smoke test / regression / feature validation / PR verify / debug broken UI | `$CLAUDE_ROOT/global/agent-browser.md` |
 
 **Validate code — single trigger**: Run script + apply all checklists in one response. No two-step workaround needed.
 
