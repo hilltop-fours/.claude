@@ -111,7 +111,7 @@ One row per group. Update as work progresses.
 | # | Group | Scope | Task title (Azure DevOps) | Branch | PR | Merged |
 |---|-------|-------|--------------------------|--------|----|--------|
 | A | `shared/` — input/output/model (safe) | `shared` | `[FE] signals: shared components input output` | `chore/110901/111400/signals-shared-components-input-output` | open | — |
-| B | `mutations-table/` — output only (safe) | `mutations-table` | `[FE] signals: mutations table components input output` | — | — | — |
+| B | `mutations-table/` — output only (safe) | `mutations-table` | `[FE] signals: mutations table components input output` | `chore/110901/111401/signals-mutations-table-components-input-output` | open | — |
 | C | `detail-cards/` — input/output (safe) | `detail-cards` | `[FE] signals: detail card components input output` | — | — | — |
 | D | `feature-forms/` simple — input/output/model (safe) | `feature-forms` | `[FE] signals: feature form components input output` | — | — | — |
 | E | `shared/` — input + ngOnChanges (coupled) | `shared` | `[FE] signals: shared components input output effect` | — | — | — |
@@ -119,7 +119,9 @@ One row per group. Update as work progresses.
 | G | `feature-forms/` — input + ngOnChanges (coupled) | `feature-forms` | `[FE] signals: feature form components input output effect` | — | — | — |
 
 > **Branch format:** `chore/110901/{task-id}/{kebab-case-scope}`
-> **Commit format:** `chore({scope}): #110901 #{task-id} description`
+> **Commit format (squashed PR title):** `chore({scope}): #110901 #{task-id} description`
+>
+> **Workflow per group:** Do the migration first (edit files), then commit directly with the PR title format — no WIP commits. Squash = commit immediately as PR title.
 
 ---
 
