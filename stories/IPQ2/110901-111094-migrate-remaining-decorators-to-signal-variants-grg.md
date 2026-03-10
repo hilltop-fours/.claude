@@ -104,91 +104,106 @@ Apply to every file touched in Phase 1. Go through each item in order.
 
 ---
 
-## Phase 1 — `@Input()` / `@Output()` / `model()` migration
+## Phase 1 — `@Input()` / `@Output()` / `model()` — safe files (no ngOnChanges)
 
-**Goal:** Replace all decorator-based inputs and outputs with signal equivalents. No behavior changes.
+**Goal:** Replace all decorator-based inputs and outputs with signal equivalents in files that have NO `ngOnChanges`. These are fully self-contained — no forced follow-up work. Ship as separate PRs per group.
 
-**Files with `@Input()` (27):**
-- `app/modules/road-feature/components/overview/feature-forms/school-zone/school-zone-form/school-zone-form.component.ts`
-- `app/modules/road-feature/components/overview/feature-forms/speed-limit/speed-limit-form/speed-limit-form.component.ts`
-- `app/modules/road-feature/components/overview/feature-forms/speed-limit/speed-limit-control/speed-limit-control.component.ts` ← model candidate
-- `app/modules/road-feature/components/overview/feature-forms/rvm/rvm-type-select/rvm-type-select.component.ts`
-- `app/modules/road-feature/components/overview/feature-forms/road-narrowing/road-narrowing-form/road-narrowing-form.component.ts`
-- `app/modules/road-feature/components/overview/feature-forms/road-category/road-category-control/road-category-control.component.ts`
-- `app/modules/road-feature/components/overview/feature-forms/load-restriction/load-restriction-form/load-restriction-form.component.ts`
-- `app/modules/road-feature/components/overview/feature-forms/length-restriction/form/length-restriction-form.component.ts`
-- `app/modules/road-feature/components/overview/feature-forms/hgv-charge/multi-hgv-charge-list-item/multi-hgv-charge-list-item.component.ts`
-- `app/modules/road-feature/components/overview/feature-forms/height-restriction/height-restriction-form/height-restriction-form.component.ts`
-- `app/modules/road-feature/components/overview/feature-forms/driving-direction/driving-direction-select/driving-direction-select.component.ts`
-- `app/modules/road-feature/components/overview/feature-forms/feature-form-base/feature-form-base.component.ts`
-- `app/modules/road-feature/components/overview/feature-forms/axle-load-restriction/form/axle-load-restriction-form.component.ts`
-- `app/modules/road-feature/components/overview/detail-cards/feature-title/feature-title.component.ts`
-- `app/modules/road-feature/components/overview/detail-cards/details-base/details-base.component.ts`
-- `app/modules/road-feature/components/overview/multi-select/multi-driving-direction-item/multi-driving-direction-item.component.ts`
-- `app/modules/road-feature/components/overview/multi-select/multi-carriageway-type-item/multi-carriageway-type-item.component.ts`
-- `app/modules/road-feature/components/overview/feature-forms/speed-limit/multi-speed-limit-list-item/multi-speed-limit-list-item.component.ts`
-- `app/modules/road-feature/components/overview/feature-forms/rvm/multi-rvm-list-item/multi-rvm-list-item.component.ts`
-- `app/modules/road-feature/components/overview/feature-forms/road-category/multi-road-category-list-item/multi-road-category-list-item.component.ts`
-- `app/shared/components/detail-page-header/detail-page-header.component.ts`
-- `app/shared/components/edit-bar/edit-bar.component.ts`
-- `app/shared/components/sprite-image/sprite-image.component.ts`
-- `app/shared/components/traffic-sign-image/traffic-sign-image.component.ts`
-- `app/shared/components/upload-page-header/upload-page-header.component.ts`
-- `app/shared/components/collapsible/collapsible.component.ts` ← model candidate
-- `app/modules/road-feature/components/overview/feature-forms/speed-limit/speed-limit-form-array/speed-limit-form-array.component.ts`
+### Group A — `shared/` components
+All output-only or simple input/output. No ngOnChanges.
 
-**Additional files with only `@Output()` (no `@Input`, ~8 more):**
-- All mutation table components: `school-zone`, `rvm`, `speed-limit`, `traffic-types`, `road-authority`, `road-category`, `road-narrowing`, `length-restriction`, `load-restriction`, `driving-direction`, `height-restriction`, `axle-load-restriction`, `carriageway-type`
-- `app/modules/road-feature/components/overview/detail-cards/school-zone-details/school-zone-details.component.ts`
-- `app/modules/road-feature/components/overview/detail-cards/school-zone-details-display/school-zone-details-display.component.ts`
-- `app/modules/road-feature/components/overview/feature-forms/road-category/road-category-form/road-category-form.component.ts`
+| File | Has @Input | Has @Output | model candidate |
+|------|-----------|------------|----------------|
+| `app/shared/components/collapsible/collapsible.component.ts` | ✓ | ✓ (`openChange`) | ✓ `open` + `openChange` → `model(false)` |
+| `app/shared/components/detail-page-header/detail-page-header.component.ts` | ✓ | ✓ | — |
+| `app/shared/components/edit-bar/edit-bar.component.ts` | ✓ | ✓ | — |
+| `app/shared/components/upload-page-header/upload-page-header.component.ts` | ✓ | — | — |
 
-**Verification:** `npm run build` from `traffic-sign-frontend/` — 0 errors.
+### Group B — `mutations-table/` components
+All output-only. No ngOnChanges.
 
-**Suggested commit groupings for Phase 1 PRs:**
-- PR 1a: `shared/` components (collapsible, detail-page-header, edit-bar, sprite-image, traffic-sign-image, upload-page-header)
-- PR 1b: `multi-select/` items (multi-driving-direction-item, multi-carriageway-type-item)
-- PR 1c: `feature-forms/` — form controls and selects (simple ones without ngOnChanges)
-- PR 1d: `feature-forms/` — form components with ngOnChanges (do inputs/outputs only, leave ngOnChanges for Phase 2)
-- PR 1e: `detail-cards/` + `mutations-table/` components
+| File | Notes |
+|------|-------|
+| `app/modules/road-feature/components/overview/mutations-table/school-zone/school-zone-mutations-table.component.ts` | `@Output` only |
+| `app/modules/road-feature/components/overview/mutations-table/rvm/rvm-mutations-table.component.ts` | `@Output` only |
+| `app/modules/road-feature/components/overview/mutations-table/speed-limit/speed-limit-mutations-table.component.ts` | `@Output` only |
+| `app/modules/road-feature/components/overview/mutations-table/traffic-types/traffic-type-mutations-table.component.ts` | `@Output` only |
+| `app/modules/road-feature/components/overview/mutations-table/road-authority/road-authority-mutations-table.component.ts` | `@Output` only |
+| `app/modules/road-feature/components/overview/mutations-table/road-category/road-category-mutations-table-component.component.ts` | `@Output` only |
+| `app/modules/road-feature/components/overview/mutations-table/road-narrowing/road-narrowing-mutations-table.component.ts` | `@Output` only |
+| `app/modules/road-feature/components/overview/mutations-table/length-restriction/length-restriction-mutations-table.component.ts` | `@Output` only |
+| `app/modules/road-feature/components/overview/mutations-table/load-restriction/load-restriction-mutations-table.component.ts` | `@Output` only |
+| `app/modules/road-feature/components/overview/mutations-table/driving-direction/driving-direction-mutations-table.component.ts` | `@Output` only |
+| `app/modules/road-feature/components/overview/mutations-table/height-restriction/height-restriction-mutations-table.component.ts` | `@Output` only |
+| `app/modules/road-feature/components/overview/mutations-table/axle-load-restriction/axle-load-restriction-mutations-table.component.ts` | `@Output` only |
+| `app/modules/road-feature/components/overview/mutations-table/carriageway-type/carriageway-type-mutations-table.component.ts` | `@Output` only |
+
+### Group C — `detail-cards/` + `feature-forms/` simple components
+No ngOnChanges. Mix of @Input and @Output.
+
+| File | Notes |
+|------|-------|
+| `app/modules/road-feature/components/overview/detail-cards/feature-title/feature-title.component.ts` | `@Input` only |
+| `app/modules/road-feature/components/overview/detail-cards/details-base/details-base.component.ts` | `@Input` + `@Output` |
+| `app/modules/road-feature/components/overview/detail-cards/school-zone-details/school-zone-details.component.ts` | `@Output` only |
+| `app/modules/road-feature/components/overview/detail-cards/school-zone-details-display/school-zone-details-display.component.ts` | `@Output` only |
+| `app/modules/road-feature/components/overview/feature-forms/school-zone/school-zone-form/school-zone-form.component.ts` | `@Input` only |
+| `app/modules/road-feature/components/overview/feature-forms/rvm/rvm-type-select/rvm-type-select.component.ts` | `@Input` only |
+| `app/modules/road-feature/components/overview/feature-forms/road-category/road-category-control/road-category-control.component.ts` | `@Input` only |
+| `app/modules/road-feature/components/overview/feature-forms/road-category/road-category-form/road-category-form.component.ts` | `@Output` only |
+| `app/modules/road-feature/components/overview/feature-forms/driving-direction/driving-direction-select/driving-direction-select.component.ts` | `@Input` only |
+| `app/modules/road-feature/components/overview/feature-forms/feature-form-base/feature-form-base.component.ts` | `@Input` + `@Output` |
+| `app/modules/road-feature/components/overview/feature-forms/speed-limit/speed-limit-control/speed-limit-control.component.ts` | ← model candidate: `speedLimitChange` |
+| `app/modules/road-feature/components/overview/feature-forms/speed-limit/speed-limit-form-array/speed-limit-form-array.component.ts` | `@Input` + `@Output` |
+
+**Verification per group:** `npm run build` from `traffic-sign-frontend/` — 0 errors before moving to next group.
 
 ---
 
-## Phase 2 — `ngOnChanges` → `effect()` migration
+## Phase 2 — `@Input()` / `@Output()` + `ngOnChanges` → `effect()` — coupled files
 
-**Goal:** Replace `ngOnChanges` with `effect()` in all components migrated in Phase 1. This is forced — signal inputs do not trigger `ngOnChanges`.
+**Goal:** These files have BOTH `@Input()` AND `ngOnChanges`. The input migration and the ngOnChanges fix MUST go in the same PR — you cannot ship input migration alone here, the app would silently break.
 
-**Files with `ngOnChanges` (14):**
-- `app/modules/road-feature/components/overview/feature-forms/speed-limit/speed-limit-form/speed-limit-form.component.ts`
-- `app/modules/road-feature/components/overview/feature-forms/road-narrowing/road-narrowing-form/road-narrowing-form.component.ts`
-- `app/modules/road-feature/components/overview/feature-forms/load-restriction/load-restriction-form/load-restriction-form.component.ts`
-- `app/modules/road-feature/components/overview/feature-forms/length-restriction/form/length-restriction-form.component.ts`
-- `app/modules/road-feature/components/overview/feature-forms/hgv-charge/multi-hgv-charge-list-item/multi-hgv-charge-list-item.component.ts`
-- `app/modules/road-feature/components/overview/feature-forms/height-restriction/height-restriction-form/height-restriction-form.component.ts`
-- `app/modules/road-feature/components/overview/feature-forms/axle-load-restriction/form/axle-load-restriction-form.component.ts`
-- `app/modules/road-feature/components/overview/multi-select/multi-driving-direction-item/multi-driving-direction-item.component.ts`
-- `app/modules/road-feature/components/overview/multi-select/multi-carriageway-type-item/multi-carriageway-type-item.component.ts`
-- `app/modules/road-feature/components/overview/feature-forms/speed-limit/multi-speed-limit-list-item/multi-speed-limit-list-item.component.ts`
-- `app/modules/road-feature/components/overview/feature-forms/rvm/multi-rvm-list-item/multi-rvm-list-item.component.ts`
-- `app/modules/road-feature/components/overview/feature-forms/road-category/multi-road-category-list-item/multi-road-category-list-item.component.ts`
-- `app/shared/components/sprite-image/sprite-image.component.ts`
-- `app/shared/components/traffic-sign-image/traffic-sign-image.component.ts`
-
-**How to convert per file:**
-- Identify which `@Input()` the `ngOnChanges` is watching (it's now `input()` after Phase 1)
-- Replace `ngOnChanges(changes: SimpleChanges)` with `effect(() => { ... })` in the constructor or as a field initializer
+**How to convert `ngOnChanges` per file:**
+- Convert `@Input()` → `input()` first (step 1 of checklist)
+- Replace `ngOnChanges(changes: SimpleChanges)` with `effect(() => { ... })` as a class field or in the constructor
 - Read the input signal value inside the effect: `this.foo()`
 - Remove `OnChanges`, `SimpleChanges` from import if no longer used
-- If `ngOnChanges` watches multiple inputs → one `effect()` that reads all of them is fine (effect re-runs when any dependency changes)
+- **Note on initial run:** `effect()` fires immediately on construction. If the old `ngOnChanges` skipped the first run (`if (changes.foo.isFirstChange()) return`), add a guard or restructure accordingly. Read each case carefully.
 
-**Note on `effect()` initial run:** `effect()` runs immediately on construction with the current signal value. If the old `ngOnChanges` only ran on subsequent changes (not on init), guard with a flag or use `afterNextRender()` if needed. Read each case carefully.
+### Group D — `shared/` components with ngOnChanges
 
-**Verification:** `npm run build` after each component group — 0 errors.
+| File | ngOnChanges watches |
+|------|-------------------|
+| `app/shared/components/sprite-image/sprite-image.component.ts` | `code` → calls `#setSpriteStyle()` |
+| `app/shared/components/traffic-sign-image/traffic-sign-image.component.ts` | `trafficSignImageId` → calls `getImage()` |
 
-**Suggested commit groupings for Phase 2 PRs:**
-- PR 2a: `shared/` — sprite-image, traffic-sign-image
-- PR 2b: `multi-select/` items — multi-driving-direction-item, multi-carriageway-type-item, multi-speed-limit-list-item, multi-rvm-list-item, multi-road-category-list-item, multi-hgv-charge-list-item
-- PR 2c: `feature-forms/` — speed-limit-form, road-narrowing-form, load-restriction-form, length-restriction-form, height-restriction-form, axle-load-restriction-form
+### Group E — `multi-select/` + `multi-*-list-item/` components with ngOnChanges
+
+All watch `roadSectionFeature`.
+
+| File |
+|------|
+| `app/modules/road-feature/components/overview/multi-select/multi-driving-direction-item/multi-driving-direction-item.component.ts` |
+| `app/modules/road-feature/components/overview/multi-select/multi-carriageway-type-item/multi-carriageway-type-item.component.ts` |
+| `app/modules/road-feature/components/overview/feature-forms/speed-limit/multi-speed-limit-list-item/multi-speed-limit-list-item.component.ts` |
+| `app/modules/road-feature/components/overview/feature-forms/rvm/multi-rvm-list-item/multi-rvm-list-item.component.ts` |
+| `app/modules/road-feature/components/overview/feature-forms/road-category/multi-road-category-list-item/multi-road-category-list-item.component.ts` |
+| `app/modules/road-feature/components/overview/feature-forms/hgv-charge/multi-hgv-charge-list-item/multi-hgv-charge-list-item.component.ts` |
+
+### Group F — `feature-forms/` form components with ngOnChanges
+
+All (except speed-limit-form) watch `disableForm`.
+
+| File | ngOnChanges watches |
+|------|-------------------|
+| `app/modules/road-feature/components/overview/feature-forms/speed-limit/speed-limit-form/speed-limit-form.component.ts` | `maxLength` |
+| `app/modules/road-feature/components/overview/feature-forms/road-narrowing/road-narrowing-form/road-narrowing-form.component.ts` | `disableForm` |
+| `app/modules/road-feature/components/overview/feature-forms/load-restriction/load-restriction-form/load-restriction-form.component.ts` | `disableForm` |
+| `app/modules/road-feature/components/overview/feature-forms/length-restriction/form/length-restriction-form.component.ts` | `disableForm` |
+| `app/modules/road-feature/components/overview/feature-forms/height-restriction/height-restriction-form/height-restriction-form.component.ts` | `disableForm` |
+| `app/modules/road-feature/components/overview/feature-forms/axle-load-restriction/form/axle-load-restriction-form.component.ts` | `disableForm` |
+
+**Verification per group:** `npm run build` — 0 errors. Manually test the affected feature in the browser.
 
 ---
 
