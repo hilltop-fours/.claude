@@ -116,7 +116,7 @@ One row per group. Update as work progresses.
 | D | `feature-forms/` simple — input/output/model (safe) | `feature-forms` | `[FE] signals: feature form components input output` | `chore/110901/111403/signals-feature-form-components-input-output` | open | — |
 | E | `shared/` — input + ngOnChanges (coupled) | `shared` | `[FE] signals: shared components input output effect` | `chore/110901/111404/signals-shared-components-input-output-effect` | open | — |
 | F | `multi-select/` + `multi-*-list-item/` — input + ngOnChanges (coupled) | `multi-select` | `[FE] signals: multi-select components input output effect` | `chore/110901/111405/signals-multi-select-components-input-output-effect` | open | — |
-| G | `feature-forms/` — input + ngOnChanges (coupled) | `feature-forms` | `[FE] signals: feature form components input output effect` | — | — | — |
+| G | `feature-forms/` — input + ngOnChanges (coupled) | `feature-forms` | `[FE] signals: feature form components input output effect` | `chore/110901/111406/signals-feature-form-components-input-output-effect` | open | — |
 
 > **Branch format:** `chore/110901/{task-id}/{kebab-case-scope}`
 > **Commit format (squashed PR title):** `chore({scope}): #110901 #{task-id} description`
