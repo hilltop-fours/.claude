@@ -41,22 +41,14 @@ Same rules as NTM task — reference sonarqube-rules.md for the list.
 Use `require('@ndwnu/eslint-config/eslint.config.cjs')` — NOT `require('@ndwnu/eslint-config')`.
 The package exports a `.cjs` file, not a default entry. Using the wrong path causes a silent failure.
 
-**`@angular-eslint/*` packages must be explicit at correct version**
-`angular-eslint` meta-package does NOT hoist `@angular-eslint/*` sub-packages to `node_modules/@angular-eslint/`.
-`angular.json` uses `@angular-eslint/builder:lint` — if `@angular-eslint/builder` is not explicitly in `package.json`, `npm run lint` fails with:
-`Could not find the '@angular-eslint/builder:lint' builder's node package.`
-Fix: add all 4 explicitly at the same version as `angular-eslint`:
-```
-"@angular-eslint/builder": "^21.3.0",
-"@angular-eslint/eslint-plugin": "^21.3.0",
-"@angular-eslint/eslint-plugin-template": "^21.3.0",
-"@angular-eslint/template-parser": "^21.3.0",
-```
-Do NOT add `@angular-eslint/schematics` — only needed for `ng add`, not linting.
+**Do NOT add `@angular-eslint/*` packages explicitly**
+Adding them separately causes ERESOLVE in CI (`npm ci`) because they introduce a duplicate peer dependency chain conflicting with `@ndwnu/design-system`'s `@angular/material`/`@angular/cdk` expectations.
+`angular-eslint` meta-package is sufficient — it handles resolution internally.
+CI uses `npm ci` which is strict; local `npm install --legacy-peer-deps` masks the conflict but produces a broken lock file.
 
-**`@ndwnu/eslint-config` beta.5 declares `@angular-eslint@18` as its own dep**
-This creates a version conflict. Resolve with `npm install --legacy-peer-deps`.
-Always use `--legacy-peer-deps` for installs on these projects until ndwnu updates their config.
+**`npm install --legacy-peer-deps` produces broken lock files**
+If you run `npm install --legacy-peer-deps` due to a peer conflict, it may omit packages (e.g. `@angular/material`) from the lock file entirely. `npm ci` on CI will then ERESOLVE.
+Fix: restore lock file from `main` (`git checkout origin/main -- package-lock.json`), then run plain `npm install`. If that fails, the conflict is in `package.json` itself — fix the version ranges first.
 
 **`@eslint/js` is not needed explicitly**
 ESLint v9 installs it as a transitive dep. Only add it explicitly if you `import js from '@eslint/js'` in your config directly.
