@@ -101,7 +101,8 @@ Order within any Angular class:
    - input signals
    - model signals
    - output signals
-   - httpResource / toSignal()
+   - httpResource signals
+   - toSignal conversions
    - computed signals
    - variables
 4. **Protected instance fields** (same subcategories, rare)
