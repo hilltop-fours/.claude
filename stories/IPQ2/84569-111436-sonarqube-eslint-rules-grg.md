@@ -30,7 +30,7 @@ Same rules as NTM task — reference sonarqube-rules.md for the list.
 ### Files changed
 - `eslint.config.js` — added `node_modules` to ignores, imported `eslint.sonar.config.js`, updated base import to use `.cjs` path
 - `eslint.sonar.config.js` — new file, sonar rules extracted into separate config
-- `package.json` — upgraded `@ndwnu/eslint-config` to `^0.0.1-beta.5`, added/corrected `@angular-eslint/*` packages at `^21.3.0`, removed redundant `@eslint/js`
+- `package.json` — upgraded `@ndwnu/eslint-config` to `^0.0.1-beta.5` (only change vs main — all other version bumps reverted)
 - `package-lock.json` — updated after package changes
 - `.vscode/settings.json` — added `eslint.workingDirectories` to fix VSCode ESLint extension in multi-root workspace
 - `eslint.ndwnu.local.cjs` — deleted (was a local-only workaround, not committed)
@@ -79,3 +79,16 @@ Extracted sonar rules to `eslint.sonar.config.js` for clarity. Import it with `r
 
 **`no-magic-numbers` removed**
 Too noisy in Angular code (form validators, array indices, etc.). Not worth the signal-to-noise ratio.
+
+**Do NOT upgrade unrelated packages in the same PR**
+Upgrading `prettier`, `eslint`, `angular-eslint`, `typescript-eslint` alongside the actual change caused cascading CI failures (format check broke on pre-existing files because prettier 3.8.1 is stricter than 3.3.3).
+Rule: only change what the story requires. Revert any version bumps not directly needed.
+
+**Always run `npx prettier <file> --write` on new `.js` config files**
+`eslint.config.js` and `eslint.sonar.config.js` are linted by prettier in CI. Forgetting to format them will fail the `npm run format:check` step.
+
+**Final PR diff vs main (what actually shipped)**
+- `eslint.config.js` — global ignores block first, beta.5 `.cjs` import path, sonar config imported
+- `eslint.sonar.config.js` — new file with sonar rules, prettier-formatted
+- `package.json` — single change: `@ndwnu/eslint-config` `0.0.1-beta.4` → `^0.0.1-beta.5`
+- `package-lock.json` — updated from clean `main` base via plain `npm install`
