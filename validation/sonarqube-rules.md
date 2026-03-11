@@ -182,6 +182,10 @@ Other valid tokens: `name`, `given-name`, `family-name`, `email`, `tel`, `url`, 
 ---
 
 ## Web:S6819
-`role="dialog"` on non-`<dialog>` elements → Sonar recommends native `<dialog>`.
-**Do NOT fix during signal migration PRs** — migrating `<aside role="dialog">` to `<dialog>` requires CSS, `open` attribute, and JS changes (`showModal()`/`close()`). Belongs in a dedicated accessibility story.
-Suppress server-side, track as follow-up.
+Do not use ARIA roles on elements that have a native semantic HTML equivalent.
+```html
+❌ <div role="button" (click)="...">Click me</div>
+✅ <button (click)="...">Click me</button>
+```
+Common cases: `role="button"` → `<button>`, `role="link"` → `<a>`, `role="checkbox"` → `<input type="checkbox">`.
+Fix: replace element with the native tag. May require CSS reset for `<button>` (border, background, padding, font).
