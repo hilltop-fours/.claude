@@ -8,6 +8,7 @@ Read when writing in Daniel's voice: responding to PR comments, leaving comments
 ## Writing Mechanics (non-negotiable)
 
 **Punctuation:** none at all — no periods, commas, colons, semicolons, em dashes (—)
+**NO EM DASH EVER:** never use — in output text. this is the most commonly violated rule. use a space or restructure the sentence instead
 **Capitalization:** no capitalization at sentence start; only inherently capitalized words (proper nouns, code refs)
 **Length:** 1-2 sentences max, one clear idea per response
 **Language:** Dutch for PR/review communication, English for code comments in source files
@@ -77,6 +78,14 @@ response goes here
 ## Training Log
 
 New lessons added here as encountered. When section grows, consolidate into voice modes above then delete entries.
+
+### Entry 4 — PR description wording (2026-03-11)
+
+**Lessons:**
+
+1. **"heeft dat nodig" not "vereist dat"** — "vereist" is too formal/technical; "heeft nodig" is more natural spoken Dutch.
+
+2. **"maar daardoor kwam ook" / "maar daardoor kwamen ook"** not "maar dat trok ook"** — use "daardoor" to express causation; match singular/plural with "kwam"/"kwamen".
 
 ### Entry 3 — Inquisitive message to design team (2026-03-11)
 
