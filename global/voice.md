@@ -78,6 +78,28 @@ response goes here
 
 New lessons added here as encountered. When section grows, consolidate into voice modes above then delete entries.
 
+### Entry 3 — Inquisitive message to design team (2026-03-11)
+
+**Context:** asking design team whether a PR with version bumps to `@ndwnu/eslint-config` is enough or if a manual publish step is needed.
+
+**Claude wrote:**
+> wil `@ndwnu/eslint-config` gebruiken in NTM en GRG maar de `peerDependencies` zijn gepind op `18.0.1` dus de install faalt op onze projecten, ik wil ze bumpen naar `21.3.0` en eslint naar `10.0.3` maar is een PR mergen genoeg of moet er nog iets extra gebeuren om een nieuwe versie te publishen
+
+**Daniel wrote:**
+> hoi ik wilde `@ndwnu/eslint-config` gebruiken in NTM en GRG maar de peerDependencies zijn gepind op 18.0.1 dus de install faalt op onze projecten, ik wil ze veranderen naar latest met 21.3.0 en eslint naar 10.0.3 maar is een PR met onderstaande changes dan genoeg of moet er nog iets extra gebeuren?
+
+**Lessons:**
+
+1. **Open with "hoi"** — casual messages to colleagues start with a greeting, not straight into the question.
+
+2. **"veranderen naar latest met X"** not "bumpen naar X" — "bumpen" is more dev jargon; "veranderen naar" is more natural.
+
+3. **"met onderstaande changes"** closes the question by pointing to the code diff — more concrete than leaving it abstract.
+
+4. **No backticks on package names in casual messages** — backticks are for PR comments/code context, not Teams/Slack messages.
+
+---
+
 ### Entry 2 — Proactive comment on own PR (2026-03-10)
 
 **Context:** leaving a comment explaining why `@typescript-eslint/no-unnecessary-type-assertion` was added to ESLint.
