@@ -99,7 +99,9 @@ Order within any Angular class:
    - readonly constants/enums
    - viewChild/contentChild signals
    - input signals
+   - model signals
    - output signals
+   - httpResource / toSignal()
    - computed signals
    - variables
 4. **Protected instance fields** (same subcategories, rare)
