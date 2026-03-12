@@ -93,7 +93,7 @@ isNew = computed(() => {
 
 Order within any Angular class:
 
-1. **Injected dependencies** (public → protected → private)
+1. **Injected dependencies** (public → protected → private); within each visibility: external packages first, then internal app deps; blank line between the two groups; alphabetical within each group
 2. **Static fields** (public → protected → private)
 3. **Public instance fields:**
    - readonly constants/enums
@@ -103,6 +103,8 @@ Order within any Angular class:
    - output signals
    - httpResource signals
    - toSignal conversions
+   - Signal Forms model signal
+   - Signal Forms field tree
    - computed signals
    - variables
 4. **Protected instance fields** (same subcategories, rare)
@@ -111,6 +113,20 @@ Order within any Angular class:
 7. **Lifecycle hooks** (`ngOnInit`, `ngOnDestroy`, etc.)
 8. **Getters/setters** (public → protected → private)
 9. **Methods** (public → protected → private)
+
+**Within each group — sort order (human-readable: top-to-bottom mirrors how a developer reads the class):**
+- Fields/signals: state → data → derived → UI state; alphabetical within each tier
+  - State: resource health (loading, error)
+  - Data: raw server values
+  - Derived: computed from data
+  - UI state: driven by route or user input
+- Methods: CRUD order (read → create → update → delete variants); non-CRUD methods alphabetically after
+
+**Spacing rules:**
+- httpResource fields (public or private): blank line between each — they are self-contained reactive units
+- signal() fields: no blank lines between them — group together
+- Public computed signals: blank line only before multiline computed blocks (body > 1 line); single-line computed signals group together without blank lines
+- Signal Forms field tree: same spacing rules as computed signals
 
 **Validation scope**: Only flag ordering violations for code added/modified in the current branch. Do not flag pre-existing violations in unchanged lines.
 
