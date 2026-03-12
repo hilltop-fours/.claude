@@ -182,3 +182,61 @@ Research spike — no code changes were the deliverable. Findings above replace 
 7. M3 Step 4 — `mapState` + localStorage
 8. M3 Step 5 — cleanup + ng-elf removal assessment
 9. M1 — `RoadAuthorityService` (after `BaseWkdService` situation is clear)
+
+---
+
+## Architecture Decision — signal facade over ng-elf
+
+`@ngrx/signals` `signalStore` out of scope for this story. `InfoMessagesStore` shows why: `rxMethod` + `patchState` + `withMethods` = large tightly coupled block.
+
+Goal: components live in pure signal environment. ng-elf stays but is hidden.
+
+Pattern: signal facade class wraps elf store internally. Exposes only signals + plain methods. No `$` observables, no `select()` leaking out to callers. Components inject facade only.
+
+`toSignal()` rule: allowed inside facade as internal implementation detail only. Forbidden in components and in public API of any service/repo.
+
+`user.store.ts` is this pattern for UI-only state. For entity repos with HTTP the same applies: facade owns elf store, converts elf selects to signals via `toSignal()` internally, exposes only signals outward.
+
+---
+
+## Page Candidates for Testing
+
+Pages assessed as browser-testable targets (no map, relatively self-contained).
+
+### /bulk-uploads
+Component: `bulk-upload/pages/bulk-upload/bulk-upload.component.ts`
+Repos used: none — uses `BlobDownloadService` + `FileDownloadService` directly (pure RxJS services, no ng-elf)
+Assessment: no ng-elf at all. Skip — not relevant to this migration.
+
+### /infoberichten
+Component: `info-messages/pages/list/list.component.ts`
+Repos used: `InfoMessagesStore` (`@store/info-messages.store.ts`) — already `@ngrx/signals` `signalStore`, not ng-elf
+Assessment: already migrated. Good reference pattern to study, not a migration target.
+
+### /organisaties (overview)
+Component: `user/pages/organization-overview/organization-overview.component.ts`
+Repos used: none — uses `OrganizationService` directly (plain HTTP Observable service)
+Assessment: no ng-elf. Has old RxJS patterns (`BehaviorSubject`, `AsyncPipe`, `console.error`) worth cleaning up later, but not a ng-elf migration target.
+
+### /organisaties/:id/bewerk (edit)
+Component: `user/pages/organization-edit/organization-edit.component.ts`
+Repos used: `UserRepository` — calls `updateOrganization()` in two places (lines 128, 170)
+Assessment: best candidate for M3 Step 2 wiring. Swap `inject(UserRepository)` → `inject(UserSignals)`, update two `updateOrganization()` calls. Visually verifiable: save org → signal updated.
+
+### /kaart/wegvakken/:id/details
+Component: `road-feature/components/overview/detail-cards/road-section-details/road-section-details.component.ts`
+Repos used: `RoadFeatureEditRepository`, `RoadFeatureRepository`, `OverviewMapElementRepository`, `MapSelectionRepository` — all ng-elf, all map-coupled
+Assessment: skip — 4 repos wired to map selection and navigation internally despite no visible map on this route.
+
+### /updates
+Component: `updates/pages/updates/updates.component.ts`
+Repos used: `InfoMessagesStore` (already `@ngrx/signals`) — reads `store.current`
+Assessment: skip — already migrated, nothing to do here.
+
+---
+
+## Migration Rules
+
+- No cleanup/refactor/inline/simplify during any migration step. Structure of new files mirrors source file exactly until cleanup pass.
+- Cleanup pass = Step 5 only, after repo deleted.
+- Never remove methods/functions that still have callers during migration. Mark with `/** @deprecated Use X instead */` — signals to other devs: "new way exists, migrate when you can." Delete only in the cleanup pass once all callers are gone.
